@@ -1,0 +1,21 @@
+{
+  "name": "@shipsite/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "shipsite": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@shipsite/core": "*",
+    "chokidar": "^4.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/node": "^20"
+  }
+}

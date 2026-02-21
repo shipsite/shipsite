@@ -1,0 +1,19 @@
+{
+  "name": "create-shipsite",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "create-shipsite": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/node": "^20"
+  }
+}

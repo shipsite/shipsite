@@ -1,0 +1,40 @@
+{
+  "name": "@shipsite/core",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./pages": "./src/pages.ts",
+    "./mdx": "./src/mdx.ts",
+    "./blog": "./src/blog.ts",
+    "./config": "./src/config.ts",
+    "./sitemap": "./src/sitemap.ts",
+    "./middleware": "./src/middleware.ts",
+    "./generate-slug-map": "./src/generate-slug-map.mjs",
+    "./content-collections": "./src/content-collections.ts",
+    "./theme": "./src/theme.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@content-collections/core": "^0.14.1",
+    "@content-collections/next": "^0.2.11",
+    "next": "16.1.6",
+    "next-intl": "^4.6.1",
+    "next-mdx-remote": "^6.0.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/react": "^19",
+    "@types/node": "^20"
+  },
+  "peerDependencies": {
+    "@shipsite/components": "*"
+  }
+}
