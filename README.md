@@ -41,6 +41,8 @@ Your site is running at `http://localhost:3000`.
 | **SSG** | Static Generation | Every page is statically generated — zero runtime JS overhead |
 | **Blog** | Full System | Blog index, articles, categories, authors, reading time |
 | **AI** | Native | Structured format that AI agents can read, write, and automate |
+| **SEO** | Automatic | Sitemap, robots.txt (AI-crawler-friendly), meta tags, hreflang — zero config |
+| **CI** | Validate | `shipsite validate` checks content, SEO, components, and images |
 | **N8N** | Automation | Connect Search Console, Google Ads, analytics — optimize on autopilot |
 
 ---
@@ -408,6 +410,50 @@ shipsite.json          content/              @shipsite/components
 
 ---
 
+## SEO — Automatic sitemap.xml and robots.txt
+
+ShipSite generates `sitemap.xml` and `robots.txt` automatically from your `shipsite.json` — zero configuration required.
+
+### sitemap.xml
+
+Generated at build time with:
+
+- **All pages** from `shipsite.json` pages array
+- **Priority** per page type (landing: 1.0, product: 0.9, blog-index: 0.8, blog-article: 0.7, legal: 0.3)
+- **Change frequency** per type (landing: weekly, blog-index: daily, blog-article: monthly, legal: yearly)
+- **hreflang alternates** for multi-language pages (`x-default` + all locales)
+- **Last modified** from blog article dates
+
+### robots.txt
+
+Generated with rules that **explicitly allow AI crawlers**:
+
+```
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+Sitemap: https://yoursite.com/sitemap.xml
+```
+
+Most websites block AI crawlers by default. ShipSite does the opposite — since your site is structured for AI consumption, the robots.txt explicitly welcomes AI agents. This means your content appears in AI-powered search results (ChatGPT, Perplexity, Claude) and AI assistants can reference your pages.
+
+---
+
 ## Deploy
 
 ShipSite generates a standard Next.js site. Deploy to any platform that supports Next.js or static hosting.
@@ -574,8 +620,27 @@ COPY .shipsite/.next/out /usr/share/nginx/html
 ```bash
 npx shipsite dev          # Start dev server
 npx shipsite build        # Generate static site
+npx shipsite validate     # Validate content, SEO, and component integrity
 npx shipsite add page X   # Scaffold a new page + register in shipsite.json
 npx shipsite add blog "Y" # Scaffold a blog post + register in shipsite.json
+```
+
+### `shipsite validate`
+
+Runs content and SEO validation across your entire site:
+
+- **Frontmatter** — title and description present in every page
+- **SEO** — title length (30-70 chars), description length (70-160 chars), duplicate detection, keyword stuffing
+- **Components** — required components per page type (Hero for landing, BlogArticle for blog posts, etc.)
+- **Blog** — author exists in shipsite.json, date format (YYYY-MM-DD), minimum word count (300), heading structure
+- **Orphan detection** — content folders not referenced in shipsite.json
+- **Image validation** — referenced images exist in public/
+
+Use it in CI to catch issues before deployment:
+
+```yaml
+- name: Validate content
+  run: npx shipsite validate
 ```
 
 ---
