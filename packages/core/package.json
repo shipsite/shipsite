@@ -2,18 +2,51 @@
   "name": "@shipsite/core",
   "version": "0.1.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./pages": "./src/pages.ts",
-    "./mdx": "./src/mdx.ts",
-    "./blog": "./src/blog.ts",
-    "./config": "./src/config.ts",
-    "./sitemap": "./src/sitemap.ts",
-    "./middleware": "./src/middleware.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./pages": {
+      "types": "./dist/pages.d.ts",
+      "default": "./dist/pages.js"
+    },
+    "./mdx": {
+      "types": "./dist/mdx.d.ts",
+      "default": "./dist/mdx.js"
+    },
+    "./blog": {
+      "types": "./dist/blog.d.ts",
+      "default": "./dist/blog.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "default": "./dist/config.js"
+    },
+    "./sitemap": {
+      "types": "./dist/sitemap.d.ts",
+      "default": "./dist/sitemap.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware.d.ts",
+      "default": "./dist/middleware.js"
+    },
     "./generate-slug-map": "./src/generate-slug-map.mjs",
-    "./content-collections": "./src/content-collections.ts",
-    "./theme": "./src/theme.ts"
+    "./content-collections": {
+      "types": "./dist/content-collections.d.ts",
+      "default": "./dist/content-collections.js"
+    },
+    "./theme": {
+      "types": "./dist/theme.d.ts",
+      "default": "./dist/theme.js"
+    }
   },
+  "files": [
+    "dist/",
+    "src/generate-slug-map.mjs"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -35,6 +68,6 @@
     "@types/node": "^20"
   },
   "peerDependencies": {
-    "@shipsite/components": "*"
+    "@shipsite/components": "^0.1.0"
   }
 }

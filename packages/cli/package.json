@@ -5,13 +5,16 @@
   "bin": {
     "shipsite": "./dist/index.js"
   },
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@shipsite/core": "*",
+    "@shipsite/core": "^0.1.0",
     "chokidar": "^4.0.3"
   },
   "devDependencies": {
