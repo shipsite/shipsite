@@ -20,6 +20,11 @@ async function main() {
       await add(args.slice(1));
       break;
     }
+    case 'validate': {
+      const { validate } = await import('./commands/validate.js');
+      await validate();
+      break;
+    }
     default:
       console.log(`
   ShipSite CLI
@@ -29,6 +34,7 @@ async function main() {
     shipsite build                     Build for production
     shipsite add page <name>           Add a new page
     shipsite add blog <title>          Add a new blog post
+    shipsite validate                  Validate content and SEO
 
   Options:
     --help    Show this help message
