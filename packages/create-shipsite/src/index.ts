@@ -327,6 +327,22 @@ description: "Terms and conditions for using our service."
 </svg>`,
   );
 
+  // Custom components directory
+  mkdirSync(join(projectDir, 'components'), { recursive: true });
+
+  writeFileSync(
+    join(projectDir, 'components', 'index.ts'),
+    `// Custom components — export your components here to use them in MDX.
+// ShipSite automatically merges these with the built-in components.
+//
+// Example:
+//   export { Highlight } from './Highlight';
+//
+// Then use in any MDX file:
+//   <Highlight color="blue">Important text</Highlight>
+`,
+  );
+
   // next.config.ts — always present so AI agents and developers know where to add redirects, headers, etc.
   writeFileSync(
     join(projectDir, 'next.config.ts'),

@@ -35,7 +35,7 @@ Your site is running at `http://localhost:3000`.
 
 | | Feature | Description |
 |---|---|---|
-| **46** | Components | Hero, Pricing, FAQ, Blog, Legal, Bento, Carousel — all typed and ready |
+| **46+** | Components | Hero, Pricing, FAQ, Blog, Legal, Bento, Carousel — plus your own custom components |
 | **1** | Config File | `shipsite.json` defines your entire site structure |
 | **i18n** | Built-in | Multi-language with slug translation and hreflang |
 | **SSG** | Static Generation | Every page is statically generated — zero runtime JS overhead |
@@ -669,12 +669,44 @@ ShipSite automatically merges your config with its own at build time.
 
 ---
 
+## Custom Components
+
+Add your own React components and use them in MDX — alongside the 46 built-in ones:
+
+**1. Create a component:**
+
+```tsx
+// components/Highlight.tsx
+export function Highlight({ color, children }: { color: string; children: React.ReactNode }) {
+  return <span style={{ backgroundColor: color, padding: '2px 8px', borderRadius: 4 }}>{children}</span>;
+}
+```
+
+**2. Export it:**
+
+```ts
+// components/index.ts
+export { Highlight } from './Highlight';
+```
+
+**3. Use it in any MDX file:**
+
+```mdx
+This is <Highlight color="#fef3c7">important</Highlight> text.
+```
+
+ShipSite automatically merges your custom components with the built-in ones. AI agents can create new components by writing `.tsx` files to `components/` and adding the export to `index.ts`.
+
+---
+
 ## Project Structure
 
 ```
 my-website/
 ├── shipsite.json          # Site configuration
 ├── next.config.ts         # Custom Next.js config (redirects, headers, etc.)
+├── components/            # Custom React components (auto-merged with built-in)
+│   └── index.ts           # Barrel export
 ├── content/
 │   ├── landing/
 │   │   └── en.mdx         # Landing page

@@ -550,6 +550,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   );
 
   // page.tsx
+  const customComponentsImport = hasCustomComponents
+    ? `import * as CustomComponents from '../../../components';\n`
+    : '';
+  const allComponentsMerge = hasCustomComponents
+    ? 'const AllComponents = { ...Components, ...CustomComponents };\n'
+    : 'const AllComponents = Components;\n';
+
   writeFileSync(
     join(srcDir, 'app', '[locale]', '[[...slug]]', 'page.tsx'),
     `import { setRequestLocale } from 'next-intl/server';
@@ -559,8 +566,9 @@ import { getPageBySlug, generateAllStaticParams, buildCanonicalUrl, getAlternate
 import { resolveAuthor } from '@shipsite/core/blog';
 import { getConfig, getSiteUrl } from '@shipsite/core/config';
 import * as Components from '@shipsite/components';
-import type { Metadata } from 'next';
+${customComponentsImport}import type { Metadata } from 'next';
 
+${allComponentsMerge}
 interface PageProps {
   params: Promise<{ locale: string; slug?: string[] }>;
 }
@@ -578,7 +586,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!pageConfig) return {};
 
   try {
-    const { frontmatter } = await getPageContent(pageConfig.content, locale, Components);
+    const { frontmatter } = await getPageContent(pageConfig.content, locale, AllComponents);
     const canonicalUrl = buildCanonicalUrl(locale, slugPath);
     const config = getConfig();
     const languages = getAlternateUrls(pageConfig);
@@ -612,7 +620,7 @@ export default async function DynamicPage({ params }: PageProps) {
 
   let content;
   try {
-    const result = await getPageContent(pageConfig.content, locale, Components);
+    const result = await getPageContent(pageConfig.content, locale, AllComponents);
     content = result.content;
   } catch (error) {
     console.error('MDX content error:', error);
