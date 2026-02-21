@@ -12,8 +12,8 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@shipsite/cli"><img src="https://img.shields.io/npm/v/@shipsite/cli.svg" alt="npm version" /></a>
-  <a href="https://github.com/nicosql/shipsite/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" /></a>
-  <a href="https://github.com/nicosql/shipsite/stargazers"><img src="https://img.shields.io/github/stars/nicosql/shipsite.svg?style=social" alt="GitHub stars" /></a>
+  <a href="https://github.com/shipsite/shipsite/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" /></a>
+  <a href="https://github.com/shipsite/shipsite/stargazers"><img src="https://img.shields.io/github/stars/shipsite/shipsite.svg?style=social" alt="GitHub stars" /></a>
 </p>
 
 ---

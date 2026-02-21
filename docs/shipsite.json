@@ -17,7 +17,7 @@
       { "label": "Features", "href": "#features" },
       { "label": "Blog", "href": "/blog" }
     ],
-    "cta": { "label": "GitHub", "href": "https://github.com/nicosql/shipsite" }
+    "cta": { "label": "GitHub", "href": "https://github.com/shipsite/shipsite" }
   },
   "footer": {
     "columns": [
@@ -26,20 +26,20 @@
         "links": [
           { "label": "Features", "href": "#features" },
           { "label": "Blog", "href": "/blog" },
-          { "label": "GitHub", "href": "https://github.com/nicosql/shipsite" }
+          { "label": "GitHub", "href": "https://github.com/shipsite/shipsite" }
         ]
       },
       {
         "title": "Resources",
         "links": [
-          { "label": "Quick Start", "href": "https://github.com/nicosql/shipsite#quick-start" },
-          { "label": "Components", "href": "https://github.com/nicosql/shipsite#components" },
+          { "label": "Quick Start", "href": "https://github.com/shipsite/shipsite#quick-start" },
+          { "label": "Components", "href": "https://github.com/shipsite/shipsite#components" },
           { "label": "npm", "href": "https://www.npmjs.com/package/@shipsite/cli" }
         ]
       }
     ],
     "social": [
-      { "platform": "github", "href": "https://github.com/nicosql/shipsite" }
+      { "platform": "github", "href": "https://github.com/shipsite/shipsite" }
     ],
     "copyright": "© 2026 ShipSite — MIT License"
   },
