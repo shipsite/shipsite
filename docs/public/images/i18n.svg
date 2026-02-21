@@ -1,0 +1,15 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" rx="12" fill="#eff6ff"/>
+  <rect x="30" y="50" width="150" height="200" rx="8" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  <text x="105" y="80" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="600" font-family="system-ui">en.mdx</text>
+  <text x="50" y="110" fill="#6b7280" font-size="10" font-family="monospace">/pricing</text>
+  <text x="50" y="130" fill="#6b7280" font-size="10" font-family="monospace">/about</text>
+  <text x="50" y="150" fill="#6b7280" font-size="10" font-family="monospace">/blog</text>
+  <rect x="220" y="50" width="150" height="200" rx="8" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  <text x="295" y="80" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="600" font-family="system-ui">de.mdx</text>
+  <text x="240" y="110" fill="#6b7280" font-size="10" font-family="monospace">/de/preise</text>
+  <text x="240" y="130" fill="#6b7280" font-size="10" font-family="monospace">/de/ueber-uns</text>
+  <text x="240" y="150" fill="#6b7280" font-size="10" font-family="monospace">/de/blog</text>
+  <line x1="180" y1="150" x2="220" y2="150" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4"/>
+  <text x="200" y="280" text-anchor="middle" fill="#3b82f6" font-size="11" font-family="system-ui">Automatic hreflang + slug translation</text>
+</svg>

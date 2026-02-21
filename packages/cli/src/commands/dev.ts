@@ -1,10 +1,11 @@
-import { join } from 'path';
+import { join, relative, dirname } from 'path';
 import {
   existsSync,
   mkdirSync,
   writeFileSync,
   symlinkSync,
   readFileSync,
+  realpathSync,
 } from 'fs';
 import { spawn } from 'child_process';
 
@@ -210,10 +211,28 @@ export const config = {
 `,
   );
 
+  // Resolve @shipsite/components source path for Tailwind @source directive
+  const cssDir = join(srcDir, 'styles');
+  let componentsSourceDirective = '';
+  // Walk up from rootDir to find node_modules/@shipsite/components/src
+  let searchDir = rootDir;
+  for (let i = 0; i < 10; i++) {
+    const candidate = join(searchDir, 'node_modules', '@shipsite', 'components', 'src');
+    if (existsSync(candidate)) {
+      const realPath = realpathSync(candidate);
+      const rel = relative(cssDir, realPath).split('\\').join('/');
+      componentsSourceDirective = `\n@source "${rel}";`;
+      break;
+    }
+    const parent = dirname(searchDir);
+    if (parent === searchDir) break;
+    searchDir = parent;
+  }
+
   // globals.css
   writeFileSync(
-    join(srcDir, 'styles', 'globals.css'),
-    `@import 'tailwindcss';
+    join(cssDir, 'globals.css'),
+    `@import 'tailwindcss';${componentsSourceDirective}
 
 :root {
   --ss-primary: ${primary};

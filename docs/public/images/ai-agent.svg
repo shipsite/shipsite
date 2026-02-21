@@ -1,0 +1,11 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" rx="12" fill="#f3f2ff"/>
+  <rect x="40" y="40" width="320" height="220" rx="8" fill="white" stroke="#5d5bd4" stroke-width="2"/>
+  <text x="200" y="100" text-anchor="middle" fill="#5d5bd4" font-size="14" font-weight="600" font-family="system-ui">AI Agent</text>
+  <rect x="80" y="120" width="240" height="30" rx="4" fill="#f3f2ff"/>
+  <text x="200" y="140" text-anchor="middle" fill="#5d5bd4" font-size="11" font-family="monospace">&lt;Hero title="..." /&gt;</text>
+  <rect x="80" y="160" width="240" height="30" rx="4" fill="#f3f2ff"/>
+  <text x="200" y="180" text-anchor="middle" fill="#5d5bd4" font-size="11" font-family="monospace">&lt;Features ... /&gt;</text>
+  <rect x="80" y="200" width="240" height="30" rx="4" fill="#f3f2ff"/>
+  <text x="200" y="220" text-anchor="middle" fill="#5d5bd4" font-size="11" font-family="monospace">&lt;BannerCTA ... /&gt;</text>
+</svg>

@@ -1,0 +1,290 @@
+---
+title: "Programmatic SEO: Generate 100 Landing Pages with ShipSite"
+description: "Learn how to use ShipSite and AI to generate hundreds of SEO-optimized landing pages automatically. Step-by-step guide with code examples."
+date: "2026-02-21"
+image: "/images/programmatic-seo-blog.svg"
+readingTime: 10
+featured: false
+author: shipsite-team
+---
+
+<BlogArticle>
+
+<BlogIntro>
+Programmatic SEO is the practice of generating large numbers of pages targeting specific search queries — city pages, comparison pages, integration pages, use-case pages. Companies like Zapier, Wise, and Nomad List use this strategy to capture long-tail traffic at scale. With ShipSite, you can generate hundreds of static landing pages using a simple script and AI-generated content.
+</BlogIntro>
+
+## What is programmatic SEO?
+
+Programmatic SEO creates pages based on structured data rather than manual writing. Instead of crafting one page at a time, you define a template and populate it with data for each variation.
+
+Common examples:
+
+- **City pages**: "Best Project Management Tool in New York / London / Berlin"
+- **Integration pages**: "Connect [Product] with Slack / GitHub / Jira"
+- **Comparison pages**: "[Product] vs Asana / Monday / ClickUp"
+- **Use-case pages**: "[Product] for Marketing Teams / Engineering / HR"
+
+The goal is to rank for hundreds of long-tail keywords that individually bring small traffic but collectively drive significant organic growth.
+
+## Why ShipSite is built for this
+
+Most programmatic SEO setups require:
+
+1. A database to store page data
+2. A template engine to render pages
+3. A CMS or framework to serve them
+4. Complex build pipelines to generate static output
+
+ShipSite collapses all of this into **files + JSON**:
+
+- Each generated page is an MDX file with typed components
+- The page registry is a JSON array in `shipsite.json`
+- The build step generates static HTML for every page
+- No database, no API, no runtime server
+
+This means your generation script only needs to do two things: **write files** and **update JSON**.
+
+<BlogCTA
+  title="Get ShipSite"
+  buttonText="View on GitHub"
+  buttonHref="https://github.com/nicosql/shipsite"
+/>
+
+## Step-by-step: Generate 100 city pages
+
+Let's build a complete programmatic SEO setup that generates city-specific landing pages.
+
+### Step 1: Define your data
+
+Create a data file with your target cities and metadata:
+
+```js
+// scripts/cities.js
+export const cities = [
+  { slug: 'new-york', name: 'New York', country: 'United States', region: 'North America' },
+  { slug: 'london', name: 'London', country: 'United Kingdom', region: 'Europe' },
+  { slug: 'berlin', name: 'Berlin', country: 'Germany', region: 'Europe' },
+  { slug: 'tokyo', name: 'Tokyo', country: 'Japan', region: 'Asia Pacific' },
+  { slug: 'sydney', name: 'Sydney', country: 'Australia', region: 'Asia Pacific' },
+  { slug: 'toronto', name: 'Toronto', country: 'Canada', region: 'North America' },
+  { slug: 'paris', name: 'Paris', country: 'France', region: 'Europe' },
+  { slug: 'singapore', name: 'Singapore', country: 'Singapore', region: 'Asia Pacific' },
+  { slug: 'amsterdam', name: 'Amsterdam', country: 'Netherlands', region: 'Europe' },
+  { slug: 'san-francisco', name: 'San Francisco', country: 'United States', region: 'North America' },
+  // ... add as many as you need
+];
+```
+
+### Step 2: Create the generation script
+
+```js
+// scripts/generate-city-pages.js
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { cities } from './cities.js';
+
+const config = JSON.parse(readFileSync('shipsite.json', 'utf-8'));
+
+for (const city of cities) {
+  const contentDir = `content/${city.slug}`;
+  mkdirSync(contentDir, { recursive: true });
+
+  const mdx = `---
+title: "Best Project Management Tool in ${city.name}"
+description: "Discover why teams in ${city.name}, ${city.country} choose our project management tool. Free plan available."
+---
+
+<Hero
+  title="The #1 Project Management Tool in ${city.name}"
+  description="Join thousands of teams in ${city.name} who manage projects faster. Built for ${city.region} teams."
+  primaryCta={{ label: "Start Free", href: "/signup?city=${city.slug}" }}
+  secondaryCta={{ label: "See Features", href: "/features" }}
+/>
+
+<Features title="Why ${city.name} Teams Choose Us" columns={3}>
+  <Feature title="Local Time Zone Support" description="Deadlines and notifications set to ${city.name} time. No confusion across your team." />
+  <Feature title="Fast Setup" description="Get your ${city.name} team onboarded in under 10 minutes. No training required." />
+  <Feature title="Free Plan" description="Start free with unlimited projects. Upgrade when your ${city.name} team grows." />
+</Features>
+
+<Testimonial
+  quote="We switched from spreadsheets and never looked back. The entire ${city.name} office is on board."
+  author="Sarah M."
+  role="Project Manager"
+  company="Tech startup in ${city.name}"
+/>
+
+<BannerCTA
+  title="Ready to get started in ${city.name}?"
+  buttonText="Start Free Today"
+  buttonHref="/signup?city=${city.slug}"
+  subtext="No credit card required. Free plan available."
+/>
+`;
+
+  writeFileSync(`${contentDir}/en.mdx`, mdx);
+
+  // Register page in config
+  config.pages.push({
+    slug: city.slug,
+    type: 'page',
+    content: city.slug,
+    locales: ['en'],
+  });
+
+  console.log(`Generated: /${city.slug}`);
+}
+
+writeFileSync('shipsite.json', JSON.stringify(config, null, 2));
+console.log(`\nDone! Generated ${cities.length} city pages.`);
+console.log('Run: npx shipsite build');
+```
+
+### Step 3: Run the script
+
+```bash
+node scripts/generate-city-pages.js
+npx shipsite build
+```
+
+That's it. You now have 100 static landing pages, each with proper meta tags, unique content, and consistent components.
+
+<BlogCTABanner
+  title="Start generating pages"
+  description="ShipSite is open source. JSON config, MDX content, 30+ components. Build hundreds of pages with one script."
+  buttonText="Get Started"
+  buttonLink="https://github.com/nicosql/shipsite#quick-start"
+/>
+
+## Level up: AI-generated unique content
+
+The basic script above uses template variables — every city page has the same structure with different names. For better SEO results, use AI to generate unique content per page:
+
+```js
+// scripts/generate-with-ai.js
+import Anthropic from '@anthropic-ai/sdk';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { cities } from './cities.js';
+
+const client = new Anthropic();
+const config = JSON.parse(readFileSync('shipsite.json', 'utf-8'));
+
+for (const city of cities) {
+  const message = await client.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1024,
+    messages: [{
+      role: 'user',
+      content: `Generate an MDX landing page for a project management tool targeting teams in ${city.name}, ${city.country}.
+
+Use these exact components:
+- <Hero title="..." description="..." primaryCta={{ label: "Start Free", href: "/signup?city=${city.slug}" }} />
+- <Features title="..." columns={3}> with 3 <Feature title="..." description="..." /> children
+- <BannerCTA title="..." buttonText="Start Free" buttonHref="/signup?city=${city.slug}" />
+
+Make the content specific to ${city.name} — mention local business culture, time zones, or regional context.
+Include frontmatter with title and description.
+Output only the MDX content, nothing else.`
+    }]
+  });
+
+  const mdx = message.content[0].text;
+  const contentDir = `content/${city.slug}`;
+  mkdirSync(contentDir, { recursive: true });
+  writeFileSync(`${contentDir}/en.mdx`, mdx);
+
+  config.pages.push({
+    slug: city.slug,
+    type: 'page',
+    content: city.slug,
+    locales: ['en'],
+  });
+
+  console.log(`Generated: /${city.slug}`);
+}
+
+writeFileSync('shipsite.json', JSON.stringify(config, null, 2));
+```
+
+Now each city page has genuinely unique content that references local context, business culture, and regional specifics. Search engines reward unique content — this is the difference between template-based programmatic SEO and AI-native programmatic SEO.
+
+## Managing hundreds of pages in shipsite.json
+
+After running the script, your `shipsite.json` pages array might look like this:
+
+```json
+{
+  "pages": [
+    { "slug": "", "type": "landing", "content": "landing" },
+    { "slug": "pricing", "type": "page", "content": "pricing" },
+    { "slug": "blog", "type": "blog-index", "content": "blog" },
+    { "slug": "new-york", "type": "page", "content": "new-york", "locales": ["en"] },
+    { "slug": "london", "type": "page", "content": "london", "locales": ["en"] },
+    { "slug": "berlin", "type": "page", "content": "berlin", "locales": ["en"] },
+    { "slug": "tokyo", "type": "page", "content": "tokyo", "locales": ["en"] },
+    { "slug": "sydney", "type": "page", "content": "sydney", "locales": ["en"] }
+  ]
+}
+```
+
+This is by design. The flat pages array is trivial for scripts to read and modify. No nested routes, no dynamic slugs, no server-side logic. Every page is explicitly registered.
+
+## Build and deploy
+
+```bash
+# Generate pages
+node scripts/generate-city-pages.js
+
+# Build static site
+npx shipsite build
+
+# Deploy to Vercel
+git add . && git commit -m "Add city pages" && git push
+```
+
+Vercel, Cloudflare Pages, and Netlify all handle static sites with hundreds of pages efficiently. The build output is plain HTML/CSS — no server required.
+
+## SEO checklist for programmatic pages
+
+Before deploying your generated pages, verify:
+
+- **Unique titles** — Each page should have a distinct `<title>` tag (set via frontmatter `title`)
+- **Unique descriptions** — Each meta description should be different (frontmatter `description`)
+- **Unique body content** — If using templates, add AI-generated paragraphs for uniqueness
+- **Internal linking** — Link between related city pages and back to your main landing page
+- **Sitemap** — ShipSite auto-generates a sitemap from `shipsite.json` — all pages are included
+- **Canonical URLs** — Each page gets a canonical URL automatically
+- **No thin content** — Each page should have enough unique content to provide value
+
+## Going further
+
+Programmatic SEO with ShipSite scales beyond city pages:
+
+- **Integration pages**: Generate a page for each integration your product supports
+- **Comparison pages**: Create "[Product] vs [Competitor]" pages from a list of competitors
+- **Feature pages**: Deep-dive pages for each feature in your product
+- **Industry pages**: "[Product] for Healthcare / Finance / Education"
+- **Multi-language**: Generate the same pages in multiple languages by creating `de.mdx`, `fr.mdx` files
+
+The pattern is always the same: define your data, write a script that generates MDX files and updates `shipsite.json`, build, deploy.
+
+<StartFreeNowCTA
+  title="Start building programmatic SEO pages"
+  bullets={["Open source — MIT License", "30+ typed components", "Generate hundreds of pages with one script"]}
+  buttonText="Get Started"
+  buttonHref="https://github.com/nicosql/shipsite#quick-start"
+/>
+
+## FAQ
+
+<BlogFAQ
+  title="Frequently Asked Questions"
+  items={[
+    { question: "Will Google penalize programmatic pages?", answer: "Not if the content provides genuine value. Google penalizes thin, duplicate content — not automatically generated pages. Use AI to generate unique content per page and ensure each page answers a real user query." },
+    { question: "How many pages can ShipSite handle?", answer: "ShipSite generates static HTML with Next.js. The build process handles thousands of pages efficiently. Vercel, Cloudflare Pages, and Netlify all serve static sites of this scale without issues." },
+    { question: "Can I update generated pages later?", answer: "Yes. The pages are regular MDX files. You can edit them manually, regenerate specific pages with an updated script, or use AI to refresh content. The shipsite.json registry makes it easy to manage which pages exist." },
+    { question: "Do I need the AI step?", answer: "No. The basic template approach works fine for getting started. AI-generated unique content is a level-up for better SEO results, but it's not required." }
+  ]}
+/>
+
+</BlogArticle>

@@ -1,0 +1,98 @@
+---
+title: "ShipSite — The AI-Native Website Generator"
+description: "Ship marketing websites with JSON + MDX. 30+ typed components, i18n, blog system, static generation. Built for AI agents to operate."
+---
+
+<Hero
+  title="The AI-native website generator"
+  description="Ship marketing websites with JSON + MDX. 30+ typed components. One config file. Let AI do the rest."
+  primaryCta={{ label: "Get Started", href: "https://github.com/nicosql/shipsite#quick-start" }}
+  secondaryCta={{ label: "View on GitHub", href: "https://github.com/nicosql/shipsite" }}
+  badge="Open Source — MIT License"
+/>
+
+<Companies
+  title="Built on"
+  logos={[
+    { src: "/images/nextjs.svg", alt: "Next.js", width: 100 },
+    { src: "/images/tailwind.svg", alt: "Tailwind CSS", width: 120 },
+    { src: "/images/mdx.svg", alt: "MDX", width: 60 },
+    { src: "/images/typescript.svg", alt: "TypeScript", width: 120 }
+  ]}
+/>
+
+<Features title="Everything you need to ship" description="From landing pages to blog posts — one framework, one config, one build." columns={3}>
+  <Feature title="30+ Typed Components" description="Hero, Pricing, FAQ, Blog, Legal — all with TypeScript props. Drop them into MDX and go." />
+  <Feature title="One JSON Config" description="shipsite.json defines your site name, colors, navigation, pages, i18n, and blog — the single source of truth." />
+  <Feature title="i18n Built-in" description="Multi-language with slug translation, hreflang tags, and locale prefix. Add a language by adding a file." />
+  <Feature title="Blog System" description="Blog index, articles, authors, categories, reading time — all generated from MDX frontmatter." />
+  <Feature title="Static Generation" description="Every page is statically generated with Next.js. Zero runtime JS overhead. Perfect Lighthouse scores." />
+  <Feature title="AI-Native" description="Structured format that AI agents can read, write, and automate. The website generator that AI can operate." />
+</Features>
+
+<AlternatingFeatures title="Built for the AI era">
+  <AlternatingFeatureRow
+    title="AI agents write your pages"
+    image="/images/ai-agent.svg"
+    description="Every component has typed props. Every page is an MDX file. Every config is JSON. AI agents generate content that works on the first try."
+  >
+    <AlternatingFeatureItem title="Typed components" description="30+ components with TypeScript interfaces — AI knows exactly what props to pass." />
+    <AlternatingFeatureItem title="JSON config" description="One shipsite.json file controls the entire site. AI reads it, modifies it, done." />
+    <AlternatingFeatureItem title="CLI automation" description="shipsite add page / shipsite add blog — scriptable commands for any workflow." />
+  </AlternatingFeatureRow>
+
+  <AlternatingFeatureRow
+    title="One config, entire website"
+    image="/images/config.svg"
+    description="shipsite.json is the single source of truth. Site name, colors, navigation, pages, i18n settings, blog authors — all in one file."
+  >
+    <AlternatingFeatureItem title="Colors and branding" description="Set primary and accent colors once. Every component picks them up automatically." />
+    <AlternatingFeatureItem title="Page registry" description="Add a page by pushing an object to the pages array. Routing and sitemap update automatically." />
+    <AlternatingFeatureItem title="Navigation and footer" description="Define nav items, CTA buttons, footer columns, and social links in config." />
+  </AlternatingFeatureRow>
+
+  <AlternatingFeatureRow
+    title="Multi-language from day one"
+    image="/images/i18n.svg"
+    description="Add a language by creating a translated MDX file. ShipSite handles locale prefixes, hreflang tags, and slug translation."
+  >
+    <AlternatingFeatureItem title="Slug translation" description="English /pricing becomes German /de/preise — set via frontmatter slug field." />
+    <AlternatingFeatureItem title="Automatic hreflang" description="Every page gets correct alternate links for all available locales." />
+    <AlternatingFeatureItem title="Locale prefix as-needed" description="Default locale gets clean URLs (/about), others get prefixed (/de/about)." />
+  </AlternatingFeatureRow>
+</AlternatingFeatures>
+
+<Steps title="Ship in 5 minutes">
+  <Step title="Create your project" description="Run npx create-shipsite my-website — interactive setup picks your colors and languages." />
+  <Step title="Write your content" description="Edit MDX files in the content/ directory. Use typed components like Hero, Features, FAQ." />
+  <Step title="Customize your config" description="Open shipsite.json to set your brand colors, navigation, footer, and page structure." />
+  <Step title="Deploy" description="Run npx shipsite build and deploy to Vercel, Cloudflare Pages, or Netlify. Static files, zero config." />
+</Steps>
+
+<BannerCTA
+  title="Start building with ShipSite"
+  buttonText="View on GitHub"
+  buttonHref="https://github.com/nicosql/shipsite"
+  subtext="MIT License — free and open source."
+/>
+
+<FAQ title="Frequently Asked Questions">
+  <FAQItem question="Is ShipSite free?">
+    Yes. ShipSite is open source under the MIT License. Free to use for personal and commercial projects.
+  </FAQItem>
+  <FAQItem question="Do I need to know React?">
+    No. You write MDX files using pre-built components. Drop in a Hero, add some Features, configure your shipsite.json — no React knowledge needed.
+  </FAQItem>
+  <FAQItem question="How does AI integration work?">
+    ShipSite uses structured files (JSON config + MDX with typed components) that AI agents can read and write directly. Point an AI at your project and it can generate pages, modify config, and create blog posts — all through standard file operations.
+  </FAQItem>
+  <FAQItem question="Is the output SEO-optimized?">
+    Yes. Every page is statically generated with proper meta tags, Open Graph data, canonical URLs, hreflang tags, and an auto-generated sitemap. Perfect for search engines.
+  </FAQItem>
+  <FAQItem question="Can I add custom components?">
+    ShipSite ships with 30+ components that cover most marketing website needs. For custom components, you can extend the MDX component registry in your project.
+  </FAQItem>
+  <FAQItem question="Where can I deploy?">
+    Anywhere that serves static files. Vercel, Cloudflare Pages, Netlify, AWS S3, or your own server. ShipSite generates standard Next.js static output.
+  </FAQItem>
+</FAQ>

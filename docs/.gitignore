@@ -1,10 +1,5 @@
 node_modules/
-dist/
-.turbo/
 .next/
 .shipsite/
-*.tsbuildinfo
 .content-collections/
-
-# Personal notes
-PLAN.md
+*.tsbuildinfo
