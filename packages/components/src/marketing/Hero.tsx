@@ -1,4 +1,10 @@
 import React from 'react';
+import { cn } from '../lib/utils';
+import { Section } from '../ui/section';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Mockup } from '../ui/mockup';
+import Glow from '../ui/glow';
 
 interface HeroProps {
   title: string;
@@ -12,36 +18,43 @@ interface HeroProps {
 
 export function Hero({ title, description, primaryCta, secondaryCta, badge, image, children }: HeroProps) {
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
-      <div className="container-main">
+    <Section className="relative overflow-hidden">
+      <Glow variant="top" />
+      <div className="container-main relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           {badge && (
-            <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[var(--ss-primary-50)] text-[var(--ss-primary-700)] mb-6">
+            <Badge variant="outline" className="animate-appear mb-6">
               {badge}
-            </div>
+            </Badge>
           )}
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[var(--ss-text)] mb-6">{title}</h1>
-          <p className="text-lg md:text-xl text-[var(--ss-text)]/60 mb-8 max-w-2xl mx-auto">{description}</p>
-          <div className="flex items-center justify-center gap-4">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 animate-appear [animation-delay:100ms]">
+            {title}
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-appear [animation-delay:200ms]">
+            {description}
+          </p>
+          <div className="flex items-center justify-center gap-4 animate-appear [animation-delay:300ms]">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center px-6 py-3 rounded-lg text-base font-medium text-white bg-[var(--ss-primary)] hover:bg-[var(--ss-primary-600)] transition-colors shadow-lg shadow-[var(--ss-primary)]/25">
-                {primaryCta.label}
-              </a>
+              <Button asChild size="lg">
+                <a href={primaryCta.href}>{primaryCta.label}</a>
+              </Button>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center px-6 py-3 rounded-lg text-base font-medium text-[var(--ss-text)] bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
-                {secondaryCta.label}
-              </a>
+              <Button asChild variant="glow" size="lg">
+                <a href={secondaryCta.href}>{secondaryCta.label}</a>
+              </Button>
             )}
           </div>
           {children}
         </div>
         {image && (
-          <div className="mt-16 rounded-xl overflow-hidden shadow-2xl border border-gray-200">
-            <img src={image} alt="" className="w-full" />
+          <div className="mt-16 animate-appear-zoom [animation-delay:400ms]">
+            <Mockup type="responsive" className="shadow-mockup w-full">
+              <img src={image} alt="" className="w-full" />
+            </Mockup>
           </div>
         )}
       </div>
-    </section>
+    </Section>
   );
 }

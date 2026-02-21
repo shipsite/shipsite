@@ -10,6 +10,10 @@ export {
 } from './context/ShipSiteProvider';
 export type { ShipSiteContextValue } from './context/ShipSiteProvider';
 
+// Theme
+export { ThemeProvider } from './context/ThemeProvider';
+export { ThemeToggle } from './ui/theme-toggle';
+
 // Layout
 export { Header } from './layout/Header';
 export { Footer } from './layout/Footer';
@@ -36,6 +40,13 @@ export { FAQ, FAQItem } from './marketing/FAQ';
 export { Steps, Step } from './marketing/Steps';
 export { CardGrid, CardGridItem } from './marketing/CardGrid';
 export { CalloutCard } from './marketing/CalloutCard';
+export { Stats, Stat } from './marketing/Stats';
+export { Testimonials, TestimonialCard } from './marketing/Testimonials';
+export { BentoGrid, BentoItem } from './marketing/BentoGrid';
+export { Gallery, GalleryItem } from './marketing/Gallery';
+export { SocialProof } from './marketing/SocialProof';
+export { Carousel, CarouselItem } from './marketing/Carousel';
+export { TabsSection, TabItem } from './marketing/TabsSection';
 
 // Blog
 export { BlogArticle } from './blog/BlogArticle';

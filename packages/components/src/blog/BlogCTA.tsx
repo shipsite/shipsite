@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '../ui/button';
 
 interface BlogCTAProps {
   title: string;
@@ -8,11 +9,11 @@ interface BlogCTAProps {
 
 export function BlogCTA({ title, buttonText, buttonHref }: BlogCTAProps) {
   return (
-    <div className="my-10 p-8 rounded-2xl bg-[var(--ss-primary-50)] border border-[var(--ss-primary-100)] text-center">
-      <h3 className="text-xl font-bold text-[var(--ss-text)] mb-4">{title}</h3>
-      <a href={buttonHref} className="inline-flex items-center px-6 py-3 rounded-lg text-sm font-medium text-white bg-[var(--ss-primary)] hover:bg-[var(--ss-primary-600)] transition-colors">
-        {buttonText}
-      </a>
+    <div className="my-10 p-8 rounded-2xl glass-1 text-center">
+      <h3 className="text-xl font-bold text-foreground mb-4">{title}</h3>
+      <Button asChild>
+        <a href={buttonHref}>{buttonText}</a>
+      </Button>
     </div>
   );
 }

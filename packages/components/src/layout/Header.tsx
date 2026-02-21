@@ -1,102 +1,94 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { Menu } from 'lucide-react';
 import { useShipSite, useResolveHref } from '../context/ShipSiteProvider';
+import { cn } from '../lib/utils';
+import { Button } from '../ui/button';
+import { Navbar, NavbarLeft, NavbarRight } from '../ui/navbar';
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetTitle,
+} from '../ui/sheet';
+import { ThemeToggle } from '../ui/theme-toggle';
 
 export function Header() {
   const { siteName, logo, navigation, locale, defaultLocale } = useShipSite();
   const resolveHref = useResolveHref();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const logoSrc = typeof logo === 'string' ? logo : logo?.light;
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--ss-background)]/95 backdrop-blur-md border-b border-gray-100">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container-main">
-        <nav className="flex items-center justify-between py-4">
-          <a
-            href={locale === defaultLocale ? '/' : `/${locale}`}
-            className="flex items-center gap-2"
-          >
-            {logoSrc && (
-              <img src={logoSrc} alt={siteName} className="h-8 w-auto" />
-            )}
-            <span className="font-semibold text-lg text-[var(--ss-text)]">
-              {siteName}
-            </span>
-          </a>
-
-          <div className="hidden md:flex items-center gap-8">
-            {navigation.items.map((item) => (
-              <a
-                key={item.href}
-                href={resolveHref(item.href)}
-                className="text-sm font-medium text-[var(--ss-text)]/70 hover:text-[var(--ss-text)] transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
-            {navigation.cta && (
-              <a
-                href={navigation.cta.href}
-                className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-[var(--ss-primary)] hover:bg-[var(--ss-primary-600)] transition-colors"
-              >
-                {navigation.cta.label}
-              </a>
-            )}
-          </div>
-
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        <Navbar>
+          <NavbarLeft>
+            <a
+              href={locale === defaultLocale ? '/' : `/${locale}`}
+              className="flex items-center gap-2"
             >
-              {mobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+              {logoSrc && (
+                <img src={logoSrc} alt={siteName} className="h-8 w-auto" />
               )}
-            </svg>
-          </button>
-        </nav>
+              <span className="font-semibold text-lg text-foreground">
+                {siteName}
+              </span>
+            </a>
+          </NavbarLeft>
 
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100 py-4 space-y-3">
+          <NavbarRight className="hidden md:flex">
             {navigation.items.map((item) => (
               <a
                 key={item.href}
                 href={resolveHref(item.href)}
-                className="block text-sm font-medium text-[var(--ss-text)]/70 hover:text-[var(--ss-text)]"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 {item.label}
               </a>
             ))}
+            <ThemeToggle />
             {navigation.cta && (
-              <a
-                href={navigation.cta.href}
-                className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-[var(--ss-primary)]"
-              >
-                {navigation.cta.label}
-              </a>
+              <Button asChild size="sm">
+                <a href={navigation.cta.href}>
+                  {navigation.cta.label}
+                </a>
+              </Button>
             )}
+          </NavbarRight>
+
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Toggle menu">
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetTitle className="sr-only">Navigation</SheetTitle>
+                <nav className="flex flex-col gap-4 mt-8">
+                  {navigation.items.map((item) => (
+                    <a
+                      key={item.href}
+                      href={resolveHref(item.href)}
+                      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                  {navigation.cta && (
+                    <Button asChild className="mt-2">
+                      <a href={navigation.cta.href}>
+                        {navigation.cta.label}
+                      </a>
+                    </Button>
+                  )}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
-        )}
+        </Navbar>
       </div>
     </header>
   );

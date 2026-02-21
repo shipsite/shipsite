@@ -1,0 +1,532 @@
+{
+  "$schema": "https://schema.shipsite.dev/components.json",
+  "version": "0.1.0",
+  "components": [
+    {
+      "name": "Hero",
+      "category": "marketing",
+      "description": "Full-width hero section with animated title, description, optional badge, primary/secondary CTAs, and a responsive device mockup image. Uses a top glow effect for visual emphasis.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Main headline text displayed as an h1." },
+        { "name": "description", "type": "string", "required": true, "description": "Supporting paragraph text below the title." },
+        { "name": "primaryCta", "type": "{ label: string; href: string }", "required": false, "description": "Primary call-to-action button with label and link." },
+        { "name": "secondaryCta", "type": "{ label: string; href: string }", "required": false, "description": "Secondary call-to-action button rendered with the glow variant." },
+        { "name": "badge", "type": "string", "required": false, "description": "Small badge text displayed above the title." },
+        { "name": "image", "type": "string", "required": false, "description": "URL of the hero image displayed inside a responsive device mockup below the CTAs." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Optional additional content rendered below the CTA buttons." }
+      ],
+      "example": "<Hero\n  title=\"Build your SaaS faster\"\n  description=\"Ship production-ready landing pages in minutes.\"\n  badge=\"New Release\"\n  primaryCta={{ label: \"Get Started\", href: \"/signup\" }}\n  secondaryCta={{ label: \"Learn More\", href: \"/docs\" }}\n  image=\"/images/hero-screenshot.png\"\n/>"
+    },
+    {
+      "name": "Feature",
+      "category": "marketing",
+      "description": "Individual feature card with an optional icon, title, and description. Used as a child of the Features grid component.",
+      "props": [
+        { "name": "icon", "type": "React.ReactNode", "required": false, "description": "Icon element displayed in a rounded container above the title." },
+        { "name": "title", "type": "string", "required": true, "description": "Feature heading text." },
+        { "name": "description", "type": "string", "required": true, "description": "Short description of the feature." }
+      ],
+      "example": "<Feature title=\"Fast\" description=\"Blazing fast performance out of the box.\" />"
+    },
+    {
+      "name": "Features",
+      "category": "marketing",
+      "description": "Section that displays a grid of Feature cards with an optional section title and description. Supports 2, 3, or 4 column layouts.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the grid." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "columns", "type": "2 | 3 | 4", "required": false, "description": "Number of grid columns. Defaults to 3." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Feature child components to render in the grid." }
+      ],
+      "example": "<Features title=\"Why choose us\" columns={3}>\n  <Feature title=\"Fast\" description=\"Blazing fast performance.\" />\n  <Feature title=\"Secure\" description=\"Enterprise-grade security.\" />\n  <Feature title=\"Scalable\" description=\"Grows with your business.\" />\n</Features>"
+    },
+    {
+      "name": "AlternatingFeatureItem",
+      "category": "marketing",
+      "description": "Individual bullet-point item within an AlternatingFeatureRow. Displays an optional icon, title, and description.",
+      "props": [
+        { "name": "icon", "type": "string", "required": false, "description": "Icon or emoji displayed to the left of the title." },
+        { "name": "title", "type": "string", "required": true, "description": "Item heading text." },
+        { "name": "description", "type": "string", "required": true, "description": "Short item description." }
+      ],
+      "example": "<AlternatingFeatureItem icon=\"⚡\" title=\"Lightning fast\" description=\"Sub-second load times.\" />"
+    },
+    {
+      "name": "AlternatingFeatureRow",
+      "category": "marketing",
+      "description": "A two-column row with text content on one side and a responsive mockup image on the other. Even rows automatically flip the layout. Supports light/dark mode images.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Row heading text." },
+        { "name": "description", "type": "string", "required": false, "description": "Row description paragraph." },
+        { "name": "image", "type": "string", "required": true, "description": "URL of the feature image (or light-mode image when imageDark is also provided)." },
+        { "name": "imageDark", "type": "string", "required": false, "description": "URL of the dark-mode variant of the image." },
+        { "name": "imageAlt", "type": "string", "required": false, "description": "Alt text for the image. Defaults to the title." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "AlternatingFeatureItem children rendered below the description." }
+      ],
+      "example": "<AlternatingFeatureRow\n  title=\"Dashboard\"\n  description=\"Manage everything from one place.\"\n  image=\"/images/dashboard.png\"\n>\n  <AlternatingFeatureItem icon=\"📊\" title=\"Analytics\" description=\"Real-time insights.\" />\n</AlternatingFeatureRow>"
+    },
+    {
+      "name": "AlternatingFeatures",
+      "category": "marketing",
+      "description": "Container section for alternating feature rows. Renders rows with alternating text/image layout separated by dividers.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the rows." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "AlternatingFeatureRow children." }
+      ],
+      "example": "<AlternatingFeatures title=\"Features\">\n  <AlternatingFeatureRow title=\"Feature 1\" image=\"/images/f1.png\" />\n  <AlternatingFeatureRow title=\"Feature 2\" image=\"/images/f2.png\" />\n</AlternatingFeatures>"
+    },
+    {
+      "name": "PricingPlan",
+      "category": "marketing",
+      "description": "Data-only component that defines a single pricing plan. Must be used as a child of PricingSection. Renders nothing on its own; its props are consumed by the parent.",
+      "props": [
+        { "name": "name", "type": "string", "required": true, "description": "Plan name (e.g. 'Free', 'Pro', 'Enterprise')." },
+        { "name": "price", "type": "string", "required": true, "description": "Monthly price display string (e.g. '$0', '$29/mo')." },
+        { "name": "yearlyPrice", "type": "string", "required": false, "description": "Yearly price display string. Enables the monthly/yearly toggle when at least one plan has this." },
+        { "name": "description", "type": "string", "required": false, "description": "Short plan description." },
+        { "name": "features", "type": "string[]", "required": true, "description": "List of feature strings displayed as a checklist." },
+        { "name": "cta", "type": "{ label: string; href: string }", "required": true, "description": "Call-to-action button for the plan." },
+        { "name": "popular", "type": "boolean", "required": false, "description": "Highlights the plan with a 'Most Popular' badge and ring styling." }
+      ],
+      "example": "<PricingPlan\n  name=\"Pro\"\n  price=\"$29/mo\"\n  yearlyPrice=\"$24/mo\"\n  description=\"For growing teams\"\n  features={[\"Unlimited projects\", \"Priority support\", \"Custom domains\"]}\n  cta={{ label: \"Get Started\", href: \"/signup\" }}\n  popular\n/>"
+    },
+    {
+      "name": "ComparisonRow",
+      "category": "marketing",
+      "description": "Data-only component that defines a row in the pricing comparison table. Must be used as a child of PricingSection.",
+      "props": [
+        { "name": "feature", "type": "string", "required": true, "description": "Feature name displayed in the first column." },
+        { "name": "values", "type": "(string | boolean)[]", "required": true, "description": "Array of values per plan. Booleans render as check/dash icons; strings render as text." }
+      ],
+      "example": "<ComparisonRow feature=\"Custom domains\" values={[false, true, true]} />"
+    },
+    {
+      "name": "ComparisonCategory",
+      "category": "marketing",
+      "description": "Data-only component that adds a category header row in the pricing comparison table. Must be used as a child of PricingSection.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Category heading text." }
+      ],
+      "example": "<ComparisonCategory title=\"Core Features\" />"
+    },
+    {
+      "name": "PricingSection",
+      "category": "marketing",
+      "description": "Full pricing section with plan cards, optional monthly/yearly toggle, and an optional feature comparison table. Consumes PricingPlan, ComparisonRow, and ComparisonCategory children.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "monthlyLabel", "type": "string", "required": false, "description": "Label for the monthly toggle. Defaults to 'Monthly'." },
+        { "name": "yearlyLabel", "type": "string", "required": false, "description": "Label for the yearly toggle. Defaults to 'Yearly'." },
+        { "name": "mostPopularLabel", "type": "string", "required": false, "description": "Label for the popular plan badge. Defaults to 'Most Popular'." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "PricingPlan, ComparisonCategory, and ComparisonRow children." }
+      ],
+      "example": "<PricingSection title=\"Pricing\" description=\"Choose your plan\">\n  <PricingPlan name=\"Free\" price=\"$0\" features={[\"1 project\"]} cta={{ label: \"Start Free\", href: \"/signup\" }} />\n  <PricingPlan name=\"Pro\" price=\"$29/mo\" features={[\"Unlimited projects\"]} cta={{ label: \"Go Pro\", href: \"/signup\" }} popular />\n</PricingSection>"
+    },
+    {
+      "name": "Companies",
+      "category": "marketing",
+      "description": "Logo showcase section with two variants: a continuous marquee scroll animation or a static inline flex layout. Supports logo names, versions, and badges in inline mode.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Title text above the logos." },
+        { "name": "logos", "type": "Array<{ src: string; alt: string; width?: number; name?: string; version?: string; badge?: string }>", "required": true, "description": "Array of logo items. Each has an image src, alt text, and optional width, name, version, and badge." },
+        { "name": "variant", "type": "'marquee' | 'inline'", "required": false, "description": "Display variant. 'marquee' (default) shows a scrolling animation; 'inline' shows a static flexbox layout with names and badges." }
+      ],
+      "example": "<Companies\n  title=\"Trusted by leading companies\"\n  logos={[\n    { src: \"/logos/acme.svg\", alt: \"Acme\" },\n    { src: \"/logos/globex.svg\", alt: \"Globex\" }\n  ]}\n/>"
+    },
+    {
+      "name": "Testimonial",
+      "category": "marketing",
+      "description": "Single large testimonial quote block with author info, displayed in a centered glass card.",
+      "props": [
+        { "name": "quote", "type": "string", "required": true, "description": "The testimonial quote text." },
+        { "name": "author", "type": "string", "required": true, "description": "Name of the person giving the testimonial." },
+        { "name": "role", "type": "string", "required": false, "description": "Job title or role of the author." },
+        { "name": "image", "type": "string", "required": false, "description": "URL of the author's avatar image." },
+        { "name": "company", "type": "string", "required": false, "description": "Company name of the author." }
+      ],
+      "example": "<Testimonial\n  quote=\"This product changed how we work.\"\n  author=\"Jane Doe\"\n  role=\"CEO\"\n  company=\"Acme Inc\"\n  image=\"/images/jane.jpg\"\n/>"
+    },
+    {
+      "name": "TestimonialCard",
+      "category": "marketing",
+      "description": "Compact testimonial card with optional star rating. Used as a child of the Testimonials grid component.",
+      "props": [
+        { "name": "quote", "type": "string", "required": true, "description": "The testimonial quote text." },
+        { "name": "author", "type": "string", "required": true, "description": "Name of the person giving the testimonial." },
+        { "name": "role", "type": "string", "required": false, "description": "Job title or role of the author." },
+        { "name": "company", "type": "string", "required": false, "description": "Company name of the author." },
+        { "name": "image", "type": "string", "required": false, "description": "URL of the author's avatar image." },
+        { "name": "rating", "type": "number", "required": false, "description": "Star rating (1-5) displayed as filled star icons." }
+      ],
+      "example": "<TestimonialCard\n  quote=\"Incredible experience!\"\n  author=\"John Smith\"\n  role=\"CTO\"\n  company=\"Globex\"\n  rating={5}\n/>"
+    },
+    {
+      "name": "Testimonials",
+      "category": "marketing",
+      "description": "Grid section that displays multiple TestimonialCard components with an optional section title and description.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the grid." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "columns", "type": "2 | 3", "required": false, "description": "Number of grid columns. Defaults to 3." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "TestimonialCard children." }
+      ],
+      "example": "<Testimonials title=\"What our customers say\" columns={3}>\n  <TestimonialCard quote=\"Amazing!\" author=\"Alice\" rating={5} />\n  <TestimonialCard quote=\"Love it!\" author=\"Bob\" rating={5} />\n  <TestimonialCard quote=\"Great tool.\" author=\"Charlie\" rating={4} />\n</Testimonials>"
+    },
+    {
+      "name": "BannerCTA",
+      "category": "marketing",
+      "description": "Full-width call-to-action banner with a centered glow effect, title, optional subtext, and a primary button. Supports additional children content.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Banner headline text." },
+        { "name": "buttonText", "type": "string", "required": true, "description": "Text displayed on the CTA button." },
+        { "name": "buttonHref", "type": "string", "required": false, "description": "URL the button links to." },
+        { "name": "subtext", "type": "string", "required": false, "description": "Supporting text displayed below the title and above the button." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Additional content rendered below the button." }
+      ],
+      "example": "<BannerCTA\n  title=\"Ready to get started?\"\n  buttonText=\"Start Free Trial\"\n  buttonHref=\"/signup\"\n  subtext=\"No credit card required.\"\n/>"
+    },
+    {
+      "name": "BannerFeature",
+      "category": "marketing",
+      "description": "Small inline feature item with an optional icon, designed to be placed inside a BannerCTA as a child.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Feature text." },
+        { "name": "icon", "type": "string", "required": false, "description": "Icon or emoji displayed before the title." }
+      ],
+      "example": "<BannerFeature title=\"99.9% uptime\" icon=\"✅\" />"
+    },
+    {
+      "name": "FAQItem",
+      "category": "marketing",
+      "description": "Individual FAQ accordion item with a question trigger and expandable answer content. Used as a child of FAQ.",
+      "props": [
+        { "name": "question", "type": "string", "required": true, "description": "The question text displayed as the accordion trigger." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "The answer content revealed when the item is expanded." }
+      ],
+      "example": "<FAQItem question=\"How does billing work?\">\n  We bill monthly based on your plan. You can cancel anytime.\n</FAQItem>"
+    },
+    {
+      "name": "FAQ",
+      "category": "marketing",
+      "description": "FAQ section with a collapsible accordion. Contains FAQItem children with question/answer pairs.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the accordion." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "FAQItem children." }
+      ],
+      "example": "<FAQ title=\"Frequently Asked Questions\">\n  <FAQItem question=\"Is there a free plan?\">Yes, we offer a generous free tier.</FAQItem>\n  <FAQItem question=\"Can I cancel anytime?\">Absolutely, no lock-in.</FAQItem>\n</FAQ>"
+    },
+    {
+      "name": "Step",
+      "category": "marketing",
+      "description": "Data-only component that defines a single step. Must be used as a child of Steps. Renders nothing on its own; its props are consumed by the parent.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Step heading text." },
+        { "name": "description", "type": "string", "required": true, "description": "Step description text." }
+      ],
+      "example": "<Step title=\"Sign up\" description=\"Create your free account in seconds.\" />"
+    },
+    {
+      "name": "Steps",
+      "category": "marketing",
+      "description": "Numbered step-by-step section with connected timeline indicators. Consumes Step children to display a vertical progression.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the steps." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Step children." }
+      ],
+      "example": "<Steps title=\"How it works\">\n  <Step title=\"Sign up\" description=\"Create your account.\" />\n  <Step title=\"Configure\" description=\"Set up your workspace.\" />\n  <Step title=\"Launch\" description=\"Go live in minutes.\" />\n</Steps>"
+    },
+    {
+      "name": "CardGridItem",
+      "category": "marketing",
+      "description": "Individual card in a grid layout with an optional icon, title, description, and link. Used as a child of CardGrid.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Card heading text." },
+        { "name": "description", "type": "string", "required": true, "description": "Card description text." },
+        { "name": "icon", "type": "React.ReactNode", "required": false, "description": "Icon element displayed above the title." },
+        { "name": "href", "type": "string", "required": false, "description": "Optional link URL. When provided, the card becomes a clickable anchor." }
+      ],
+      "example": "<CardGridItem title=\"Documentation\" description=\"Read the full docs.\" href=\"/docs\" />"
+    },
+    {
+      "name": "CardGrid",
+      "category": "marketing",
+      "description": "Responsive grid container for CardGridItem children. Supports 2, 3, or 4 column layouts.",
+      "props": [
+        { "name": "columns", "type": "2 | 3 | 4", "required": false, "description": "Number of grid columns. Defaults to 3." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "CardGridItem children." }
+      ],
+      "example": "<CardGrid columns={3}>\n  <CardGridItem title=\"Feature A\" description=\"Description A\" />\n  <CardGridItem title=\"Feature B\" description=\"Description B\" />\n  <CardGridItem title=\"Feature C\" description=\"Description C\" />\n</CardGrid>"
+    },
+    {
+      "name": "CalloutCard",
+      "category": "marketing",
+      "description": "Highlighted callout box with a colored border for info, success, or warning messages. Useful for drawing attention to important content within a page.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Callout heading text." },
+        { "name": "description", "type": "string", "required": true, "description": "Callout body text." },
+        { "name": "variant", "type": "'info' | 'success' | 'warning'", "required": false, "description": "Color variant for the callout. Defaults to 'info'." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Additional content rendered below the description." }
+      ],
+      "example": "<CalloutCard\n  title=\"Pro Tip\"\n  description=\"You can customize the theme in settings.\"\n  variant=\"info\"\n/>"
+    },
+    {
+      "name": "Stat",
+      "category": "marketing",
+      "description": "Data-only component that defines a single statistic. Must be used as a child of Stats. Renders nothing on its own; its props are consumed by the parent.",
+      "props": [
+        { "name": "value", "type": "string | number", "required": true, "description": "The main numeric or text value displayed prominently." },
+        { "name": "label", "type": "string", "required": false, "description": "Label text displayed above the value." },
+        { "name": "suffix", "type": "string", "required": false, "description": "Suffix text displayed after the value (e.g. '+', '%')." },
+        { "name": "description", "type": "string", "required": false, "description": "Description text displayed below the value." }
+      ],
+      "example": "<Stat value=\"99.9\" suffix=\"%\" label=\"Uptime\" description=\"Average over the last 12 months\" />"
+    },
+    {
+      "name": "Stats",
+      "category": "marketing",
+      "description": "Section displaying key statistics in a 2x2 or 4-column grid with large gradient numbers. Consumes Stat children.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the stats." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Stat children." }
+      ],
+      "example": "<Stats title=\"Our numbers\">\n  <Stat value=\"10K\" suffix=\"+\" label=\"Users\" />\n  <Stat value=\"99.9\" suffix=\"%\" label=\"Uptime\" />\n  <Stat value=\"50\" suffix=\"+\" label=\"Countries\" />\n  <Stat value=\"24/7\" label=\"Support\" />\n</Stats>"
+    },
+    {
+      "name": "BentoItem",
+      "category": "marketing",
+      "description": "Individual bento grid card with a title, optional description, optional full-bleed image, and support for custom children. Supports spanning 1 or 2 columns.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Card heading text." },
+        { "name": "description", "type": "string", "required": false, "description": "Card description text." },
+        { "name": "image", "type": "string", "required": false, "description": "URL of a full-bleed image rendered at the bottom of the card." },
+        { "name": "span", "type": "1 | 2", "required": false, "description": "Number of grid columns the item spans. Defaults to 1." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Custom content rendered inside the card." }
+      ],
+      "example": "<BentoItem title=\"Analytics\" description=\"Track everything in real-time.\" image=\"/images/analytics.png\" span={2} />"
+    },
+    {
+      "name": "BentoGrid",
+      "category": "marketing",
+      "description": "Asymmetric grid layout section for showcasing features in a bento-box style. Uses a 3-column grid with equal-height rows. Contains BentoItem children.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the grid." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "BentoItem children." }
+      ],
+      "example": "<BentoGrid title=\"Everything you need\">\n  <BentoItem title=\"Dashboard\" description=\"Overview at a glance.\" span={2} />\n  <BentoItem title=\"Reports\" description=\"Detailed insights.\" />\n  <BentoItem title=\"Team\" description=\"Collaborate seamlessly.\" />\n  <BentoItem title=\"Integrations\" description=\"Connect your tools.\" span={2} />\n</BentoGrid>"
+    },
+    {
+      "name": "GalleryItem",
+      "category": "marketing",
+      "description": "Individual gallery image card with a hover zoom effect and an optional caption. Used as a child of Gallery.",
+      "props": [
+        { "name": "src", "type": "string", "required": true, "description": "URL of the image." },
+        { "name": "alt", "type": "string", "required": true, "description": "Alt text for the image." },
+        { "name": "caption", "type": "string", "required": false, "description": "Caption text displayed below the image." }
+      ],
+      "example": "<GalleryItem src=\"/images/screenshot-1.png\" alt=\"Dashboard view\" caption=\"The main dashboard\" />"
+    },
+    {
+      "name": "Gallery",
+      "category": "marketing",
+      "description": "Responsive image gallery section with optional title and description. Displays GalleryItem children in a configurable grid.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the gallery." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "columns", "type": "2 | 3 | 4", "required": false, "description": "Number of grid columns. Defaults to 3." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "GalleryItem children." }
+      ],
+      "example": "<Gallery title=\"Screenshots\" columns={3}>\n  <GalleryItem src=\"/images/s1.png\" alt=\"Screenshot 1\" />\n  <GalleryItem src=\"/images/s2.png\" alt=\"Screenshot 2\" />\n  <GalleryItem src=\"/images/s3.png\" alt=\"Screenshot 3\" />\n</Gallery>"
+    },
+    {
+      "name": "SocialProof",
+      "category": "marketing",
+      "description": "Compact social proof section showing stacked user avatars with a text message and optional subtext. Ideal for displaying user counts or trust indicators.",
+      "props": [
+        { "name": "avatars", "type": "string[]", "required": false, "description": "Array of avatar image URLs displayed as overlapping circles." },
+        { "name": "text", "type": "string", "required": true, "description": "Main social proof text (e.g. 'Loved by 10,000+ users')." },
+        { "name": "subtext", "type": "string", "required": false, "description": "Secondary text displayed below the main text." }
+      ],
+      "example": "<SocialProof\n  avatars={[\"/avatars/1.jpg\", \"/avatars/2.jpg\", \"/avatars/3.jpg\"]}\n  text=\"Loved by 10,000+ teams\"\n  subtext=\"across 50 countries\"\n/>"
+    },
+    {
+      "name": "CarouselItem",
+      "category": "marketing",
+      "description": "Individual card within a horizontally scrollable Carousel. Supports an image, title, description, and custom children.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Card heading text." },
+        { "name": "description", "type": "string", "required": false, "description": "Card description text." },
+        { "name": "image", "type": "string", "required": false, "description": "URL of the card image displayed above the content." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Custom content rendered inside the card." }
+      ],
+      "example": "<CarouselItem title=\"Feature 1\" description=\"Description of feature 1.\" image=\"/images/f1.png\" />"
+    },
+    {
+      "name": "Carousel",
+      "category": "marketing",
+      "description": "Horizontally scrollable carousel section with snap-scrolling, left/right navigation buttons, and optional title/description. Contains CarouselItem children.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the carousel." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "CarouselItem children." }
+      ],
+      "example": "<Carousel title=\"Explore our features\">\n  <CarouselItem title=\"Feature 1\" description=\"Description 1\" image=\"/images/f1.png\" />\n  <CarouselItem title=\"Feature 2\" description=\"Description 2\" image=\"/images/f2.png\" />\n  <CarouselItem title=\"Feature 3\" description=\"Description 3\" image=\"/images/f3.png\" />\n</Carousel>"
+    },
+    {
+      "name": "TabItem",
+      "category": "marketing",
+      "description": "Data-only component that defines a single tab. Must be used as a child of TabsSection. Renders nothing on its own; its props are consumed by the parent.",
+      "props": [
+        { "name": "label", "type": "string", "required": true, "description": "Tab button label text." },
+        { "name": "title", "type": "string", "required": false, "description": "Content heading displayed when the tab is active." },
+        { "name": "description", "type": "string", "required": false, "description": "Content description displayed when the tab is active." },
+        { "name": "image", "type": "string", "required": false, "description": "Image URL displayed alongside the content when the tab is active." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Custom content rendered when the tab is active." }
+      ],
+      "example": "<TabItem label=\"Overview\" title=\"Product Overview\" description=\"Everything you need to know.\" image=\"/images/overview.png\" />"
+    },
+    {
+      "name": "TabsSection",
+      "category": "marketing",
+      "description": "Interactive tabbed section with pill-style tab buttons and a content panel that changes based on the active tab. Consumes TabItem children.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the tabs." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "TabItem children." }
+      ],
+      "example": "<TabsSection title=\"Features\">\n  <TabItem label=\"Dashboard\" title=\"Your Dashboard\" description=\"See everything at a glance.\" image=\"/images/dashboard.png\" />\n  <TabItem label=\"Reports\" title=\"Detailed Reports\" description=\"Analyze your data.\" image=\"/images/reports.png\" />\n</TabsSection>"
+    },
+    {
+      "name": "PageHero",
+      "category": "marketing",
+      "description": "Lightweight page hero section with centered title, optional description, badge, and children. Suitable for inner pages that do not need the full Hero with image and CTAs.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Page title displayed as an h1." },
+        { "name": "description", "type": "string", "required": false, "description": "Supporting paragraph text below the title." },
+        { "name": "badge", "type": "string", "required": false, "description": "Small badge text displayed above the title." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Additional content rendered below the description." }
+      ],
+      "example": "<PageHero\n  title=\"About Us\"\n  description=\"Learn more about our mission and team.\"\n  badge=\"Company\"\n/>"
+    },
+    {
+      "name": "BlogArticle",
+      "category": "blog",
+      "description": "Top-level wrapper for blog article content. Renders a centered, max-width article container with vertical padding.",
+      "props": [
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Article content (headings, paragraphs, blog components)." },
+        { "name": "contentFolder", "type": "string", "required": false, "description": "Content folder identifier for the blog article." }
+      ],
+      "example": "<BlogArticle>\n  <BlogIntro>Introduction paragraph here.</BlogIntro>\n  ## Section heading\n  Content here...\n</BlogArticle>"
+    },
+    {
+      "name": "BlogIntro",
+      "category": "blog",
+      "description": "Styled intro paragraph block for the opening of a blog article. Renders children in a larger, muted font with relaxed line-height.",
+      "props": [
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Introductory paragraph content." }
+      ],
+      "example": "<BlogIntro>\n  This article explores how to improve your team's productivity with modern tools.\n</BlogIntro>"
+    },
+    {
+      "name": "BlogCTA",
+      "category": "blog",
+      "description": "Inline call-to-action block for blog articles. Displays a centered title and button within a glass card.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "CTA heading text." },
+        { "name": "buttonText", "type": "string", "required": true, "description": "Text displayed on the button." },
+        { "name": "buttonHref", "type": "string", "required": true, "description": "URL the button links to." }
+      ],
+      "example": "<BlogCTA\n  title=\"Try it free today\"\n  buttonText=\"Get Started\"\n  buttonHref=\"/signup\"\n/>"
+    },
+    {
+      "name": "BlogCTABanner",
+      "category": "blog",
+      "description": "Prominent call-to-action banner for blog articles with a glow effect, title, description, and button. Designed as a mid-article conversion element.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Banner headline text." },
+        { "name": "description", "type": "string", "required": true, "description": "Supporting description text." },
+        { "name": "buttonText", "type": "string", "required": true, "description": "Text displayed on the button." },
+        { "name": "buttonLink", "type": "string", "required": true, "description": "URL the button links to." }
+      ],
+      "example": "<BlogCTABanner\n  title=\"Start for free\"\n  description=\"No credit card required. Cancel anytime.\"\n  buttonText=\"Get Started\"\n  buttonLink=\"/signup\"\n/>"
+    },
+    {
+      "name": "BlogFAQ",
+      "category": "blog",
+      "description": "FAQ accordion section for blog articles. Renders a titled list of question/answer pairs as collapsible accordion items.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "FAQ section heading (e.g. 'Frequently Asked Questions')." },
+        { "name": "items", "type": "Array<{ question: string; answer: string }>", "required": true, "description": "Array of FAQ items, each with a question and answer string." }
+      ],
+      "example": "<BlogFAQ\n  title=\"FAQ\"\n  items={[\n    { question: \"Is there a free plan?\", answer: \"Yes, our free plan is available forever.\" },\n    { question: \"Can I cancel anytime?\", answer: \"Absolutely, no contracts.\" }\n  ]}\n/>"
+    },
+    {
+      "name": "BlogTable",
+      "category": "blog",
+      "description": "Responsive data table for blog articles with styled headers and rows. Renders inside a bordered, scrollable container.",
+      "props": [
+        { "name": "headers", "type": "string[]", "required": true, "description": "Array of column header strings." },
+        { "name": "rows", "type": "string[][]", "required": true, "description": "Array of row arrays, where each inner array contains cell strings matching the headers." }
+      ],
+      "example": "<BlogTable\n  headers={[\"Plan\", \"Price\", \"Users\"]}\n  rows={[\n    [\"Free\", \"$0\", \"Up to 5\"],\n    [\"Pro\", \"$29/mo\", \"Unlimited\"]\n  ]}\n/>"
+    },
+    {
+      "name": "BlogTip",
+      "category": "blog",
+      "description": "Highlighted tip/callout box for blog articles with a green accent. Displays a title and rich content for actionable advice.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Tip heading text. Defaults to 'Tip'." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Tip content." }
+      ],
+      "example": "<BlogTip title=\"Pro Tip\">\n  Use keyboard shortcuts to navigate faster.\n</BlogTip>"
+    },
+    {
+      "name": "StartFreeNowCTA",
+      "category": "blog",
+      "description": "Feature-rich CTA block for blog articles with a title, bullet-point checklist with check icons, and a primary button.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "CTA heading text." },
+        { "name": "bullets", "type": "string[]", "required": true, "description": "Array of benefit strings displayed as a checklist." },
+        { "name": "buttonText", "type": "string", "required": true, "description": "Text displayed on the button." },
+        { "name": "buttonHref", "type": "string", "required": true, "description": "URL the button links to." }
+      ],
+      "example": "<StartFreeNowCTA\n  title=\"Ready to get started?\"\n  bullets={[\"No credit card required\", \"Free forever plan\", \"Cancel anytime\"]}\n  buttonText=\"Start Free\"\n  buttonHref=\"/signup\"\n/>"
+    },
+    {
+      "name": "BlogIndex",
+      "category": "blog",
+      "description": "Blog listing page wrapper with an optional title, description, and children for rendering blog post cards or custom content.",
+      "props": [
+        { "name": "title", "type": "string", "required": false, "description": "Page heading displayed above the blog list." },
+        { "name": "description", "type": "string", "required": false, "description": "Page subheading text." },
+        { "name": "children", "type": "React.ReactNode", "required": false, "description": "Blog post cards or other content." }
+      ],
+      "example": "<BlogIndex title=\"Blog\" description=\"Latest articles and insights.\">\n  {/* Blog post cards rendered here */}\n</BlogIndex>"
+    },
+    {
+      "name": "LegalSection",
+      "category": "legal",
+      "description": "Individual section within a legal page. Renders a titled block with prose-style content formatting for paragraphs and lists.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Section heading (e.g. '1. Data Collection')." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Section content (paragraphs, lists, etc.)." }
+      ],
+      "example": "<LegalSection title=\"1. Data Collection\">\n  <p>We collect data that you provide directly to us.</p>\n</LegalSection>"
+    },
+    {
+      "name": "LegalPage",
+      "category": "legal",
+      "description": "Top-level wrapper for legal pages (privacy policy, terms of service, etc.). Renders a centered, max-width container with a title and optional last-updated date.",
+      "props": [
+        { "name": "title", "type": "string", "required": true, "description": "Page title displayed as an h1." },
+        { "name": "lastUpdated", "type": "string", "required": false, "description": "Date string displayed below the title (e.g. '2024-01-15')." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "LegalSection children and other content." }
+      ],
+      "example": "<LegalPage title=\"Privacy Policy\" lastUpdated=\"2024-01-15\">\n  <LegalSection title=\"1. Introduction\">\n    <p>This privacy policy explains how we handle your data.</p>\n  </LegalSection>\n</LegalPage>"
+    }
+  ]
+}

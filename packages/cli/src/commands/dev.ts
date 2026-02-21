@@ -54,6 +54,107 @@ export async function dev() {
   });
 }
 
+function hexToHsl(hex: string): [number, number, number] {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l * 100];
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h = 0;
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+  else if (max === g) h = ((b - r) / d + 2) / 6;
+  else h = ((r - g) / d + 4) / 6;
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+}
+
+function generateShadcnTokens(colors: { primary?: string; accent?: string; background?: string; text?: string }): string {
+  const primary = colors.primary || '#5d5bd4';
+  const accent = colors.accent || '#067647';
+
+  const [pH, pS, pL] = hexToHsl(primary);
+
+  // Light mode
+  const brandFgLight = `${pH} ${Math.min(pS + 10, 100)}% ${Math.min(pL + 10, 85)}%`;
+
+  // Dark mode tokens (primary design - Launch UI inspired)
+  const darkBgH = pH;
+  const darkBgS = Math.min(Math.round(pS * 0.6), 50);
+  const darkBg = `${darkBgH} ${darkBgS}% 4%`;
+  const darkFg = `0 0% 98%`;
+  const darkCard = `${darkBgH} ${darkBgS}% 6%`;
+  const darkMuted = `${darkBgH} ${Math.round(darkBgS * 0.8)}% 15%`;
+  const darkMutedFg = `${darkBgH} ${Math.round(darkBgS * 0.4)}% 65%`;
+  const darkBorder = `${darkBgH} ${Math.round(darkBgS * 0.7)}% 14%`;
+  const darkInput = `${darkBgH} ${Math.round(darkBgS * 0.7)}% 18%`;
+  const darkRing = `${pH} ${Math.round(pS * 0.5)}% 60%`;
+  const darkBrandFg = `${pH} ${Math.min(pS + 10, 100)}% ${Math.min(pL + 15, 80)}%`;
+
+  return `:root {
+  --brand: hsl(${pH} ${pS}% ${pL}%);
+  --brand-foreground: hsl(${brandFgLight});
+  --primary: hsl(${pH} ${pS}% ${pL}%);
+  --primary-foreground: hsl(0 0% 98%);
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(222 47% 11%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222 47% 11%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222 47% 11%);
+  --secondary: hsl(210 10% 93%);
+  --secondary-foreground: hsl(222 47% 20%);
+  --muted: hsl(210 10% 93%);
+  --muted-foreground: hsl(215 15% 45%);
+  --accent: hsl(210 10% 90%);
+  --accent-foreground: hsl(222 47% 20%);
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(0 72% 51%);
+  --border: hsl(220 9% 91%);
+  --input: hsl(220 9% 91%);
+  --ring: hsl(215 15% 70%);
+  --radius: 0.625rem;
+  --line-width: 1px;
+  --shadow: #00000008;
+  --shadow-strong: #00000010;
+  --ss-primary: ${primary};
+  --ss-accent: ${accent};
+}
+
+.dark {
+  --brand: hsl(${pH} ${pS}% ${pL}%);
+  --brand-foreground: hsl(${darkBrandFg});
+  --primary: hsl(${pH} ${pS}% ${pL}%);
+  --primary-foreground: hsl(0 0% 98%);
+  --background: hsl(${darkBg});
+  --foreground: hsl(${darkFg});
+  --card: hsl(${darkCard});
+  --card-foreground: hsl(${darkFg});
+  --popover: hsl(${darkCard});
+  --popover-foreground: hsl(${darkFg});
+  --secondary: hsl(${darkMuted});
+  --secondary-foreground: hsl(${darkFg});
+  --muted: hsl(${darkMuted});
+  --muted-foreground: hsl(${darkMutedFg});
+  --accent: hsl(${darkMuted});
+  --accent-foreground: hsl(${darkFg});
+  --destructive: hsl(0 62% 30%);
+  --destructive-foreground: hsl(${darkFg});
+  --border: hsl(${darkBorder});
+  --input: hsl(${darkInput});
+  --ring: hsl(${darkRing});
+  --radius: 0.625rem;
+  --line-width: 1px;
+  --shadow: #00000040;
+  --shadow-strong: #00000060;
+  --ss-primary: ${primary};
+  --ss-accent: ${accent};
+}
+`;
+}
+
 function generateWorkspace(rootDir: string) {
   const config = JSON.parse(
     readFileSync(join(rootDir, 'shipsite.json'), 'utf-8'),
@@ -67,11 +168,6 @@ function generateWorkspace(rootDir: string) {
   const locales = config.i18n?.locales || ['en'];
   const defaultLocale = config.i18n?.defaultLocale || 'en';
   const localePrefix = config.i18n?.localePrefix || 'as-needed';
-  const colors = config.colors || {};
-  const primary = colors.primary || '#5d5bd4';
-  const accent = colors.accent || '#067647';
-  const background = colors.background || '#ffffff';
-  const text = colors.text || '#1f2a37';
 
   // Symlink content directory
   const contentLink = join(shipSiteDir, 'content');
@@ -214,6 +310,7 @@ export const config = {
   // Resolve @shipsite/components source path for Tailwind @source directive
   const cssDir = join(srcDir, 'styles');
   let componentsSourceDirective = '';
+  let utilsCssImport = '';
   // Walk up from rootDir to find node_modules/@shipsite/components/src
   let searchDir = rootDir;
   for (let i = 0; i < 10; i++) {
@@ -222,6 +319,12 @@ export const config = {
       const realPath = realpathSync(candidate);
       const rel = relative(cssDir, realPath).split('\\').join('/');
       componentsSourceDirective = `\n@source "${rel}";`;
+      // Also resolve the utils.css path from components
+      const utilsCssPath = join(realPath, 'styles', 'utils.css');
+      if (existsSync(utilsCssPath)) {
+        const utilsRel = relative(cssDir, utilsCssPath).split('\\').join('/');
+        utilsCssImport = `\n@import "${utilsRel}";`;
+      }
       break;
     }
     const parent = dirname(searchDir);
@@ -229,26 +332,93 @@ export const config = {
     searchDir = parent;
   }
 
-  // globals.css
+  // Generate shadcn/ui tokens from config colors
+  const shadcnTokens = generateShadcnTokens(config.colors || {});
+
+  // globals.css — full Launch UI compatible stylesheet
   writeFileSync(
     join(cssDir, 'globals.css'),
-    `@import 'tailwindcss';${componentsSourceDirective}
+    `@import 'tailwindcss';${componentsSourceDirective}${utilsCssImport}
 
-:root {
-  --ss-primary: ${primary};
-  --ss-accent: ${accent};
-  --ss-background: ${background};
-  --ss-text: ${text};
+@import 'tw-animate-css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --spacing-container: 1280px;
+  --spacing-container-lg: 1536px;
+
+  --shadow-md: 0 4px 6px -1px var(--shadow), 0 2px 4px -2px var(--shadow);
+  --shadow-xl: 0 20px 25px -5px var(--shadow), 0 8px 10px -6px var(--shadow);
+  --shadow-2xl: 0 25px 50px -12px var(--shadow);
+  --shadow-mockup: -12px 16px 48px var(--shadow-strong);
+
+  --line-width: 1px;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-appear: appear 0.6s forwards ease-out;
+  --animate-appear-zoom: appear-zoom 0.6s forwards ease-out;
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+  @keyframes appear {
+    0% { opacity: 0; transform: translateY(1rem); filter: blur(0.5rem); }
+    50% { filter: blur(0); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  @keyframes appear-zoom {
+    0% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+  }
 }
 
-body {
-  background-color: var(--ss-background);
-  color: var(--ss-text);
-  font-family: system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
+${shadcnTokens}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-behavior: smooth; }
 }
-
-html { scroll-behavior: smooth; }
 
 .container-main {
   width: 100%;
@@ -281,7 +451,7 @@ html { scroll-behavior: smooth; }
 .page-prose > p { font-size: 1rem; line-height: 1.6; margin-top: 0.5rem; margin-bottom: 0.5rem; }
 .page-prose > ul { list-style: disc; padding-left: 1.75rem; margin-block: 0.75rem; }
 .page-prose > ol { list-style: decimal; padding-left: 1.75rem; margin-block: 0.75rem; }
-.page-prose > p a { color: var(--ss-primary); text-decoration: underline; font-weight: 500; }
+.page-prose > p a { color: var(--primary); text-decoration: underline; font-weight: 500; }
 .page-prose > p a:hover { text-decoration: none; }
 `,
   );
@@ -292,6 +462,7 @@ html { scroll-behavior: smooth; }
     `import { notFound } from 'next/navigation';
 import { routing } from '../../i18n/routing';
 import { ShipSiteProvider } from '@shipsite/components/context';
+import { ThemeProvider } from '@shipsite/components/theme';
 import { Header, Footer } from '@shipsite/components';
 import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl } from '@shipsite/core';
 import '../../styles/globals.css';
@@ -326,8 +497,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const alternatePathMap = generateAlternatePathMap();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body>
+        <ThemeProvider>
         <ShipSiteProvider value={{
           siteName: config.name,
           siteUrl: config.url,
@@ -351,6 +523,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           <main id="main-content">{children}</main>
           <Footer />
         </ShipSiteProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

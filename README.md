@@ -35,12 +35,13 @@ Your site is running at `http://localhost:3000`.
 
 | | Feature | Description |
 |---|---|---|
-| **30+** | Components | Hero, Pricing, FAQ, Blog, Legal — all typed and ready |
+| **46** | Components | Hero, Pricing, FAQ, Blog, Legal, Bento, Carousel — all typed and ready |
 | **1** | Config File | `shipsite.json` defines your entire site structure |
 | **i18n** | Built-in | Multi-language with slug translation and hreflang |
 | **SSG** | Static Generation | Every page is statically generated — zero runtime JS overhead |
 | **Blog** | Full System | Blog index, articles, categories, authors, reading time |
 | **AI** | Native | Structured format that AI agents can read, write, and automate |
+| **N8N** | Automation | Connect Search Console, Google Ads, analytics — optimize on autopilot |
 
 ---
 
@@ -52,9 +53,10 @@ ShipSite stores everything in **structured, human-readable files**:
 
 - **`shipsite.json`** — one JSON config an AI can read and modify
 - **MDX pages** — typed components with predictable props
+- **`components.json`** — machine-readable reference of all 46 components with props, types, and examples
 - **CLI automation** — `shipsite add page` / `shipsite add blog` for scripting
 
-This makes ShipSite the **website generator that AI agents can operate**.
+This makes ShipSite the **website generator that AI agents can operate**. Connect it to N8N, Windmill, or Make to build fully automated pipelines — from Google Search Console analysis to content generation to deployment.
 
 ### AI generates an MDX page
 
@@ -123,8 +125,11 @@ writeFileSync('shipsite.json', JSON.stringify(config, null, 2));
 // Run: npx shipsite build → 50 static pages
 ```
 
-### Automation workflows (n8n, Windmill, Make)
+### Automation workflows (N8N, Windmill, Make)
 
+Since ShipSite is pure files, any workflow tool can operate it. Here are real-world automation scenarios:
+
+**Blog generation pipeline:**
 ```
 Trigger: New blog topic from Airtable / Google Sheet
    ↓
@@ -138,6 +143,66 @@ Step 4: Git commit + push → Vercel auto-deploys
    ↓
 Result: New blog post live in < 60 seconds
 ```
+
+**SEO optimization loop (Google Search Console → AI → Deploy):**
+```
+Trigger: Weekly cron / N8N schedule
+   ↓
+Step 1: Pull Google Search Console API → pages with low CTR or declining impressions
+   ↓
+Step 2: AI agent reads the MDX file + components.json → understands the page structure
+   ↓
+Step 3: AI rewrites titles, descriptions, content for better rankings
+   ↓
+Step 4: Git commit + push → auto-deploy → measure results next week
+   ↓
+Result: Continuous SEO improvement without manual intervention
+```
+
+**Google Ads landing page generation:**
+```
+Trigger: New ad campaign created in Google Ads
+   ↓
+Step 1: Pull campaign keywords and ad copy from Google Ads API
+   ↓
+Step 2: AI generates targeted landing page MDX with matching Hero, Features, CTA
+   ↓
+Step 3: Register page in shipsite.json → deploy
+   ↓
+Result: Campaign-specific landing pages in seconds, not days
+```
+
+**Multi-language content pipeline:**
+```
+Trigger: New English blog post merged to main
+   ↓
+Step 1: AI translates MDX content to DE, FR (preserving all component props)
+   ↓
+Step 2: Writes translated files to content/blog/<slug>/de.mdx, fr.mdx
+   ↓
+Step 3: Updates locales array in shipsite.json
+   ↓
+Result: Multi-language blog post published simultaneously
+```
+
+### components.json — AI-readable component reference
+
+ShipSite ships with a `components.json` that describes all 46 components — names, categories, props with types, and MDX examples. AI agents read this file to understand what's available and generate correct MDX on the first try:
+
+```json
+{
+  "name": "Hero",
+  "category": "marketing",
+  "props": [
+    { "name": "title", "type": "string", "required": true },
+    { "name": "primaryCta", "type": "{ label: string; href: string }", "required": false },
+    { "name": "badge", "type": "string", "required": false }
+  ],
+  "example": "<Hero title=\"...\" primaryCta={{ label: \"Get Started\", href: \"/signup\" }} />"
+}
+```
+
+Feed this to any AI agent (Claude, GPT, Gemini) and it knows exactly what components exist and how to use them — no documentation parsing, no trial and error.
 
 ### AI modifies shipsite.json
 
@@ -551,6 +616,10 @@ We welcome contributions! Here's how to get started:
 5. Submit a pull request
 
 ---
+
+## Company
+
+ShipSite is built and maintained by **MPH GL GmbH**, headquartered in Zug, Switzerland.
 
 ## License
 

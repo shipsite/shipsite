@@ -10,10 +10,10 @@ interface CardGridItemProps {
 export function CardGridItem({ title, description, icon, href }: CardGridItemProps) {
   const Wrapper = href ? 'a' : 'div';
   return (
-    <Wrapper {...(href ? { href } : {})} className="block p-6 rounded-xl bg-white border border-gray-100 hover:border-[var(--ss-primary-200)] hover:shadow-md transition-all">
-      {icon && <div className="mb-3 text-[var(--ss-primary)]">{icon}</div>}
-      <h3 className="font-semibold text-[var(--ss-text)] mb-2">{title}</h3>
-      <p className="text-sm text-[var(--ss-text)]/60">{description}</p>
+    <Wrapper {...(href ? { href } : {})} className="block p-6 rounded-xl glass-1 hover:glass-2 transition-all">
+      {icon && <div className="mb-3 text-primary">{icon}</div>}
+      <h3 className="font-semibold text-foreground mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground">{description}</p>
     </Wrapper>
   );
 }
