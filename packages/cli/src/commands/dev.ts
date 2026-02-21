@@ -181,17 +181,35 @@ function generateWorkspace(rootDir: string) {
     symlinkSync(join(rootDir, 'public'), publicLink);
   }
 
+  // Symlink custom components directory
+  const hasCustomComponents = existsSync(join(rootDir, 'components'));
+  const componentsLink = join(shipSiteDir, 'components');
+  if (!existsSync(componentsLink) && hasCustomComponents) {
+    symlinkSync(join(rootDir, 'components'), componentsLink);
+  }
+
   // Generate next.config.ts
+  // Detect user's custom next.config file (always expected, but graceful fallback)
+  const userNextConfigExtensions = ['ts', 'mjs', 'js'];
+  const userNextConfig = userNextConfigExtensions.find((ext) =>
+    existsSync(join(rootDir, `next.config.${ext}`)),
+  );
+
+  const userConfigImport = userNextConfig
+    ? `import userConfig from '../next.config.${userNextConfig}';\n`
+    : '';
+  const userConfigSpread = userNextConfig ? '  ...userConfig,\n' : '';
+
   writeFileSync(
     join(shipSiteDir, 'next.config.ts'),
     `import createNextIntlPlugin from 'next-intl/plugin';
 import { withContentCollections } from '@content-collections/next';
 import type { NextConfig } from 'next';
-
+${userConfigImport}
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
+${userConfigSpread}  reactStrictMode: true,
   poweredByHeader: false,
 };
 

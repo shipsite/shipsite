@@ -645,11 +645,36 @@ Use it in CI to catch issues before deployment:
 
 ---
 
+## Custom Next.js Config
+
+Every ShipSite project includes a `next.config.ts` in the project root. Add redirects, rewrites, headers, or any other Next.js configuration:
+
+```ts
+// next.config.ts
+import type { NextConfig } from 'next';
+
+const config: NextConfig = {
+  redirects: async () => [
+    { source: '/old-page', destination: '/new-page', permanent: true },
+  ],
+  headers: async () => [
+    { source: '/(.*)', headers: [{ key: 'X-Frame-Options', value: 'DENY' }] },
+  ],
+};
+
+export default config;
+```
+
+ShipSite automatically merges your config with its own at build time.
+
+---
+
 ## Project Structure
 
 ```
 my-website/
 ├── shipsite.json          # Site configuration
+├── next.config.ts         # Custom Next.js config (redirects, headers, etc.)
 ├── content/
 │   ├── landing/
 │   │   └── en.mdx         # Landing page

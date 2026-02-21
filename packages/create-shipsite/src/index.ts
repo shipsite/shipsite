@@ -327,6 +327,28 @@ description: "Terms and conditions for using our service."
 </svg>`,
   );
 
+  // next.config.ts — always present so AI agents and developers know where to add redirects, headers, etc.
+  writeFileSync(
+    join(projectDir, 'next.config.ts'),
+    `import type { NextConfig } from 'next';
+
+const config: NextConfig = {
+  // Add your custom Next.js config here.
+  // ShipSite merges this with its own config automatically.
+  //
+  // Examples:
+  // redirects: async () => [
+  //   { source: '/old-page', destination: '/new-page', permanent: true },
+  // ],
+  // headers: async () => [
+  //   { source: '/(.*)', headers: [{ key: 'X-Frame-Options', value: 'DENY' }] },
+  // ],
+};
+
+export default config;
+`,
+  );
+
   // .gitignore
   writeFileSync(
     join(projectDir, '.gitignore'),
@@ -349,6 +371,7 @@ description: "Terms and conditions for using our service."
         scripts: {
           dev: 'shipsite dev',
           build: 'shipsite build',
+          validate: 'shipsite validate',
         },
         dependencies: {
           '@shipsite/cli': '^0.1.0',
