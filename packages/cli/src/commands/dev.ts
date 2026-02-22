@@ -25,7 +25,7 @@ export async function dev() {
 
   // 2. Generate slug map
   const { generateSlugMap } = await import(
-    '@shipsite/core/generate-slug-map'
+    '@shipsite.dev/core/generate-slug-map'
   );
   const shipSiteDir = join(rootDir, '.shipsite');
   const slugMap = generateSlugMap(rootDir);
@@ -306,7 +306,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   // middleware.ts
   writeFileSync(
     join(srcDir, 'middleware.ts'),
-    `import { createShipSiteMiddleware } from '@shipsite/core/middleware';
+    `import { createShipSiteMiddleware } from '@shipsite.dev/core/middleware';
 import slugMap from '../slug-map.json';
 
 const middleware = createShipSiteMiddleware({
@@ -325,14 +325,14 @@ export const config = {
 `,
   );
 
-  // Resolve @shipsite/components source path for Tailwind @source directive
+  // Resolve @shipsite.dev/components source path for Tailwind @source directive
   const cssDir = join(srcDir, 'styles');
   let componentsSourceDirective = '';
   let utilsCssImport = '';
-  // Walk up from rootDir to find node_modules/@shipsite/components/src
+  // Walk up from rootDir to find node_modules/@shipsite.dev/components/src
   let searchDir = rootDir;
   for (let i = 0; i < 10; i++) {
-    const candidate = join(searchDir, 'node_modules', '@shipsite', 'components', 'src');
+    const candidate = join(searchDir, 'node_modules', '@shipsite.dev', 'components', 'src');
     if (existsSync(candidate)) {
       const realPath = realpathSync(candidate);
       const rel = relative(cssDir, realPath).split('\\').join('/');
@@ -479,10 +479,10 @@ ${shadcnTokens}
     join(srcDir, 'app', '[locale]', 'layout.tsx'),
     `import { notFound } from 'next/navigation';
 import { routing } from '../../i18n/routing';
-import { ShipSiteProvider } from '@shipsite/components/context';
-import { ThemeProvider } from '@shipsite/components/theme';
-import { Header, Footer } from '@shipsite/components';
-import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl } from '@shipsite/core';
+import { ShipSiteProvider } from '@shipsite.dev/components/context';
+import { ThemeProvider } from '@shipsite.dev/components/theme';
+import { Header, Footer } from '@shipsite.dev/components';
+import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl } from '@shipsite.dev/core';
 import '../../styles/globals.css';
 import type { Metadata, Viewport } from 'next';
 
@@ -561,11 +561,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     join(srcDir, 'app', '[locale]', '[[...slug]]', 'page.tsx'),
     `import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { getPageContent } from '@shipsite/core/mdx';
-import { getPageBySlug, generateAllStaticParams, buildCanonicalUrl, getAlternateUrls, isNoIndexPage } from '@shipsite/core/pages';
-import { resolveAuthor } from '@shipsite/core/blog';
-import { getConfig, getSiteUrl } from '@shipsite/core/config';
-import * as Components from '@shipsite/components';
+import { getPageContent } from '@shipsite.dev/core/mdx';
+import { getPageBySlug, generateAllStaticParams, buildCanonicalUrl, getAlternateUrls, isNoIndexPage } from '@shipsite.dev/core/pages';
+import { resolveAuthor } from '@shipsite.dev/core/blog';
+import { getConfig, getSiteUrl } from '@shipsite.dev/core/config';
+import * as Components from '@shipsite.dev/components';
 ${customComponentsImport}import type { Metadata } from 'next';
 
 ${allComponentsMerge}
@@ -635,7 +635,7 @@ export default async function DynamicPage({ params }: PageProps) {
   // sitemap.ts
   writeFileSync(
     join(srcDir, 'app', 'sitemap.ts'),
-    `import sitemap from '@shipsite/core/sitemap';
+    `import sitemap from '@shipsite.dev/core/sitemap';
 export default sitemap;
 `,
   );
@@ -644,7 +644,7 @@ export default sitemap;
   writeFileSync(
     join(srcDir, 'app', 'robots.ts'),
     `import type { MetadataRoute } from 'next';
-import { getSiteUrl } from '@shipsite/core/config';
+import { getSiteUrl } from '@shipsite.dev/core/config';
 
 export default function robots(): MetadataRoute.Robots {
   return {

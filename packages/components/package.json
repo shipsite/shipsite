@@ -1,5 +1,5 @@
 {
-  "name": "@shipsite/components",
+  "name": "@shipsite.dev/components",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -46,7 +46,7 @@
     "tailwindcss": "^4"
   },
   "peerDependencies": {
-    "@shipsite/core": "^0.1.0",
+    "@shipsite.dev/core": "^0.1.0",
     "next": ">=15"
   }
 }

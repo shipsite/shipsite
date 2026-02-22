@@ -7,9 +7,9 @@
     "build": "shipsite build"
   },
   "dependencies": {
-    "@shipsite/cli": "*",
-    "@shipsite/core": "*",
-    "@shipsite/components": "*",
+    "@shipsite.dev/cli": "*",
+    "@shipsite.dev/core": "*",
+    "@shipsite.dev/components": "*",
     "@content-collections/core": "^0.14.1",
     "@content-collections/next": "^0.2.11",
     "@radix-ui/react-accordion": "^1.2.3",

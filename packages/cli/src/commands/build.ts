@@ -40,7 +40,7 @@ export async function build() {
 
   // 3. Generate slug map
   const { generateSlugMap } = await import(
-    '@shipsite/core/generate-slug-map'
+    '@shipsite.dev/core/generate-slug-map'
   );
   const shipSiteDir = join(rootDir, '.shipsite');
   const slugMap = generateSlugMap(rootDir);

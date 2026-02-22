@@ -390,9 +390,9 @@ export default config;
           validate: 'shipsite validate',
         },
         dependencies: {
-          '@shipsite/cli': '^0.1.0',
-          '@shipsite/core': '^0.1.0',
-          '@shipsite/components': '^0.1.0',
+          '@shipsite.dev/cli': '^0.1.0',
+          '@shipsite.dev/core': '^0.1.0',
+          '@shipsite.dev/components': '^0.1.0',
           '@radix-ui/react-accordion': '^1.2.3',
           '@radix-ui/react-dialog': '^1.1.6',
           '@radix-ui/react-slot': '^1.2.0',

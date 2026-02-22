@@ -1,5 +1,5 @@
 {
-  "name": "@shipsite/core",
+  "name": "@shipsite.dev/core",
   "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
@@ -68,6 +68,6 @@
     "@types/node": "^20"
   },
   "peerDependencies": {
-    "@shipsite/components": "^0.1.0"
+    "@shipsite.dev/components": "^0.1.0"
   }
 }

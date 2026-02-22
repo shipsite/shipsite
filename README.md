@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@shipsite/cli"><img src="https://img.shields.io/npm/v/@shipsite/cli.svg" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@shipsite.dev/cli"><img src="https://img.shields.io/npm/v/@shipsite.dev/cli.svg" alt="npm version" /></a>
   <a href="https://github.com/shipsite/shipsite/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" /></a>
   <a href="https://github.com/shipsite/shipsite/stargazers"><img src="https://img.shields.io/github/stars/shipsite/shipsite.svg?style=social" alt="GitHub stars" /></a>
 </p>
@@ -235,7 +235,7 @@ Add a page? Push an object to the `pages` array. Change the CTA? Update one stri
 ## How It Works
 
 ```
-shipsite.json          content/              @shipsite/components
+shipsite.json          content/             @shipsite.dev/components
 ┌──────────────┐      ┌──────────────────┐   ┌──────────────────┐
 │ name          │      │ landing/en.mdx   │   │ Hero             │
 │ colors        │      │ pricing/en.mdx   │   │ Features         │

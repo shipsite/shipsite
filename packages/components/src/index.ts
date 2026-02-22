@@ -1,4 +1,4 @@
-// @shipsite/components — MDX Component Registry
+// @shipsite.dev/components — MDX Component Registry
 
 // Context
 export {

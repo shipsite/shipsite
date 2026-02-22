@@ -1,7 +1,7 @@
 /**
  * Type declarations for the virtual 'content-collections' module.
  * This module is generated at build time by @content-collections/core.
- * These types allow @shipsite/core to compile standalone.
+ * These types allow @shipsite.dev/core to compile standalone.
  */
 declare module 'content-collections' {
   export interface SitePage {

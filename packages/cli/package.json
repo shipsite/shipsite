@@ -1,5 +1,5 @@
 {
-  "name": "@shipsite/cli",
+  "name": "@shipsite.dev/cli",
   "version": "0.1.0",
   "type": "module",
   "bin": {
@@ -14,7 +14,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@shipsite/core": "^0.1.0",
+    "@shipsite.dev/core": "^0.1.0",
     "chokidar": "^4.0.3"
   },
   "devDependencies": {
