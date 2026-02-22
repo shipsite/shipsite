@@ -155,7 +155,7 @@ function generateShadcnTokens(colors: { primary?: string; accent?: string; backg
 `;
 }
 
-function generateWorkspace(rootDir: string) {
+export function generateWorkspace(rootDir: string) {
   const config = JSON.parse(
     readFileSync(join(rootDir, 'shipsite.json'), 'utf-8'),
   );
@@ -195,8 +195,11 @@ function generateWorkspace(rootDir: string) {
     existsSync(join(rootDir, `next.config.${ext}`)),
   );
 
+  const userConfigImportPath = userNextConfig === 'ts'
+    ? '../next.config'
+    : `../next.config.${userNextConfig}`;
   const userConfigImport = userNextConfig
-    ? `import userConfig from '../next.config.${userNextConfig}';\n`
+    ? `import userConfig from '${userConfigImportPath}';\n`
     : '';
   const userConfigSpread = userNextConfig ? '  ...userConfig,\n' : '';
 
@@ -211,6 +214,11 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 const nextConfig: NextConfig = {
 ${userConfigSpread}  reactStrictMode: true,
   poweredByHeader: false,
+  turbopack: {
+    resolveAlias: {
+      'content-collections': './.content-collections/generated',
+    },
+  },
 };
 
 export default withContentCollections(withNextIntl(nextConfig));
@@ -551,7 +559,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   // page.tsx
   const customComponentsImport = hasCustomComponents
-    ? `import * as CustomComponents from '../../../components';\n`
+    ? `import * as CustomComponents from '../../../../components';\n`
     : '';
   const allComponentsMerge = hasCustomComponents
     ? 'const AllComponents = { ...Components, ...CustomComponents };\n'

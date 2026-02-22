@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { spawn } from 'child_process';
+import { generateWorkspace } from './dev.js';
 
 export async function build() {
   const rootDir = process.cwd();
@@ -38,7 +39,10 @@ export async function build() {
   }
   console.log(`  All content files present`);
 
-  // 3. Generate slug map
+  // 3. Generate .shipsite workspace
+  generateWorkspace(rootDir);
+
+  // 4. Generate slug map
   const { generateSlugMap } = await import(
     '@shipsite.dev/core/generate-slug-map'
   );
@@ -50,7 +54,7 @@ export async function build() {
   );
   console.log(`  Generated slug-map.json`);
 
-  // 4. Build
+  // 5. Build
   console.log('\n  Running next build...\n');
   const nextBuild = spawn('npx', ['next', 'build'], {
     cwd: shipSiteDir,

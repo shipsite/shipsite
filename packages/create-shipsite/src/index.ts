@@ -340,6 +340,8 @@ description: "Terms and conditions for using our service."
 //
 // Then use in any MDX file:
 //   <Highlight color="blue">Important text</Highlight>
+
+export {};
 `,
   );
 
