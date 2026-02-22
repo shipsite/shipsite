@@ -338,11 +338,15 @@ export const config = {
   const cssDir = join(srcDir, 'styles');
   let componentsSourceDirective = '';
   let utilsCssImport = '';
-  // Walk up from rootDir to find node_modules/@shipsite.dev/components/src
+  // Walk up from rootDir to find node_modules/@shipsite.dev/components
+  // Prefer src/ (has TSX source), fall back to dist/ (compiled JS still contains class names)
   let searchDir = rootDir;
   for (let i = 0; i < 10; i++) {
-    const candidate = join(searchDir, 'node_modules', '@shipsite.dev', 'components', 'src');
-    if (existsSync(candidate)) {
+    const pkgDir = join(searchDir, 'node_modules', '@shipsite.dev', 'components');
+    const srcCandidate = join(pkgDir, 'src');
+    const distCandidate = join(pkgDir, 'dist');
+    const candidate = existsSync(srcCandidate) ? srcCandidate : existsSync(distCandidate) ? distCandidate : null;
+    if (candidate) {
       const realPath = realpathSync(candidate);
       const rel = relative(cssDir, realPath).split('\\').join('/');
       componentsSourceDirective = `\n@source "${rel}";`;
