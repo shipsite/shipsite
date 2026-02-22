@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { existsSync, readFileSync, writeFileSync, cpSync, rmSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { spawn } from 'child_process';
 import { generateWorkspace } from './dev.js';
 
@@ -40,7 +40,7 @@ export async function build() {
   console.log(`  All content files present`);
 
   // 3. Generate .shipsite workspace
-  generateWorkspace(rootDir);
+  generateWorkspace(rootDir, 'build');
 
   // 4. Generate slug map
   const { generateSlugMap } = await import(
@@ -64,13 +64,6 @@ export async function build() {
 
   nextBuild.on('close', (code) => {
     if (code === 0) {
-      // Copy .shipsite/.next to project root so Vercel finds it automatically
-      const sourceNext = join(shipSiteDir, '.next');
-      const destNext = join(rootDir, '.next');
-      if (existsSync(destNext)) {
-        rmSync(destNext, { recursive: true, force: true });
-      }
-      cpSync(sourceNext, destNext, { recursive: true });
       console.log('\n  Build complete!');
     } else {
       console.error('\n  Build failed');

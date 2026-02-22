@@ -155,7 +155,7 @@ function generateShadcnTokens(colors: { primary?: string; accent?: string; backg
 `;
 }
 
-export function generateWorkspace(rootDir: string) {
+export function generateWorkspace(rootDir: string, mode: 'dev' | 'build' = 'dev') {
   const config = JSON.parse(
     readFileSync(join(rootDir, 'shipsite.json'), 'utf-8'),
   );
@@ -202,6 +202,7 @@ export function generateWorkspace(rootDir: string) {
     ? `import userConfig from '${userConfigImportPath}';\n`
     : '';
   const userConfigSpread = userNextConfig ? '  ...userConfig,\n' : '';
+  const distDirLine = mode === 'build' ? "  distDir: '../.next',\n" : '';
 
   writeFileSync(
     join(shipSiteDir, 'next.config.ts'),
@@ -212,7 +213,7 @@ ${userConfigImport}
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
-${userConfigSpread}  reactStrictMode: true,
+${userConfigSpread}${distDirLine}  reactStrictMode: true,
   poweredByHeader: false,
   turbopack: {
     resolveAlias: {
