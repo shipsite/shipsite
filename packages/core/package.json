@@ -72,6 +72,6 @@
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "@shipsite.dev/components": "^0.1.0"
+    "next": ">=15"
   }
 }
