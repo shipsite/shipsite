@@ -110,11 +110,15 @@ ${shadcnTokens}
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
     font-family: system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   html { scroll-behavior: smooth; }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .container-main {

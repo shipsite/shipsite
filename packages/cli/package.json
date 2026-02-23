@@ -15,7 +15,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@shipsite.dev/core": "^0.1.0",
+    "@shipsite.dev/core": "*",
     "chokidar": "^4.0.3"
   },
   "devDependencies": {
