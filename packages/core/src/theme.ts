@@ -121,7 +121,8 @@ export function generateShadcnTokens(config: {
   const [tH, tS, tL] = hexToHsl(text);
 
   // Generate derived colors
-  const primaryFg = pL > 50 ? `${tH} ${tS}% 15%` : `${bH} ${bS}% 98%`;
+  // Saturated colors appear darker than their HSL lightness — adjust threshold
+  const primaryFg = pL > 70 ? `${tH} ${tS}% 15%` : `0 0% 98%`;
   const brandFg = `${pH} ${Math.min(pS + 10, 100)}% ${Math.min(pL + 10, 85)}%`;
 
   // Muted: desaturated, lighter version of background
