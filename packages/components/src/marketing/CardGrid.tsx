@@ -25,5 +25,9 @@ interface CardGridProps {
 
 export function CardGrid({ columns = 3, children }: CardGridProps) {
   const gridCols = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' };
-  return <div className={`grid grid-cols-1 ${gridCols[columns]} gap-6 py-8`}>{children}</div>;
+  return (
+    <div className="mx-auto w-full max-w-[76rem] px-[clamp(1rem,3vw,3rem)] py-8">
+      <div className={`grid grid-cols-1 ${gridCols[columns]} gap-6`}>{children}</div>
+    </div>
+  );
 }

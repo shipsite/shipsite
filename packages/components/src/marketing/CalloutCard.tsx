@@ -16,10 +16,12 @@ export function CalloutCard({ title, description, variant = 'info', children }: 
   };
 
   return (
-    <div className={cn('rounded-xl border p-6 my-8', variantStyles[variant])}>
+    <div className={cn('mx-auto w-full max-w-[76rem] px-[clamp(1rem,3vw,3rem)] my-8')}>
+    <div className={cn('rounded-xl border p-6', variantStyles[variant])}>
       <h3 className="font-semibold text-foreground mb-2">{title}</h3>
       <p className="text-sm text-muted-foreground">{description}</p>
       {children}
+    </div>
     </div>
   );
 }
