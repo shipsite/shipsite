@@ -1,5 +1,6 @@
 import type React from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
 import { allSitePages } from 'content-collections';
 
 export interface PageFrontmatter {
@@ -28,7 +29,7 @@ export async function getPageContent(
     throw new Error(`MDX content not found: ${pageName}/${locale}`);
   }
 
-  const allComponents = { ...components };
+  const allComponents: Record<string, unknown> = { ...components };
 
   // Inject contentFolder so wrapper components can resolve their own metadata
   const contentFolderInjections: Record<string, string> = {
@@ -61,6 +62,9 @@ export async function getPageContent(
       parseFrontmatter: false,
       blockJS: false,
       blockDangerousJS: false,
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+      },
     },
   });
 

@@ -8,8 +8,8 @@ export function generatePage(ctx: GeneratorContext): void {
     ? `import * as CustomComponents from '../../../../components';\n`
     : '';
   const allComponentsMerge = hasCustomComponents
-    ? 'const AllComponents = { ...Components, ...CustomComponents };\n'
-    : 'const AllComponents = Components;\n';
+    ? 'const AllComponents = { ...mdxHtmlOverrides, ...Components, ...CustomComponents };\n'
+    : 'const AllComponents = { ...mdxHtmlOverrides, ...Components };\n';
 
   writeFileSync(
     join(ctx.srcDir, 'app', '[locale]', '[[...slug]]', 'page.tsx'),
@@ -21,6 +21,16 @@ import { resolveAuthor } from '@shipsite.dev/core/blog';
 import { getConfig, getSiteUrl } from '@shipsite.dev/core/config';
 import * as Components from '@shipsite.dev/components';
 ${customComponentsImport}import type { Metadata } from 'next';
+
+// Map shadcn Table components to HTML element names for Markdown tables
+const mdxHtmlOverrides = {
+  table: Components.Table,
+  thead: Components.TableHeader,
+  tbody: Components.TableBody,
+  th: Components.TableHead,
+  tr: Components.TableRow,
+  td: Components.TableCell,
+};
 
 ${allComponentsMerge}
 interface PageProps {

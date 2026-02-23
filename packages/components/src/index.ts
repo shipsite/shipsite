@@ -59,5 +59,17 @@ export { BlogTable } from './blog/BlogTable';
 export { BlogTip } from './blog/BlogTip';
 export { StartFreeNowCTA } from './blog/StartFreeNowCTA';
 
+// UI primitives
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from './ui/table';
+
 // Legal
 export { LegalPage, LegalSection } from './legal/LegalPage';
