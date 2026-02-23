@@ -33,7 +33,7 @@ export function Hero({ title, description, primaryCta, secondaryCta, badge, imag
           <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-appear [animation-delay:200ms]">
             {description}
           </p>
-          <div className="flex items-center justify-center gap-4 animate-appear [animation-delay:300ms]">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-appear [animation-delay:300ms]">
             {primaryCta && (
               <Button asChild size="lg">
                 <a href={primaryCta.href}>{primaryCta.label}</a>
