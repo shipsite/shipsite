@@ -21,7 +21,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx turbo build test
+      - run: npx turbo build test --filter='./packages/*'
 
       - name: Integration test (full site build)
         run: |
