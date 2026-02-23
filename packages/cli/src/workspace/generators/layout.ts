@@ -23,7 +23,7 @@ import { routing } from '../../i18n/routing';
 import { ShipSiteProvider } from '@shipsite.dev/components/context';
 import { ThemeProvider } from '@shipsite.dev/components/theme';
 import { Header, Footer } from '@shipsite.dev/components';
-import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl } from '@shipsite.dev/core';
+import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl, getLocalizedField } from '@shipsite.dev/core';
 import '../../styles/globals.css';
 import type { Metadata, Viewport } from 'next';
 
@@ -55,6 +55,25 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const navLinks = generateNavLinks(locale);
   const alternatePathMap = generateAlternatePathMap();
 
+  const t = (v: string | Record<string, string>) =>
+    typeof v === 'string' ? v : (v[locale] || v.en || '');
+
+  const rawNav = config.navigation || { items: [] };
+  const navigation = {
+    items: rawNav.items.map((i: any) => ({ label: t(i.label), href: i.href })),
+    cta: rawNav.cta ? { label: t(rawNav.cta.label), href: rawNav.cta.href } : undefined,
+  };
+
+  const rawFooter = config.footer || {};
+  const footer = {
+    columns: rawFooter.columns?.map((c: any) => ({
+      title: t(c.title),
+      links: c.links.map((l: any) => ({ label: t(l.label), href: l.href })),
+    })),
+    social: rawFooter.social,
+    copyright: rawFooter.copyright ? t(rawFooter.copyright) : undefined,
+  };
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
@@ -70,8 +89,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
             background: config.colors?.background || '#ffffff',
             text: config.colors?.text || '#1f2a37',
           },
-          navigation: config.navigation || { items: [] },
-          footer: config.footer || {},
+          navigation,
+          footer,
           navLinks,
           alternatePathMap,
           locale,

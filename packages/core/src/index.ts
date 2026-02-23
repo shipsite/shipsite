@@ -2,6 +2,7 @@
 export * from './config';
 export * from './pages';
 export * from './mdx';
+export * from './i18n';
 export * from './blog';
 export * from './theme';
 export { default as sitemap } from './sitemap';

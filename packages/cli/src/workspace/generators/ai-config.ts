@@ -69,6 +69,7 @@ function buildSharedContent(ctx: GeneratorContext, components: ComponentsJson | 
 
 \`\`\`
 shipsite.json          # Site configuration (pages, nav, footer, colors, i18n)
+                       # Navigation & footer labels accept string | { locale: "text" } for i18n
 content/               # MDX content files, one folder per page
   {page-name}/
     {locale}.mdx       # Content file per locale

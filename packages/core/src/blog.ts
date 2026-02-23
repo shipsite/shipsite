@@ -1,5 +1,9 @@
 import { allSitePages } from 'content-collections';
 import { getConfig } from './config';
+import { getLocalizedField } from './i18n';
+
+// Re-export for backward compatibility
+export { getLocalizedField } from './i18n';
 
 export interface ResolvedArticle {
   slug: string;
@@ -26,15 +30,6 @@ export interface ResolvedAuthor {
 export interface ResolvedCategory {
   key: string;
   label: string;
-}
-
-export function getLocalizedField(
-  field: string | Record<string, string> | undefined,
-  locale: string,
-): string {
-  if (!field) return '';
-  if (typeof field === 'string') return field;
-  return field[locale] || field.en || '';
 }
 
 export function resolveAuthor(

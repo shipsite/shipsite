@@ -3,8 +3,10 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 // ─── Schema ────────────────────────────────────────────────────
+const LocalizedString = z.union([z.string(), z.record(z.string())]);
+
 const NavigationItemSchema = z.object({
-  label: z.string(),
+  label: LocalizedString,
   href: z.string(),
 });
 
@@ -14,8 +16,8 @@ const NavigationSchema = z.object({
 });
 
 const FooterColumnSchema = z.object({
-  title: z.string(),
-  links: z.array(z.object({ label: z.string(), href: z.string() })),
+  title: LocalizedString,
+  links: z.array(z.object({ label: LocalizedString, href: z.string() })),
 });
 
 const SocialLinkSchema = z.object({
@@ -26,7 +28,7 @@ const SocialLinkSchema = z.object({
 const FooterSchema = z.object({
   columns: z.array(FooterColumnSchema).optional(),
   social: z.array(SocialLinkSchema).optional(),
-  copyright: z.string().optional(),
+  copyright: LocalizedString.optional(),
 });
 
 const PageConfigSchema = z.object({
