@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ShipSite Configuration",
+  "description": "Configuration file for a ShipSite project (shipsite.json).",
+  "type": "object",
+  "required": ["name", "url", "pages"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference for IDE autocompletion."
+    },
+    "name": {
+      "type": "string",
+      "description": "Site name, used in metadata and header."
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Canonical site URL (e.g. \"https://example.com\")."
+    },
+    "logo": {
+      "description": "Logo path or light/dark variants.",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": { "type": "string" },
+            "dark": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "favicon": {
+      "type": "string",
+      "description": "Path to favicon (e.g. \"/favicon.png\")."
+    },
+    "ogImage": {
+      "type": "string",
+      "description": "Default Open Graph image path."
+    },
+    "colors": {
+      "type": "object",
+      "description": "Brand colors.",
+      "properties": {
+        "primary": { "type": "string", "description": "Primary brand color (hex)." },
+        "accent": { "type": "string", "description": "Accent color (hex)." },
+        "background": { "type": "string", "description": "Background color (hex)." },
+        "text": { "type": "string", "description": "Text color (hex)." }
+      },
+      "required": ["primary"],
+      "additionalProperties": false
+    },
+    "fonts": {
+      "type": "object",
+      "description": "Font families.",
+      "properties": {
+        "heading": { "type": "string" },
+        "body": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "i18n": {
+      "type": "object",
+      "description": "Internationalization settings.",
+      "properties": {
+        "defaultLocale": { "type": "string", "default": "en" },
+        "locales": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["en"]
+        },
+        "localePrefix": {
+          "type": "string",
+          "enum": ["as-needed", "always", "never"],
+          "default": "as-needed"
+        }
+      },
+      "additionalProperties": false
+    },
+    "navigation": {
+      "type": "object",
+      "description": "Header navigation.",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/navigationItem" }
+        },
+        "cta": { "$ref": "#/$defs/navigationItem" }
+      },
+      "required": ["items"],
+      "additionalProperties": false
+    },
+    "footer": {
+      "type": "object",
+      "description": "Footer configuration.",
+      "properties": {
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "links"],
+            "properties": {
+              "title": { "$ref": "#/$defs/localizedString", "description": "Column heading." },
+              "links": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/navigationItem" }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "social": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["platform", "href"],
+            "properties": {
+              "platform": { "type": "string", "description": "e.g. \"github\", \"twitter\", \"linkedin\"." },
+              "href": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "copyright": { "$ref": "#/$defs/localizedString" }
+      },
+      "additionalProperties": false
+    },
+    "pages": {
+      "type": "array",
+      "description": "Page definitions.",
+      "items": {
+        "type": "object",
+        "required": ["slug", "type", "content"],
+        "properties": {
+          "slug": { "type": "string", "description": "URL slug (empty string for root/landing)." },
+          "type": {
+            "type": "string",
+            "description": "Page type.",
+            "enum": ["landing", "page", "blog-index", "blog-article", "legal"]
+          },
+          "content": { "type": "string", "description": "Content folder name inside content/." },
+          "locales": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Locales this page is available in. Defaults to all configured locales."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "blog": {
+      "type": "object",
+      "description": "Blog configuration.",
+      "properties": {
+        "authors": {
+          "type": "object",
+          "description": "Author definitions keyed by ID.",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "role": { "$ref": "#/$defs/localizedString" },
+              "image": { "type": "string" },
+              "bio": { "$ref": "#/$defs/localizedString" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "label"],
+            "properties": {
+              "key": { "type": "string" },
+              "label": {
+                "type": "object",
+                "description": "Locale → label map (e.g. { \"en\": \"Tech\", \"de\": \"Technik\" }).",
+                "additionalProperties": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "categoryMap": {
+          "type": "object",
+          "description": "Maps raw category strings to canonical category keys.",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "analytics": {
+      "type": "object",
+      "properties": {
+        "googleTagManager": { "type": "string", "description": "GTM container ID (e.g. \"GTM-XXXXX\")." }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "localizedString": {
+      "description": "A plain string or a locale map (e.g. { \"en\": \"Features\", \"de\": \"Funktionen\" }).",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      ]
+    },
+    "navigationItem": {
+      "type": "object",
+      "required": ["label", "href"],
+      "properties": {
+        "label": { "$ref": "#/$defs/localizedString", "description": "Display text (plain string or locale map)." },
+        "href": { "type": "string", "description": "Link target." }
+      },
+      "additionalProperties": false
+    }
+  }
+}

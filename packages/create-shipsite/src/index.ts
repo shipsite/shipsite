@@ -156,7 +156,7 @@ async function main() {
 
   // shipsite.json
   const config = {
-    $schema: 'https://schema.shipsite.dev/v1.json',
+    $schema: './node_modules/@shipsite.dev/core/shipsite.schema.json',
     name: projectName,
     url: `https://${projectName}.com`,
     logo: '/images/logo.svg',

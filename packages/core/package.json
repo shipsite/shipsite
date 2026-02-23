@@ -50,7 +50,8 @@
   },
   "files": [
     "dist/",
-    "src/generate-slug-map.mjs"
+    "src/generate-slug-map.mjs",
+    "shipsite.schema.json"
   ],
   "scripts": {
     "build": "tsc",

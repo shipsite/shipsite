@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.shipsite.dev/v1.json",
+  "$schema": "./node_modules/@shipsite.dev/core/shipsite.schema.json",
   "name": "Test Site",
   "url": "https://testsite.com",
   "logo": "/images/logo.svg",
