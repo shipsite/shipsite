@@ -3,7 +3,6 @@ import { writeFileSync } from 'fs';
 import type { GeneratorContext } from '../types.js';
 
 export function generateLayout(ctx: GeneratorContext): void {
-  // Build icons metadata from config
   const favicon = ctx.config.favicon;
   let iconsBlock = '';
   if (favicon) {
@@ -14,18 +13,41 @@ export function generateLayout(ctx: GeneratorContext): void {
   },`;
   }
 
-  // Root layout — owns <html lang>, <body>, ThemeProvider, global styles.
-  // Uses getLocale() from next-intl so the lang attribute is set correctly
-  // even though the [locale] segment hasn't been resolved yet at this level.
+  const defaultLocale = ctx.config.i18n?.defaultLocale || 'en';
+
+  // Root layout — static shell with default lang for /_not-found and other
+  // non-locale routes. The [locale] layout overrides <html> for real pages.
   writeFileSync(
     join(ctx.srcDir, 'app', 'layout.tsx'),
-    `import { getLocale } from 'next-intl/server';
+    `import '../styles/globals.css';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="${defaultLocale}" suppressHydrationWarning>
+      <body>{children}</body>
+    </html>
+  );
+}
+`,
+  );
+
+  // Locale layout — owns <html lang={locale}>, <body>, providers, header/footer.
+  writeFileSync(
+    join(ctx.srcDir, 'app', '[locale]', 'layout.tsx'),
+    `import { notFound } from 'next/navigation';
+import { routing } from '../../i18n/routing';
+import { ShipSiteProvider } from '@shipsite.dev/components/context';
 import { ThemeProvider } from '@shipsite.dev/components/theme';
-import { getConfig, getSiteUrl } from '@shipsite.dev/core';
-import '../styles/globals.css';
+import { Header, Footer } from '@shipsite.dev/components';
+import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl } from '@shipsite.dev/core';
+import '../../styles/globals.css';
 import type { Metadata, Viewport } from 'next';
 
 const config = getConfig();
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -36,38 +58,6 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
 };
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
-
-  return (
-    <html lang={locale} suppressHydrationWarning>
-      <body>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  );
-}
-`,
-  );
-
-  // Locale layout — owns ShipSiteProvider, Header, Footer.
-  // Reads locale from [locale] param and resolves localized labels.
-  writeFileSync(
-    join(ctx.srcDir, 'app', '[locale]', 'layout.tsx'),
-    `import { notFound } from 'next/navigation';
-import { routing } from '../../i18n/routing';
-import { ShipSiteProvider } from '@shipsite.dev/components/context';
-import { Header, Footer } from '@shipsite.dev/components';
-import { generateNavLinks, generateAlternatePathMap, getConfig } from '@shipsite.dev/core';
-
-const config = getConfig();
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -101,29 +91,35 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   };
 
   return (
-    <ShipSiteProvider value={{
-      siteName: config.name,
-      siteUrl: config.url,
-      logo: config.logo,
-      ogImage: config.ogImage,
-      colors: {
-        primary: config.colors?.primary || '#5d5bd4',
-        accent: config.colors?.accent || '#067647',
-        background: config.colors?.background || '#ffffff',
-        text: config.colors?.text || '#1f2a37',
-      },
-      navigation,
-      footer,
-      navLinks,
-      alternatePathMap,
-      locale,
-      locales: config.i18n?.locales || ['en'],
-      defaultLocale: config.i18n?.defaultLocale || 'en',
-    }}>
-      <Header />
-      <main id="main-content">{children}</main>
-      <Footer />
-    </ShipSiteProvider>
+    <html lang={locale} suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+        <ShipSiteProvider value={{
+          siteName: config.name,
+          siteUrl: config.url,
+          logo: config.logo,
+          ogImage: config.ogImage,
+          colors: {
+            primary: config.colors?.primary || '#5d5bd4',
+            accent: config.colors?.accent || '#067647',
+            background: config.colors?.background || '#ffffff',
+            text: config.colors?.text || '#1f2a37',
+          },
+          navigation,
+          footer,
+          navLinks,
+          alternatePathMap,
+          locale,
+          locales: config.i18n?.locales || ['en'],
+          defaultLocale: config.i18n?.defaultLocale || 'en',
+        }}>
+          <Header />
+          <main id="main-content">{children}</main>
+          <Footer />
+        </ShipSiteProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
 `,
