@@ -21,7 +21,27 @@ jobs:
 
       - run: npm ci
 
-      - run: npx turbo build
+      - run: npx turbo build test
+
+      - name: Integration test (full site build)
+        run: |
+          cd examples/minimal
+          rm -rf .shipsite .next
+          node ../../packages/cli/dist/index.js build
+          PAGE_COUNT=$(find .next/server/app -name '*.html' 2>/dev/null | wc -l)
+          echo "Generated $PAGE_COUNT HTML pages"
+          if [ "$PAGE_COUNT" -lt 5 ]; then
+            echo "ERROR: Expected at least 5 pages, got $PAGE_COUNT"
+            exit 1
+          fi
+          CSS_FILE=$(find .next/static -name '*.css' -type f | head -1)
+          CSS_SIZE=$(wc -c < "$CSS_FILE")
+          echo "CSS size: ${CSS_SIZE} bytes"
+          if [ "$CSS_SIZE" -lt 50000 ]; then
+            echo "ERROR: CSS too small — Tailwind likely missed component classes"
+            exit 1
+          fi
+          echo "Integration test passed"
 
       - name: Set version from tag
         run: |

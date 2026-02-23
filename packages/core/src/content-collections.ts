@@ -1,6 +1,30 @@
 import { defineCollection, defineConfig } from '@content-collections/core';
 import { z } from 'zod';
 
+/**
+ * Resolve the content kind from a directory path.
+ */
+export function resolveKind(directory: string): string {
+  if (directory.startsWith('blog/')) {
+    return directory.split('/').length > 1 ? 'blog-article' : 'blog-index';
+  }
+  return 'page';
+}
+
+/**
+ * Extract a plain-text excerpt from MDX content by finding the <BlogIntro> block.
+ */
+export function extractExcerpt(content: string): string {
+  const match = content.match(/<BlogIntro>\s*([\s\S]*?)\s*<\/BlogIntro>/);
+  if (!match) return '';
+  return match[1]
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+    .replace(/[*_~`]/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+}
+
 export const sitePages = defineCollection({
   name: 'sitePages',
   directory: 'content',
@@ -21,26 +45,8 @@ export const sitePages = defineCollection({
     const locale = doc._meta.fileName.replace(/\.mdx$/, '');
     const contentFolder = doc._meta.directory;
     const contentId = doc._meta.path.replace(/\.mdx$/, '');
-
-    const path = doc._meta.directory;
-    let kind: string;
-    if (path.startsWith('blog/')) {
-      kind = path.split('/').length > 1 ? 'blog-article' : 'blog-index';
-    } else {
-      kind = 'page';
-    }
-
-    // Extract excerpt from BlogIntro component
-    const raw = doc.content;
-    const match = raw.match(/<BlogIntro>\s*([\s\S]*?)\s*<\/BlogIntro>/);
-    const excerpt = match
-      ? match[1]
-          .replace(/\*\*(.*?)\*\*/g, '$1')
-          .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-          .replace(/[*_~`]/g, '')
-          .replace(/\n+/g, ' ')
-          .trim()
-      : '';
+    const kind = resolveKind(doc._meta.directory);
+    const excerpt = extractExcerpt(doc.content);
 
     return {
       ...doc,

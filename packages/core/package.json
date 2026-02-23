@@ -50,6 +50,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -63,9 +65,10 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
+    "@types/node": "^20",
     "@types/react": "^19",
-    "@types/node": "^20"
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.18"
   },
   "peerDependencies": {
     "@shipsite.dev/components": "^0.1.0"

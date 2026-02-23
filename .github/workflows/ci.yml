@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build & unit tests
+        run: npx turbo build test
+
+      - name: Integration test (full site build)
+        run: |
+          cd examples/minimal
+          rm -rf .shipsite .next
+
+          node ../../packages/cli/dist/index.js build
+
+          # Verify static pages were generated
+          PAGE_COUNT=$(find .next/server/app -name '*.html' 2>/dev/null | wc -l)
+          echo "Generated $PAGE_COUNT HTML pages"
+          if [ "$PAGE_COUNT" -lt 5 ]; then
+            echo "ERROR: Expected at least 5 pages, got $PAGE_COUNT"
+            exit 1
+          fi
+
+          # Verify Tailwind CSS output (components scanned correctly)
+          CSS_FILE=$(find .next/static -name '*.css' -type f | head -1)
+          if [ -z "$CSS_FILE" ]; then
+            echo "ERROR: No CSS file found in .next/static"
+            exit 1
+          fi
+          CSS_SIZE=$(wc -c < "$CSS_FILE")
+          echo "CSS size: ${CSS_SIZE} bytes ($CSS_FILE)"
+          if [ "$CSS_SIZE" -lt 50000 ]; then
+            echo "ERROR: CSS too small (${CSS_SIZE} bytes) — Tailwind likely missed component classes"
+            exit 1
+          fi
+
+          echo "Integration test passed"
