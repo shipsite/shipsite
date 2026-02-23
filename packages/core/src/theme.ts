@@ -158,6 +158,19 @@ export function generateShadcnTokens(config: {
   // Shadow
   const shadow = '#00000008';
 
+  // Dark mode tokens derived from primary hue
+  const darkBgH = pH;
+  const darkBgS = Math.min(Math.round(pS * 0.6), 50);
+  const darkBg = `${darkBgH} ${darkBgS}% 4%`;
+  const darkFg = `0 0% 98%`;
+  const darkCard = `${darkBgH} ${darkBgS}% 6%`;
+  const darkMuted = `${darkBgH} ${Math.round(darkBgS * 0.8)}% 15%`;
+  const darkMutedFg = `${darkBgH} ${Math.round(darkBgS * 0.4)}% 65%`;
+  const darkBorder = `${darkBgH} ${Math.round(darkBgS * 0.7)}% 14%`;
+  const darkInput = `${darkBgH} ${Math.round(darkBgS * 0.7)}% 18%`;
+  const darkRing = `${pH} ${Math.round(pS * 0.5)}% 60%`;
+  const darkBrandFg = `${pH} ${Math.min(pS + 10, 100)}% ${Math.min(pL + 15, 80)}%`;
+
   return `:root {
   /* Brand colors */
   --brand: hsl(${pH} ${pS}% ${pL}%);
@@ -215,6 +228,36 @@ export function generateShadcnTokens(config: {
   --ss-accent: ${accent};
   --ss-background: ${background};
   --ss-text: ${text};
+}
+
+.dark {
+  --brand: hsl(${pH} ${pS}% ${pL}%);
+  --brand-foreground: hsl(${darkBrandFg});
+  --primary: hsl(${pH} ${pS}% ${pL}%);
+  --primary-foreground: hsl(0 0% 98%);
+  --background: hsl(${darkBg});
+  --foreground: hsl(${darkFg});
+  --card: hsl(${darkCard});
+  --card-foreground: hsl(${darkFg});
+  --popover: hsl(${darkCard});
+  --popover-foreground: hsl(${darkFg});
+  --secondary: hsl(${darkMuted});
+  --secondary-foreground: hsl(${darkFg});
+  --muted: hsl(${darkMuted});
+  --muted-foreground: hsl(${darkMutedFg});
+  --accent: hsl(${darkMuted});
+  --accent-foreground: hsl(${darkFg});
+  --destructive: hsl(0 62% 30%);
+  --destructive-foreground: hsl(${darkFg});
+  --border: hsl(${darkBorder});
+  --input: hsl(${darkInput});
+  --ring: hsl(${darkRing});
+  --radius: 0.625rem;
+  --line-width: 1px;
+  --shadow: #00000040;
+  --shadow-strong: #00000060;
+  --ss-primary: ${primary};
+  --ss-accent: ${accent};
 }
 `;
 }
