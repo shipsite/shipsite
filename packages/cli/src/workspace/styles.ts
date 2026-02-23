@@ -135,7 +135,9 @@ ${shadcnTokens}
   }
 }
 
-.page-prose > * {
+.page-prose > h2, .page-prose > h3, .page-prose > h4,
+.page-prose > p, .page-prose > ul, .page-prose > ol,
+.page-prose > blockquote, .page-prose > [data-slot="table-container"] {
   width: 100%;
   max-width: 76rem;
   margin-inline: auto;
