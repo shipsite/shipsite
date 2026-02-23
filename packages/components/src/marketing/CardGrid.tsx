@@ -10,9 +10,9 @@ interface CardGridItemProps {
 export function CardGridItem({ title, description, icon, href }: CardGridItemProps) {
   const Wrapper = href ? 'a' : 'div';
   return (
-    <Wrapper {...(href ? { href } : {})} className="block p-6 rounded-xl glass-1 hover:glass-2 transition-all">
+    <Wrapper {...(href ? { href } : {})} className="block p-6 rounded-xl glass-1 hover:glass-2 transition-all focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring">
       {icon && <div className="mb-3 text-primary">{icon}</div>}
-      <h3 className="font-semibold text-foreground mb-2">{title}</h3>
+      <h3 className="font-semibold tracking-tight text-foreground mb-2">{title}</h3>
       <p className="text-sm text-muted-foreground">{description}</p>
     </Wrapper>
   );

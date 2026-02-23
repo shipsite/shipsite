@@ -128,6 +128,12 @@ body {
   padding-inline: clamp(1rem, 3vw, 3rem);
 }
 
+.blog-content > .prose-container {
+  max-width: none;
+  padding-inline: 0;
+  margin-inline: 0;
+}
+
 @layer utilities {
   @keyframes marquee {
     from { transform: translateX(0); }
@@ -139,21 +145,6 @@ body {
   }
 }
 
-.page-prose > h2, .page-prose > h3, .page-prose > h4,
-.page-prose > p, .page-prose > ul, .page-prose > ol,
-.page-prose > blockquote {
-  width: 100%;
-  max-width: 76rem;
-  margin-inline: auto;
-  padding-inline: clamp(1rem, 3vw, 3rem);
-}
-.page-prose > h2 { margin-top: 2.5rem; margin-bottom: 1rem; font-size: clamp(1.375rem, 1.1rem + 1.2vw, 2.25rem); font-weight: 600; }
-.page-prose > h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem); font-weight: 600; }
-.page-prose > p { font-size: 1rem; line-height: 1.6; margin-top: 0.5rem; margin-bottom: 0.5rem; }
-.page-prose > ul { list-style: disc; padding-left: 1.75rem; margin-block: 0.75rem; }
-.page-prose > ol { list-style: decimal; padding-left: 1.75rem; margin-block: 0.75rem; }
-.page-prose > p a { color: var(--primary); text-decoration: underline; font-weight: 500; }
-.page-prose > p a:hover { text-decoration: none; }
 `,
   );
 }

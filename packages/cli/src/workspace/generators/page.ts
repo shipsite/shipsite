@@ -22,14 +22,29 @@ import { getConfig, getSiteUrl } from '@shipsite.dev/core/config';
 import * as Components from '@shipsite.dev/components';
 ${customComponentsImport}import type { Metadata } from 'next';
 
-// Map shadcn Table components to HTML element names for Markdown tables
+// Map styled components to HTML elements for Markdown rendering
 const mdxHtmlOverrides = {
+  // Tables
   table: Components.Table,
   thead: Components.TableHeader,
   tbody: Components.TableBody,
   th: Components.TableHead,
   tr: Components.TableRow,
   td: Components.TableCell,
+  // Prose
+  h2: Components.ProseH2,
+  h3: Components.ProseH3,
+  h4: Components.ProseH4,
+  p: Components.ProseP,
+  a: Components.ProseA,
+  ul: Components.ProseUl,
+  ol: Components.ProseOl,
+  li: Components.ProseLi,
+  blockquote: Components.ProseBlockquote,
+  pre: Components.ProsePre,
+  code: Components.ProseCode,
+  hr: Components.ProseHr,
+  img: Components.ProseImg,
 };
 
 ${allComponentsMerge}

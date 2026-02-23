@@ -10,9 +10,9 @@ interface CalloutCardProps {
 
 export function CalloutCard({ title, description, variant = 'info', children }: CalloutCardProps) {
   const variantStyles = {
-    info: 'bg-primary/5 border-primary/20',
-    success: 'bg-emerald-50 border-emerald-200',
-    warning: 'bg-amber-50 border-amber-200',
+    info: 'bg-primary/5 border-primary/20 dark:bg-primary/10',
+    success: 'bg-emerald-500/10 border-emerald-500/20',
+    warning: 'bg-amber-500/10 border-amber-500/20',
   };
 
   return (

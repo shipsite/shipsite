@@ -12,17 +12,11 @@ export function resolveKind(directory: string): string {
 }
 
 /**
- * Extract a plain-text excerpt from MDX content by finding the <BlogIntro> block.
+ * Return the excerpt for blog listings.
+ * Uses explicit excerpt if provided, otherwise falls back to description.
  */
-export function extractExcerpt(content: string): string {
-  const match = content.match(/<BlogIntro>\s*([\s\S]*?)\s*<\/BlogIntro>/);
-  if (!match) return '';
-  return match[1]
-    .replace(/\*\*(.*?)\*\*/g, '$1')
-    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-    .replace(/[*_~`]/g, '')
-    .replace(/\n+/g, ' ')
-    .trim();
+export function extractExcerpt(excerpt: string | undefined, description: string | undefined): string {
+  return (excerpt || description || '').trim();
 }
 
 export const sitePages = defineCollection({
@@ -40,13 +34,14 @@ export const sitePages = defineCollection({
     featured: z.boolean().optional(),
     author: z.string().optional(),
     slug: z.string().optional(),
+    excerpt: z.string().optional(),
   }),
   transform: (doc) => {
     const locale = doc._meta.fileName.replace(/\.mdx$/, '');
     const contentFolder = doc._meta.directory;
     const contentId = doc._meta.path.replace(/\.mdx$/, '');
     const kind = resolveKind(doc._meta.directory);
-    const excerpt = extractExcerpt(doc.content);
+    const excerpt = extractExcerpt(doc.excerpt, doc.description);
 
     return {
       ...doc,

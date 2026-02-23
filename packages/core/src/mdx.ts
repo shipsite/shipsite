@@ -2,6 +2,7 @@ import type React from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { allSitePages } from 'content-collections';
+import { resolveAuthor } from './blog';
 
 export interface PageFrontmatter {
   title: string;
@@ -14,6 +15,7 @@ export interface PageFrontmatter {
   wordCount?: number;
   featured?: boolean;
   author?: string;
+  excerpt?: string;
 }
 
 export async function getPageContent(
@@ -47,9 +49,21 @@ export async function getPageContent(
         componentName
       ];
       if (Orig) {
+        const authorData = page?.author
+          ? resolveAuthor(page.author, locale)
+          : undefined;
         allComponents[componentName] = async (
           props: Record<string, unknown>,
-        ) => Orig({ ...props, contentFolder: pageName });
+        ) =>
+          Orig({
+            ...props,
+            contentFolder: pageName,
+            date: page?.date || '',
+            readingTime: page?.readingTime || 0,
+            author: authorData
+              ? { name: authorData.name, role: authorData.role, image: authorData.image }
+              : undefined,
+          });
       }
     }
   }

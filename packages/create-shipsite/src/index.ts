@@ -312,16 +312,13 @@ description: "Latest news, updates, and insights."
     `---
 title: "Getting Started with ${projectName}"
 description: "Learn how to set up and start using ${projectName} in minutes."
+excerpt: "Welcome to ${projectName}! In this guide, we'll walk you through everything you need to know to get started."
 date: "${today}"
 readingTime: 3
 author: default
 ---
 
 <BlogArticle>
-
-<BlogIntro>
-Welcome to ${projectName}! In this guide, we'll walk you through everything you need to know to get started.
-</BlogIntro>
 
 ## Step 1: Create Your Account
 
@@ -334,13 +331,6 @@ Once you're in, head to Settings to customize your workspace. You can invite tea
 ## Step 3: Start Building
 
 You're all set! Start exploring the features and building something great.
-
-<StartFreeNowCTA
-  title="Ready to get started?"
-  bullets={["No credit card required", "Free plan available", "Cancel anytime"]}
-  buttonText="Start Free"
-  buttonHref="https://app.${projectName}.com/signup"
-/>
 
 </BlogArticle>
 `,

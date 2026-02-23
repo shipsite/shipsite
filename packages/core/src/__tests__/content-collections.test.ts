@@ -34,64 +34,23 @@ describe('resolveKind', () => {
 // ─── extractExcerpt ────────────────────────────────────────────
 
 describe('extractExcerpt', () => {
-  it('returns empty string when no BlogIntro present', () => {
-    expect(extractExcerpt('## Hello World\n\nSome content.')).toBe('');
+  it('returns empty string when neither excerpt nor description provided', () => {
+    expect(extractExcerpt(undefined, undefined)).toBe('');
   });
 
-  it('extracts plain text from BlogIntro', () => {
-    const mdx = '<BlogIntro>This is the intro paragraph.</BlogIntro>';
-    expect(extractExcerpt(mdx)).toBe('This is the intro paragraph.');
+  it('returns description when no excerpt provided', () => {
+    expect(extractExcerpt(undefined, 'Meta description.')).toBe('Meta description.');
   });
 
-  it('strips bold markdown', () => {
-    const mdx = '<BlogIntro>This is **very important** text.</BlogIntro>';
-    expect(extractExcerpt(mdx)).toBe('This is very important text.');
+  it('returns excerpt when provided, ignoring description', () => {
+    expect(extractExcerpt('Longer intro text for listings.', 'Short meta.')).toBe('Longer intro text for listings.');
   });
 
-  it('strips markdown links', () => {
-    const mdx = '<BlogIntro>Check out [our tool](https://example.com) today.</BlogIntro>';
-    expect(extractExcerpt(mdx)).toBe('Check out our tool today.');
+  it('falls back to description when excerpt is empty string', () => {
+    expect(extractExcerpt('', 'Fallback description.')).toBe('Fallback description.');
   });
 
-  it('strips remaining markdown characters', () => {
-    const mdx = '<BlogIntro>Use `code` and *italic* and _underline_ and ~strikethrough~.</BlogIntro>';
-    expect(extractExcerpt(mdx)).toBe('Use code and italic and underline and strikethrough.');
-  });
-
-  it('collapses newlines into spaces', () => {
-    const mdx = `<BlogIntro>First line.\n\nSecond line.\nThird line.</BlogIntro>`;
-    expect(extractExcerpt(mdx)).toBe('First line. Second line. Third line.');
-  });
-
-  it('trims whitespace around content', () => {
-    const mdx = `<BlogIntro>
-  Some intro text with leading whitespace.
-</BlogIntro>`;
-    expect(extractExcerpt(mdx)).toBe('Some intro text with leading whitespace.');
-  });
-
-  it('handles BlogIntro with surrounding content', () => {
-    const mdx = `---
-title: Test
----
-
-<BlogArticle>
-<BlogIntro>The actual intro.</BlogIntro>
-
-## Heading
-
-More content.
-</BlogArticle>`;
-    expect(extractExcerpt(mdx)).toBe('The actual intro.');
-  });
-
-  it('handles complex real-world excerpt', () => {
-    const mdx = `<BlogIntro>
-**absentify** hilft [Unternehmen](https://example.com) bei der
-Abwesenheitsplanung. Jetzt *kostenlos* testen!
-</BlogIntro>`;
-    expect(extractExcerpt(mdx)).toBe(
-      'absentify hilft Unternehmen bei der Abwesenheitsplanung. Jetzt kostenlos testen!',
-    );
+  it('trims whitespace', () => {
+    expect(extractExcerpt('  Some excerpt.  ', undefined)).toBe('Some excerpt.');
   });
 });

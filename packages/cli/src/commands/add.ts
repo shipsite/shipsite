@@ -92,6 +92,7 @@ async function addBlog(title: string) {
       `---
 title: "${title}"
 description: ""
+excerpt: ""
 date: "${today}"
 image: "/images/placeholder.webp"
 readingTime: 5
@@ -100,10 +101,6 @@ author: ""
 ---
 
 <BlogArticle>
-
-<BlogIntro>
-Write your introduction here.
-</BlogIntro>
 
 ## Getting Started
 

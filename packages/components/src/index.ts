@@ -51,13 +51,6 @@ export { TabsSection, TabItem } from './marketing/TabsSection';
 // Blog
 export { BlogArticle } from './blog/BlogArticle';
 export { BlogIndex } from './blog/BlogIndex';
-export { BlogCTA } from './blog/BlogCTA';
-export { BlogCTABanner } from './blog/BlogCTABanner';
-export { BlogFAQ } from './blog/BlogFAQ';
-export { BlogIntro } from './blog/BlogIntro';
-export { BlogTable } from './blog/BlogTable';
-export { BlogTip } from './blog/BlogTip';
-export { StartFreeNowCTA } from './blog/StartFreeNowCTA';
 
 // UI primitives
 export {
@@ -70,6 +63,9 @@ export {
   TableCell,
   TableCaption,
 } from './ui/table';
+
+// Prose (Markdown element overrides)
+export { ProseH2, ProseH3, ProseH4, ProseP, ProseA, ProseUl, ProseOl, ProseLi, ProseBlockquote, ProsePre, ProseCode, ProseHr, ProseImg } from './ui/prose';
 
 // Legal
 export { LegalPage, LegalSection } from './legal/LegalPage';
