@@ -11,6 +11,7 @@ import { generateLayout } from './generators/layout.js';
 import { generatePage } from './generators/page.js';
 import { generateSitemapAndRobots } from './generators/sitemap-robots.js';
 import { generateProjectFiles } from './generators/project-files.js';
+import { generateAiConfig } from './generators/ai-config.js';
 import type { GeneratorContext } from './types.js';
 
 export function generateWorkspace({ rootDir, mode }: { rootDir: string; mode: 'dev' | 'build' }): void {
@@ -45,6 +46,7 @@ export function generateWorkspace({ rootDir, mode }: { rootDir: string; mode: 'd
   generatePage(ctx);
   generateSitemapAndRobots(ctx);
   generateProjectFiles(ctx);
+  generateAiConfig(ctx);
 
   console.log('  Generated .shipsite workspace');
 }

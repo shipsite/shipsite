@@ -434,25 +434,25 @@
       "example": "<BlogIndex title=\"Blog\" description=\"Latest articles and insights.\">\n  {/* Blog post cards rendered here */}\n</BlogIndex>"
     },
     {
-      "name": "LegalSection",
-      "category": "legal",
-      "description": "Individual section within a legal page. Renders a titled block with prose-style content formatting for paragraphs and lists.",
+      "name": "ContentSection",
+      "category": "content",
+      "description": "Titled section with prose-style formatting for paragraphs and lists. Used as a child of ContentPage for structured text pages (legal, about, FAQ, etc.).",
       "props": [
-        { "name": "title", "type": "string", "required": true, "description": "Section heading (e.g. '1. Data Collection')." },
+        { "name": "title", "type": "string", "required": true, "description": "Section heading (e.g. '1. Data Collection', 'Our Mission')." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "Section content (paragraphs, lists, etc.)." }
       ],
-      "example": "<LegalSection title=\"1. Data Collection\">\n  <p>We collect data that you provide directly to us.</p>\n</LegalSection>"
+      "example": "<ContentSection title=\"Our Mission\">\n  We build tools that help developers ship faster.\n</ContentSection>"
     },
     {
-      "name": "LegalPage",
-      "category": "legal",
-      "description": "Top-level wrapper for legal pages (privacy policy, terms of service, etc.). Renders a centered, max-width container with a title and optional last-updated date.",
+      "name": "ContentPage",
+      "category": "content",
+      "description": "Top-level wrapper for text-heavy pages (legal, about, contact, etc.). Renders a narrow, centered container with a title and optional last-updated date.",
       "props": [
         { "name": "title", "type": "string", "required": true, "description": "Page title displayed as an h1." },
         { "name": "lastUpdated", "type": "string", "required": false, "description": "Date string displayed below the title (e.g. '2024-01-15')." },
-        { "name": "children", "type": "React.ReactNode", "required": true, "description": "LegalSection children and other content." }
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "ContentSection children and other content." }
       ],
-      "example": "<LegalPage title=\"Privacy Policy\" lastUpdated=\"2024-01-15\">\n  <LegalSection title=\"1. Introduction\">\n    <p>This privacy policy explains how we handle your data.</p>\n  </LegalSection>\n</LegalPage>"
+      "example": "<ContentPage title=\"About Us\">\n  <ContentSection title=\"Our Mission\">\n    We build tools that help developers ship faster.\n  </ContentSection>\n</ContentPage>"
     }
   ]
 }

@@ -67,5 +67,5 @@ export {
 // Prose (Markdown element overrides)
 export { ProseH2, ProseH3, ProseH4, ProseP, ProseA, ProseUl, ProseOl, ProseLi, ProseBlockquote, ProsePre, ProseCode, ProseHr, ProseImg } from './ui/prose';
 
-// Legal
-export { LegalPage, LegalSection } from './legal/LegalPage';
+// Content
+export { ContentPage, ContentSection } from './content/ContentPage';

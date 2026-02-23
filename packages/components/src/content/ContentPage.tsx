@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface LegalSectionProps {
+interface ContentSectionProps {
   title: string;
   children: React.ReactNode;
 }
 
-export function LegalSection({ title, children }: LegalSectionProps) {
+export function ContentSection({ title, children }: ContentSectionProps) {
   return (
     <div className="mb-8">
       <h2 className="text-xl font-bold text-foreground mb-4">{title}</h2>
@@ -16,13 +16,13 @@ export function LegalSection({ title, children }: LegalSectionProps) {
   );
 }
 
-interface LegalPageProps {
+interface ContentPageProps {
   title: string;
   lastUpdated?: string;
   children: React.ReactNode;
 }
 
-export function LegalPage({ title, lastUpdated, children }: LegalPageProps) {
+export function ContentPage({ title, lastUpdated, children }: ContentPageProps) {
   return (
     <section className="py-12 md:py-20">
       <div className="container-main max-w-3xl">

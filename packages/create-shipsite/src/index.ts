@@ -344,11 +344,11 @@ title: "Privacy Policy"
 description: "How we handle your data."
 ---
 
-<LegalPage title="Privacy Policy" lastUpdated="${today}">
-  <LegalSection title="1. Data Collection">We collect only the data necessary to provide our services.</LegalSection>
-  <LegalSection title="2. Data Usage">Your data is used solely to deliver and improve our services.</LegalSection>
-  <LegalSection title="3. Contact">For privacy-related inquiries, contact us at privacy@${projectName}.com.</LegalSection>
-</LegalPage>
+<ContentPage title="Privacy Policy" lastUpdated="${today}">
+  <ContentSection title="1. Data Collection">We collect only the data necessary to provide our services.</ContentSection>
+  <ContentSection title="2. Data Usage">Your data is used solely to deliver and improve our services.</ContentSection>
+  <ContentSection title="3. Contact">For privacy-related inquiries, contact us at privacy@${projectName}.com.</ContentSection>
+</ContentPage>
 `,
   );
 
@@ -360,11 +360,11 @@ title: "Terms of Service"
 description: "Terms and conditions for using our service."
 ---
 
-<LegalPage title="Terms of Service" lastUpdated="${today}">
-  <LegalSection title="1. Acceptance of Terms">By using our service, you agree to these terms.</LegalSection>
-  <LegalSection title="2. Use of Service">You may use our service for lawful purposes only.</LegalSection>
-  <LegalSection title="3. Termination">We reserve the right to terminate accounts that violate these terms.</LegalSection>
-</LegalPage>
+<ContentPage title="Terms of Service" lastUpdated="${today}">
+  <ContentSection title="1. Acceptance of Terms">By using our service, you agree to these terms.</ContentSection>
+  <ContentSection title="2. Use of Service">You may use our service for lawful purposes only.</ContentSection>
+  <ContentSection title="3. Termination">We reserve the right to terminate accounts that violate these terms.</ContentSection>
+</ContentPage>
 `,
   );
 
