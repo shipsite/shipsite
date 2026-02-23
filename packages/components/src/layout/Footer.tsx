@@ -8,6 +8,7 @@ import {
   FooterColumn,
   FooterBottom,
 } from '../ui/footer';
+import { LocaleSwitcher } from '../ui/locale-switcher';
 
 export function Footer() {
   const { siteName, footer } = useShipSite();
@@ -45,9 +46,10 @@ export function Footer() {
                 `\u00A9 ${new Date().getFullYear()} ${siteName}`}
             </p>
 
-            {footer.social && footer.social.length > 0 && (
-              <div className="flex items-center gap-4">
-                {footer.social.map((social) => (
+            <div className="flex items-center gap-4">
+              {footer.social &&
+                footer.social.length > 0 &&
+                footer.social.map((social) => (
                   <a
                     key={social.href}
                     href={social.href}
@@ -58,8 +60,8 @@ export function Footer() {
                     {social.platform}
                   </a>
                 ))}
-              </div>
-            )}
+              <LocaleSwitcher />
+            </div>
           </FooterBottom>
         </div>
       </FooterRoot>

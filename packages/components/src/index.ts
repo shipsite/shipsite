@@ -17,6 +17,7 @@ export { ThemeToggle } from './ui/theme-toggle';
 // Layout
 export { Header } from './layout/Header';
 export { Footer } from './layout/Footer';
+export { LocaleSwitcher } from './ui/locale-switcher';
 
 // Marketing
 export { Hero } from './marketing/Hero';
