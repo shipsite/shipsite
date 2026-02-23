@@ -109,6 +109,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 `,
   );
 
-  // Remove any stale root layout — not needed, [locale]/layout.tsx is the root
-  // Next.js treats the deepest layout with <html> as the root layout
+  // Root layout — prevents Next.js from auto-generating one without lang attribute.
+  // Passes children through so [locale]/layout.tsx owns <html lang={locale}>.
+  writeFileSync(
+    join(ctx.srcDir, 'app', 'layout.tsx'),
+    `export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}
+`,
+  );
 }
