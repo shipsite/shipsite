@@ -15,6 +15,13 @@ import type { GeneratorContext } from './types.js';
 
 export function generateWorkspace({ rootDir, mode }: { rootDir: string; mode: 'dev' | 'build' }): void {
   const config = JSON.parse(readFileSync(join(rootDir, 'shipsite.json'), 'utf-8'));
+
+  // Derive i18n config from pages if not explicitly set
+  if (!config.i18n) {
+    const locales = [...new Set((config.pages || []).flatMap((p: { locales?: string[] }) => p.locales || ['en']))];
+    config.i18n = { defaultLocale: locales[0] || 'en', locales, localePrefix: 'as-needed' };
+  }
+
   const shipSiteDir = join(rootDir, '.shipsite');
   const srcDir = join(shipSiteDir, 'src');
 
