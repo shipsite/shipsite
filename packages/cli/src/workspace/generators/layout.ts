@@ -14,6 +14,15 @@ export function generateLayout(ctx: GeneratorContext): void {
   },`;
   }
 
+  // Root layout — prevents Next.js from auto-generating one without lang
+  writeFileSync(
+    join(ctx.srcDir, 'app', 'layout.tsx'),
+    `export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}
+`,
+  );
+
   writeFileSync(
     join(ctx.srcDir, 'app', '[locale]', 'layout.tsx'),
     `import { notFound } from 'next/navigation';
