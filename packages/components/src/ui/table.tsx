@@ -4,8 +4,8 @@ import { cn } from "../lib/utils";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
-    <div data-slot="table-container" className="prose-container my-8 mx-auto w-full max-w-[76rem] px-[clamp(1rem,3vw,3rem)] overflow-x-auto">
-      <div className="rounded-xl border border-border bg-card shadow-sm">
+    <div data-slot="table-container" className="prose-container my-8 mx-auto w-full max-w-[76rem] px-[clamp(1rem,3vw,3rem)]">
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-x-auto">
         <table
           data-slot="table"
           className={cn("w-full caption-bottom text-sm", className)}
