@@ -1,6 +1,7 @@
 {
   "name": "@shipsite.dev/cli",
   "version": "0.1.5",
+  "repository": { "type": "git", "url": "https://github.com/shipsite/shipsite", "directory": "packages/cli" },
   "type": "module",
   "bin": {
     "shipsite": "./dist/index.js"
