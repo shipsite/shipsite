@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - run: npm ci
@@ -60,25 +60,17 @@ jobs:
           done
 
       - name: Publish @shipsite.dev/core
-        run: npm publish --access public
+        run: npm publish --provenance --access public
         working-directory: packages/core
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @shipsite.dev/components
-        run: npm publish --access public
+        run: npm publish --provenance --access public
         working-directory: packages/components
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @shipsite.dev/cli
-        run: npm publish --access public
+        run: npm publish --provenance --access public
         working-directory: packages/cli
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish create-shipsite
-        run: npm publish --access public
+        run: npm publish --provenance --access public
         working-directory: packages/create-shipsite
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
