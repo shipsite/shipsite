@@ -3,10 +3,10 @@ import createMiddleware from 'next-intl/middleware';
 import { defineRouting } from 'next-intl/routing';
 
 /**
- * Create ShipSite middleware.
+ * Create ShipSite proxy (Next.js "proxy" file convention, formerly "middleware").
  * Must be called with the slug-map and locale config.
  */
-export function createShipSiteMiddleware(options: {
+export function createShipSiteProxy(options: {
   locales: string[];
   defaultLocale: string;
   localePrefix: 'as-needed' | 'always' | 'never';
@@ -35,7 +35,7 @@ export function createShipSiteMiddleware(options: {
     return null;
   }
 
-  return function middleware(request: NextRequest) {
+  return function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Case 1: Direct visit with EN slug under a non-default locale prefix
@@ -81,6 +81,6 @@ export function createShipSiteMiddleware(options: {
   };
 }
 
-export const middlewareConfig = {
+export const proxyConfig = {
   matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 };

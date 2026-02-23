@@ -5,6 +5,6 @@ export * from './mdx';
 export * from './blog';
 export * from './theme';
 export { default as sitemap } from './sitemap';
-export { createShipSiteMiddleware, middlewareConfig } from './middleware';
+export { createShipSiteProxy, proxyConfig } from './proxy';
 // Note: content-collections exports are available via '@shipsite.dev/core/content-collections'
 // They are NOT re-exported here to avoid pulling @content-collections/core into the Next.js bundle

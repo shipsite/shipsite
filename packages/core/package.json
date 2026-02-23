@@ -29,9 +29,9 @@
       "types": "./dist/sitemap.d.ts",
       "default": "./dist/sitemap.js"
     },
-    "./middleware": {
-      "types": "./dist/middleware.d.ts",
-      "default": "./dist/middleware.js"
+    "./proxy": {
+      "types": "./dist/proxy.d.ts",
+      "default": "./dist/proxy.js"
     },
     "./generate-slug-map": "./src/generate-slug-map.mjs",
     "./content-collections": {

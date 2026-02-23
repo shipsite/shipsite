@@ -20,7 +20,7 @@ export function generateProjectFiles(ctx: GeneratorContext): void {
           moduleResolution: 'bundler',
           resolveJsonModule: true,
           isolatedModules: true,
-          jsx: 'preserve',
+          jsx: 'react-jsx',
           incremental: true,
           plugins: [{ name: 'next' }],
           paths: {
@@ -33,6 +33,7 @@ export function generateProjectFiles(ctx: GeneratorContext): void {
           '**/*.ts',
           '**/*.tsx',
           '.next/types/**/*.ts',
+          '.next/dev/types/**/*.ts',
         ],
         exclude: ['node_modules'],
       },

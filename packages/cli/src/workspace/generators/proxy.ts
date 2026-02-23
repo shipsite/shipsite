@@ -2,24 +2,24 @@ import { join } from 'path';
 import { writeFileSync } from 'fs';
 import type { GeneratorContext } from '../types.js';
 
-export function generateMiddleware(ctx: GeneratorContext): void {
+export function generateProxy(ctx: GeneratorContext): void {
   const locales = ctx.config.i18n?.locales || ['en'];
   const defaultLocale = ctx.config.i18n?.defaultLocale || 'en';
   const localePrefix = ctx.config.i18n?.localePrefix || 'as-needed';
 
   writeFileSync(
-    join(ctx.srcDir, 'middleware.ts'),
-    `import { createShipSiteMiddleware } from '@shipsite.dev/core/middleware';
+    join(ctx.srcDir, 'proxy.ts'),
+    `import { createShipSiteProxy } from '@shipsite.dev/core/proxy';
 import slugMap from '../slug-map.json';
 
-const middleware = createShipSiteMiddleware({
+const proxy = createShipSiteProxy({
   locales: ${JSON.stringify(locales)},
   defaultLocale: '${defaultLocale}',
   localePrefix: '${localePrefix}',
   slugMap: slugMap as Record<string, Record<string, string>>,
 });
 
-export default middleware;
+export default proxy;
 
 // Next.js requires config to be a static object literal (not imported)
 export const config = {

@@ -4,6 +4,68 @@ import * as p from '@clack/prompts';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { resolve, join } from 'path';
 import { execSync } from 'child_process';
+import { deflateSync } from 'zlib';
+
+// --- Minimal PNG generator (zero dependencies) ---
+
+const crcTable: number[] = [];
+for (let n = 0; n < 256; n++) {
+  let c = n;
+  for (let k = 0; k < 8; k++) {
+    c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  }
+  crcTable[n] = c;
+}
+
+function crc32(buf: Buffer): number {
+  let crc = 0xffffffff;
+  for (let i = 0; i < buf.length; i++) {
+    crc = crcTable[(crc ^ buf[i]) & 0xff]! ^ (crc >>> 8);
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function pngChunk(type: string, data: Buffer): Buffer {
+  const len = Buffer.alloc(4);
+  len.writeUInt32BE(data.length, 0);
+  const typeB = Buffer.from(type, 'ascii');
+  const crcB = Buffer.alloc(4);
+  crcB.writeUInt32BE(crc32(Buffer.concat([typeB, data])), 0);
+  return Buffer.concat([len, typeB, data, crcB]);
+}
+
+/** Generate a solid-color square PNG (RGB, no alpha). */
+function generatePng(size: number, hex: string): Buffer {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+
+  const rowBytes = 1 + size * 3;
+  const raw = Buffer.alloc(rowBytes * size);
+  for (let y = 0; y < size; y++) {
+    const off = y * rowBytes;
+    raw[off] = 0; // filter: none
+    for (let x = 0; x < size; x++) {
+      const px = off + 1 + x * 3;
+      raw[px] = r;
+      raw[px + 1] = g;
+      raw[px + 2] = b;
+    }
+  }
+
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(size, 0);
+  ihdr.writeUInt32BE(size, 4);
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 2; // color type: RGB
+
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    pngChunk('IHDR', ihdr),
+    pngChunk('IDAT', deflateSync(raw)),
+    pngChunk('IEND', Buffer.alloc(0)),
+  ]);
+}
 
 async function main() {
   console.log();
@@ -326,6 +388,10 @@ description: "Terms and conditions for using our service."
   <text x="16" y="22" text-anchor="middle" fill="white" font-size="18" font-weight="bold" font-family="system-ui">${projectName.charAt(0).toUpperCase()}</text>
 </svg>`,
   );
+
+  // Default favicon and apple-touch-icon (solid primary color — swap with your real icons)
+  writeFileSync(join(projectDir, 'public', 'favicon.png'), generatePng(32, primaryColor));
+  writeFileSync(join(projectDir, 'public', 'apple-touch-icon.png'), generatePng(180, primaryColor));
 
   // Custom components directory
   mkdirSync(join(projectDir, 'components'), { recursive: true });

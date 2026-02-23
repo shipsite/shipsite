@@ -6,7 +6,7 @@ import { generateStyles } from './styles.js';
 import { generateNextConfig } from './generators/next-config.js';
 import { generateContentCollections } from './generators/content-collections.js';
 import { generateI18n } from './generators/i18n.js';
-import { generateMiddleware } from './generators/middleware.js';
+import { generateProxy } from './generators/proxy.js';
 import { generateLayout } from './generators/layout.js';
 import { generatePage } from './generators/page.js';
 import { generateSitemapAndRobots } from './generators/sitemap-robots.js';
@@ -32,7 +32,7 @@ export function generateWorkspace({ rootDir, mode }: { rootDir: string; mode: 'd
   generateNextConfig(ctx);
   generateContentCollections(ctx);
   generateI18n(ctx);
-  generateMiddleware(ctx);
+  generateProxy(ctx);
   generateStyles(ctx);
   generateLayout(ctx);
   generatePage(ctx);

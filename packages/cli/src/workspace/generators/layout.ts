@@ -3,6 +3,17 @@ import { writeFileSync } from 'fs';
 import type { GeneratorContext } from '../types.js';
 
 export function generateLayout(ctx: GeneratorContext): void {
+  // Build icons metadata from config
+  const favicon = ctx.config.favicon;
+  let iconsBlock = '';
+  if (favicon) {
+    iconsBlock = `
+  icons: {
+    icon: '${favicon}',
+    apple: '/apple-touch-icon.png',
+  },`;
+  }
+
   writeFileSync(
     join(ctx.srcDir, 'app', '[locale]', 'layout.tsx'),
     `import { notFound } from 'next/navigation';
@@ -22,7 +33,7 @@ export function generateStaticParams() {
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: { default: config.name, template: '%s | ' + config.name },
+  title: { default: config.name, template: '%s | ' + config.name },${iconsBlock}
 };
 
 export const viewport: Viewport = {
