@@ -67,6 +67,38 @@ function generatePng(size: number, hex: string): Buffer {
   ]);
 }
 
+// ─── Default label translations ───────────────────────────────
+const translations: Record<string, Record<string, string>> = {
+  Features:         { en: 'Features',         de: 'Funktionen',          fr: 'Fonctionnalités',       es: 'Características' },
+  Pricing:          { en: 'Pricing',          de: 'Preise',              fr: 'Tarifs',                es: 'Precios' },
+  Blog:             { en: 'Blog',             de: 'Blog',                fr: 'Blog',                  es: 'Blog' },
+  'Get Started':    { en: 'Get Started',      de: 'Loslegen',            fr: 'Commencer',             es: 'Comenzar' },
+  Product:          { en: 'Product',          de: 'Produkt',             fr: 'Produit',               es: 'Producto' },
+  Legal:            { en: 'Legal',            de: 'Rechtliches',         fr: 'Mentions légales',      es: 'Legal' },
+  'Privacy Policy': { en: 'Privacy Policy',   de: 'Datenschutz',         fr: 'Politique de confidentialité', es: 'Política de privacidad' },
+  'Terms of Service': { en: 'Terms of Service', de: 'Nutzungsbedingungen', fr: 'Conditions d\'utilisation', es: 'Términos de servicio' },
+};
+
+/**
+ * Build a localized label for shipsite.json.
+ * Returns a plain string when only one locale is selected,
+ * or a `{ en: "...", de: "..." }` map for multiple locales.
+ */
+function localizedLabel(
+  key: string,
+  locales: string[],
+): string | Record<string, string> {
+  if (locales.length <= 1) {
+    const locale = locales[0] || 'en';
+    return translations[key]?.[locale] || key;
+  }
+  const map: Record<string, string> = {};
+  for (const locale of locales) {
+    map[locale] = translations[key]?.[locale] || key;
+  }
+  return map;
+}
+
 async function main() {
   console.log();
   p.intro('Create a new ShipSite project');
@@ -144,29 +176,29 @@ async function main() {
     },
     navigation: {
       items: [
-        { label: 'Features', href: '/features' },
-        { label: 'Pricing', href: '/pricing' },
-        { label: 'Blog', href: '/blog' },
+        { label: localizedLabel('Features', locales), href: '/features' },
+        { label: localizedLabel('Pricing', locales), href: '/pricing' },
+        { label: localizedLabel('Blog', locales), href: '/blog' },
       ],
       cta: {
-        label: 'Get Started',
+        label: localizedLabel('Get Started', locales),
         href: `https://app.${projectName}.com/signup`,
       },
     },
     footer: {
       columns: [
         {
-          title: 'Product',
+          title: localizedLabel('Product', locales),
           links: [
-            { label: 'Features', href: '/features' },
-            { label: 'Pricing', href: '/pricing' },
+            { label: localizedLabel('Features', locales), href: '/features' },
+            { label: localizedLabel('Pricing', locales), href: '/pricing' },
           ],
         },
         {
-          title: 'Legal',
+          title: localizedLabel('Legal', locales),
           links: [
-            { label: 'Privacy Policy', href: '/privacy' },
-            { label: 'Terms of Service', href: '/terms' },
+            { label: localizedLabel('Privacy Policy', locales), href: '/privacy' },
+            { label: localizedLabel('Terms of Service', locales), href: '/terms' },
           ],
         },
       ],
