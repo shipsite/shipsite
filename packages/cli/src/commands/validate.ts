@@ -245,6 +245,19 @@ export async function validate() {
         fail(`Raw <img> tag found — use MDX components: content/${rel}`);
       }
 
+      // Curly quotes in JSX props (break MDX parsing)
+      const curlyQuoteRe = /[\u201C\u201D\u2018\u2019]/;
+      const jsxAttrRe = /\w+=\s*["'\u201C\u201D\u2018\u2019]/;
+      const lines = source.split('\n');
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (jsxAttrRe.test(line) && curlyQuoteRe.test(line)) {
+          fail(
+            `Curly quote in JSX prop — use straight quotes: content/${rel} (line ${i + 1})`,
+          );
+        }
+      }
+
       // --- Component checks per page type ---
 
       if (page.type === 'landing') {
