@@ -1,5 +1,5 @@
 import { allSitePages } from 'content-collections';
-import { getConfig, getSiteUrl, getDefaultLocale, type PageConfig } from './config';
+import { getConfig, getSiteUrl, getDefaultLocale, getLocales, type PageConfig } from './config';
 
 /**
  * Resolve the full URL slug for a content-collections doc.
@@ -52,13 +52,18 @@ export function generateAllStaticParams(): {
   const pages = getAllPages();
   const defaultLocale = getDefaultLocale();
 
-  return pages.flatMap((page) => {
-    const pageLocales = page.locales || [defaultLocale];
+  const siteLocales = getLocales();
 
-    return pageLocales.map((locale) => {
-      const doc = allSitePages.find(
-        (d) => d.contentFolder === page.content && d.locale === locale,
-      );
+  return pages.flatMap((page) => {
+    return siteLocales.map((locale) => {
+      // Use locale-specific doc if available, otherwise fall back to default
+      const doc =
+        allSitePages.find(
+          (d) => d.contentFolder === page.content && d.locale === locale,
+        ) ||
+        allSitePages.find(
+          (d) => d.contentFolder === page.content && d.locale === defaultLocale,
+        );
       const resolvedSlug = doc ? resolveDocSlug(doc, page.slug) : page.slug;
 
       return {
@@ -97,7 +102,10 @@ export function resolvePageHref(enSlug: string, locale: string): string {
 
   const pageLocales = page.locales || [defaultLocale];
   if (!pageLocales.includes(locale)) {
-    return enSlug ? `/${enSlug}` : '/';
+    if (locale === defaultLocale) {
+      return enSlug ? `/${enSlug}` : '/';
+    }
+    return resolvePageHref(enSlug, defaultLocale);
   }
 
   const doc = allSitePages.find(

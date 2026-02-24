@@ -79,7 +79,7 @@ export async function getPageContent(
         const authorData = a.authorKey ? resolveAuthor(a.authorKey, locale) : undefined;
         return {
           ...a,
-          href: resolvePageHref(`blog/${a.slug}`, locale),
+          href: resolvePageHref(`blog/${a.slug}`, a.locale),
           author: authorData
             ? { name: authorData.name, role: authorData.role, image: authorData.image }
             : undefined,
