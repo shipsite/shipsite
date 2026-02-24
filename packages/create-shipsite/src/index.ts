@@ -3,7 +3,7 @@
 import * as p from '@clack/prompts';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { resolve, join } from 'path';
-import { execSync } from 'child_process';
+import { execSync, spawn } from 'child_process';
 import { deflateSync } from 'zlib';
 import { createRequire } from 'module';
 
@@ -1034,13 +1034,25 @@ export default config;
     // Git not available
   }
 
-  // Install dependencies
+  // Install dependencies (async so the spinner stays animated)
   const installSpinner = p.spinner();
   installSpinner.start('Installing dependencies...');
+  const installStart = Date.now();
+  const installTimer = setInterval(() => {
+    const elapsed = Math.round((Date.now() - installStart) / 1000);
+    installSpinner.message(`Installing dependencies... (${elapsed}s)`);
+  }, 1000);
   try {
-    execSync('npm install', { cwd: projectDir, stdio: 'ignore', timeout: 120_000 });
-    installSpinner.stop('Dependencies installed!');
+    await new Promise<void>((resolve, reject) => {
+      const child = spawn('npm', ['install'], { cwd: projectDir, stdio: 'ignore' });
+      child.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`exit ${code}`))));
+      child.on('error', reject);
+    });
+    clearInterval(installTimer);
+    const totalSeconds = Math.round((Date.now() - installStart) / 1000);
+    installSpinner.stop(`Dependencies installed (${totalSeconds}s)`);
   } catch {
+    clearInterval(installTimer);
     installSpinner.stop('Failed to install dependencies');
     p.log.warning('Run `npm install` manually to install dependencies.');
   }
