@@ -5,6 +5,7 @@ import { Check } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Section } from '../ui/section';
 import { Button } from '../ui/button';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
 
 interface PricingPlanProps {
   name: string;
@@ -50,12 +51,23 @@ export function PricingSectionClient({ id, title, description, monthlyLabel = 'M
         )}
 
         {plans.some((p) => p.yearlyPrice) && (
-          <div className="flex items-center justify-center gap-3 mb-12">
-            <span className={cn('text-sm font-medium', !isYearly ? 'text-foreground' : 'text-muted-foreground')}>{monthlyLabel}</span>
-            <button onClick={() => setIsYearly(!isYearly)} className={cn('relative w-12 h-6 rounded-full transition-colors', isYearly ? 'bg-primary' : 'bg-muted')}>
-              <span className={cn('absolute top-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform', isYearly ? 'translate-x-6' : 'translate-x-0.5')} />
-            </button>
-            <span className={cn('text-sm font-medium', isYearly ? 'text-foreground' : 'text-muted-foreground')}>{yearlyLabel}</span>
+          <div className="flex justify-center mb-12">
+            <TabsPrimitive.Root defaultValue="monthly" onValueChange={(v) => setIsYearly(v === 'yearly')}>
+              <TabsPrimitive.List className="inline-flex rounded-full glass-1 p-1 gap-1">
+                <TabsPrimitive.Trigger
+                  value="monthly"
+                  className="rounded-full px-5 py-2 text-sm font-medium text-muted-foreground transition-all hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  {monthlyLabel}
+                </TabsPrimitive.Trigger>
+                <TabsPrimitive.Trigger
+                  value="yearly"
+                  className="rounded-full px-5 py-2 text-sm font-medium text-muted-foreground transition-all hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  {yearlyLabel}
+                </TabsPrimitive.Trigger>
+              </TabsPrimitive.List>
+            </TabsPrimitive.Root>
           </div>
         )}
 
