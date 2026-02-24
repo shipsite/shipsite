@@ -1,11 +1,12 @@
 import React from 'react';
 import { Section } from '../ui/section';
 import { cn } from '../lib/utils';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface BentoItemProps {
   title: string;
   description?: string;
-  image?: string;
+  image?: ImageSource;
   span?: 1 | 2;
   children?: React.ReactNode;
 }
@@ -20,7 +21,7 @@ export function BentoItem({ title, description, image, span = 1, children }: Ben
       {description && <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{description}</p>}
       {image && (
         <div className="mt-auto -mx-6 -mb-6 md:-mx-8 md:-mb-8">
-          <img src={image} alt={title} className="w-full" />
+          <ThemeImage src={image} alt={title} className="w-full" />
         </div>
       )}
       {children}

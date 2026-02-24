@@ -1,12 +1,13 @@
 import React from 'react';
 import { Section } from '../ui/section';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface TestimonialCardProps {
   quote: string;
   author: string;
   role?: string;
   company?: string;
-  image?: string;
+  image?: ImageSource;
   rating?: number;
 }
 
@@ -22,7 +23,7 @@ export function TestimonialCard({ quote, author, role, company, image, rating }:
       )}
       <blockquote className="text-sm text-foreground/80 leading-relaxed">&ldquo;{quote}&rdquo;</blockquote>
       <div className="flex items-center gap-3 mt-auto pt-2">
-        {image && <img src={image} alt={author} className="w-8 h-8 rounded-full object-cover" />}
+        {image && <ThemeImage src={image} alt={author} className="w-8 h-8 rounded-full object-cover" />}
         <div>
           <p className="text-sm font-semibold text-foreground">{author}</p>
           {(role || company) && (

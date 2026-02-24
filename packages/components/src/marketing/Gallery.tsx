@@ -1,9 +1,10 @@
 import React from 'react';
 import { Section } from '../ui/section';
 import { cn } from '../lib/utils';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface GalleryItemProps {
-  src: string;
+  src: ImageSource;
   alt: string;
   caption?: string;
 }
@@ -12,7 +13,7 @@ export function GalleryItem({ src, alt, caption }: GalleryItemProps) {
   return (
     <figure className="group overflow-hidden rounded-xl glass-1">
       <div className="overflow-hidden">
-        <img
+        <ThemeImage
           src={src}
           alt={alt}
           className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"

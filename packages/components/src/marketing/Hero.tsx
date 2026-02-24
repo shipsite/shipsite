@@ -5,6 +5,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Mockup } from '../ui/mockup';
 import Glow from '../ui/glow';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface HeroProps {
   title: string;
@@ -12,7 +13,7 @@ interface HeroProps {
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   badge?: string;
-  image?: string;
+  image?: ImageSource;
   children?: React.ReactNode;
 }
 
@@ -50,7 +51,7 @@ export function Hero({ title, description, primaryCta, secondaryCta, badge, imag
         {image && (
           <div className="mt-16 animate-appear-zoom [animation-delay:400ms]">
             <Mockup type="responsive" className="shadow-mockup w-full">
-              <img src={image} alt="" className="w-full" />
+              <ThemeImage src={image} alt="" className="w-full" />
             </Mockup>
           </div>
         )}

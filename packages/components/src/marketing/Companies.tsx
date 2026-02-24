@@ -2,9 +2,10 @@ import React from 'react';
 import { Section } from '../ui/section';
 import { Badge } from '../ui/badge';
 import { cn } from '../lib/utils';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface LogoItem {
-  src: string;
+  src: ImageSource;
   alt: string;
   width?: number;
   name?: string;
@@ -27,12 +28,12 @@ export function Companies({ title, logos, variant = 'marquee' }: CompaniesProps)
           <div className="flex flex-wrap items-center justify-center gap-8">
             {logos.map((logo, i) => (
               <div key={i} className="flex items-center gap-2 text-sm font-medium">
-                <img
+                <ThemeImage
                   src={logo.src}
                   alt={logo.alt}
                   width={logo.width || 32}
                   height={logo.width || 32}
-                  className="h-6 w-6 object-contain opacity-70 dark:invert"
+                  className={cn("h-6 w-6 object-contain opacity-70", typeof logo.src === 'string' && "dark:invert")}
                 />
                 {logo.name && <span className={cn(!logo.name && 'sr-only')}>{logo.name}</span>}
                 {logo.version && <span className="text-muted-foreground">{logo.version}</span>}
@@ -55,12 +56,12 @@ export function Companies({ title, logos, variant = 'marquee' }: CompaniesProps)
           <div className="flex gap-12 items-center" style={{ '--marquee-gap': '3rem' } as React.CSSProperties}>
             <div className="flex gap-12 items-center animate-marquee">
               {logos.map((logo, i) => (
-                <img key={i} src={logo.src} alt={logo.alt} width={logo.width || 120} className="h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all" />
+                <ThemeImage key={i} src={logo.src} alt={logo.alt} width={logo.width || 120} className="h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all" />
               ))}
             </div>
             <div className="flex gap-12 items-center animate-marquee" aria-hidden>
               {logos.map((logo, i) => (
-                <img key={i} src={logo.src} alt="" width={logo.width || 120} className="h-8 w-auto object-contain grayscale opacity-60" />
+                <ThemeImage key={i} src={logo.src} alt="" width={logo.width || 120} className="h-8 w-auto object-contain grayscale opacity-60" />
               ))}
             </div>
           </div>

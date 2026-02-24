@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface TocItem {
   id: string;
@@ -12,7 +13,7 @@ interface TocItem {
 interface BlogArticleAuthor {
   name: string;
   role: string;
-  image: string;
+  image: ImageSource;
 }
 
 interface BlogArticleClientProps {
@@ -175,7 +176,7 @@ export function BlogArticleClient({
                   {tocItems.length > 0 && <hr className="border-border" />}
                   <div className="flex flex-col gap-3">
                     {author.image && (
-                      <img
+                      <ThemeImage
                         src={author.image}
                         alt={author.name}
                         className="w-12 h-12 rounded-full object-cover"

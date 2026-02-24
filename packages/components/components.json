@@ -12,7 +12,7 @@
         { "name": "primaryCta", "type": "{ label: string; href: string }", "required": false, "description": "Primary call-to-action button with label and link." },
         { "name": "secondaryCta", "type": "{ label: string; href: string }", "required": false, "description": "Secondary call-to-action button rendered with the glow variant." },
         { "name": "badge", "type": "string", "required": false, "description": "Small badge text displayed above the title." },
-        { "name": "image", "type": "string", "required": false, "description": "URL of the hero image displayed inside a responsive device mockup below the CTAs." },
+        { "name": "image", "type": "ImageSource", "required": false, "description": "Hero image displayed inside a responsive device mockup. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "children", "type": "React.ReactNode", "required": false, "description": "Optional additional content rendered below the CTA buttons." }
       ],
       "example": "<Hero\n  title=\"Build your SaaS faster\"\n  description=\"Ship production-ready landing pages in minutes.\"\n  badge=\"New Release\"\n  primaryCta={{ label: \"Get Started\", href: \"/signup\" }}\n  secondaryCta={{ label: \"Learn More\", href: \"/docs\" }}\n  image=\"/images/hero-screenshot.png\"\n/>"
@@ -58,8 +58,7 @@
       "props": [
         { "name": "title", "type": "string", "required": true, "description": "Row heading text." },
         { "name": "description", "type": "string", "required": false, "description": "Row description paragraph." },
-        { "name": "image", "type": "string", "required": true, "description": "URL of the feature image (or light-mode image when imageDark is also provided)." },
-        { "name": "imageDark", "type": "string", "required": false, "description": "URL of the dark-mode variant of the image." },
+        { "name": "image", "type": "ImageSource", "required": true, "description": "Feature image. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "imageAlt", "type": "string", "required": false, "description": "Alt text for the image. Defaults to the title." },
         { "name": "children", "type": "React.ReactNode", "required": false, "description": "AlternatingFeatureItem children rendered below the description." }
       ],
@@ -130,7 +129,7 @@
       "description": "Logo showcase section with two variants: a continuous marquee scroll animation or a static inline flex layout. Supports logo names, versions, and badges in inline mode.",
       "props": [
         { "name": "title", "type": "string", "required": false, "description": "Title text above the logos." },
-        { "name": "logos", "type": "Array<{ src: string; alt: string; width?: number; name?: string; version?: string; badge?: string }>", "required": true, "description": "Array of logo items. Each has an image src, alt text, and optional width, name, version, and badge." },
+        { "name": "logos", "type": "Array<{ src: ImageSource; alt: string; width?: number; name?: string; version?: string; badge?: string }>", "required": true, "description": "Array of logo items. Each has an image src (string or { light, dark }), alt text, and optional width, name, version, and badge." },
         { "name": "variant", "type": "'marquee' | 'inline'", "required": false, "description": "Display variant. 'marquee' (default) shows a scrolling animation; 'inline' shows a static flexbox layout with names and badges." }
       ],
       "example": "<Companies\n  title=\"Trusted by leading companies\"\n  logos={[\n    { src: \"/logos/acme.svg\", alt: \"Acme\" },\n    { src: \"/logos/globex.svg\", alt: \"Globex\" }\n  ]}\n/>"
@@ -143,7 +142,7 @@
         { "name": "quote", "type": "string", "required": true, "description": "The testimonial quote text." },
         { "name": "author", "type": "string", "required": true, "description": "Name of the person giving the testimonial." },
         { "name": "role", "type": "string", "required": false, "description": "Job title or role of the author." },
-        { "name": "image", "type": "string", "required": false, "description": "URL of the author's avatar image." },
+        { "name": "image", "type": "ImageSource", "required": false, "description": "Author's avatar image. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "company", "type": "string", "required": false, "description": "Company name of the author." }
       ],
       "example": "<Testimonial\n  quote=\"This product changed how we work.\"\n  author=\"Jane Doe\"\n  role=\"CEO\"\n  company=\"Acme Inc\"\n  image=\"/images/jane.jpg\"\n/>"
@@ -157,7 +156,7 @@
         { "name": "author", "type": "string", "required": true, "description": "Name of the person giving the testimonial." },
         { "name": "role", "type": "string", "required": false, "description": "Job title or role of the author." },
         { "name": "company", "type": "string", "required": false, "description": "Company name of the author." },
-        { "name": "image", "type": "string", "required": false, "description": "URL of the author's avatar image." },
+        { "name": "image", "type": "ImageSource", "required": false, "description": "Author's avatar image. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "rating", "type": "number", "required": false, "description": "Star rating (1-5) displayed as filled star icons." }
       ],
       "example": "<TestimonialCard\n  quote=\"Incredible experience!\"\n  author=\"John Smith\"\n  role=\"CTO\"\n  company=\"Globex\"\n  rating={5}\n/>"
@@ -302,7 +301,7 @@
       "props": [
         { "name": "title", "type": "string", "required": true, "description": "Card heading text." },
         { "name": "description", "type": "string", "required": false, "description": "Card description text." },
-        { "name": "image", "type": "string", "required": false, "description": "URL of a full-bleed image rendered at the bottom of the card." },
+        { "name": "image", "type": "ImageSource", "required": false, "description": "Full-bleed image at the bottom of the card. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "span", "type": "1 | 2", "required": false, "description": "Number of grid columns the item spans. Defaults to 1." },
         { "name": "children", "type": "React.ReactNode", "required": false, "description": "Custom content rendered inside the card." }
       ],
@@ -324,7 +323,7 @@
       "category": "marketing",
       "description": "Individual gallery image card with a hover zoom effect and an optional caption. Used as a child of Gallery.",
       "props": [
-        { "name": "src", "type": "string", "required": true, "description": "URL of the image." },
+        { "name": "src", "type": "ImageSource", "required": true, "description": "Image source. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "alt", "type": "string", "required": true, "description": "Alt text for the image." },
         { "name": "caption", "type": "string", "required": false, "description": "Caption text displayed below the image." }
       ],
@@ -360,7 +359,7 @@
       "props": [
         { "name": "title", "type": "string", "required": false, "description": "Card heading text." },
         { "name": "description", "type": "string", "required": false, "description": "Card description text." },
-        { "name": "image", "type": "string", "required": false, "description": "URL of the card image displayed above the content." },
+        { "name": "image", "type": "ImageSource", "required": false, "description": "Card image displayed above the content. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "children", "type": "React.ReactNode", "required": false, "description": "Custom content rendered inside the card." }
       ],
       "example": "<CarouselItem title=\"Feature 1\" description=\"Description of feature 1.\" image=\"/images/f1.png\" />"
@@ -384,7 +383,7 @@
         { "name": "label", "type": "string", "required": true, "description": "Tab button label text." },
         { "name": "title", "type": "string", "required": false, "description": "Content heading displayed when the tab is active." },
         { "name": "description", "type": "string", "required": false, "description": "Content description displayed when the tab is active." },
-        { "name": "image", "type": "string", "required": false, "description": "Image URL displayed alongside the content when the tab is active." },
+        { "name": "image", "type": "ImageSource", "required": false, "description": "Image displayed alongside the content when the tab is active. Pass a string URL or { light, dark } for theme-aware images." },
         { "name": "children", "type": "React.ReactNode", "required": false, "description": "Custom content rendered when the tab is active." }
       ],
       "example": "<TabItem label=\"Overview\" title=\"Product Overview\" description=\"Everything you need to know.\" image=\"/images/overview.png\" />"

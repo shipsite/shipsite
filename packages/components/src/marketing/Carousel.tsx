@@ -4,18 +4,19 @@ import React, { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Section } from '../ui/section';
 import { cn } from '../lib/utils';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface CarouselItemProps {
   title?: string;
   description?: string;
-  image?: string;
+  image?: ImageSource;
   children?: React.ReactNode;
 }
 
 export function CarouselItem({ title, description, image, children }: CarouselItemProps) {
   return (
     <div className="glass-1 rounded-2xl overflow-hidden flex-shrink-0 w-[85vw] max-w-[400px] snap-center">
-      {image && <img src={image} alt={title || ''} className="w-full aspect-video object-cover" />}
+      {image && <ThemeImage src={image} alt={title || ''} className="w-full aspect-video object-cover" />}
       <div className="p-6">
         {title && <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>}
         {description && <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>}

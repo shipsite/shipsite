@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import { Section } from '../ui/section';
 import { cn } from '../lib/utils';
+import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface TabItemProps {
   label: string;
   title?: string;
   description?: string;
-  image?: string;
+  image?: ImageSource;
   children?: React.ReactNode;
 }
 
@@ -73,7 +74,7 @@ export function TabsSection({ title, description, children }: TabsSectionProps) 
                 )}
               </div>
               {activeTab.image && (
-                <img src={activeTab.image} alt={activeTab.title || activeTab.label} className="w-full rounded-xl" />
+                <ThemeImage src={activeTab.image} alt={activeTab.title || activeTab.label} className="w-full rounded-xl" />
               )}
             </div>
           </div>

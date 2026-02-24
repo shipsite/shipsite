@@ -53,6 +53,10 @@ export { TabsSection, TabItem } from './marketing/TabsSection';
 export { BlogArticle } from './blog/BlogArticle';
 export { BlogIndex } from './blog/BlogIndex';
 
+// Image utilities
+export { ThemeImage } from './ui/theme-image';
+export type { ImageSource } from './ui/theme-image';
+
 // UI primitives
 export {
   Table,
