@@ -327,6 +327,7 @@ async function main() {
       bento1Title: 'Visual Workflow Builder', bento1Desc: 'Design complex workflows with an intuitive drag-and-drop interface. No coding required for common automation tasks.',
       bento2Title: 'API-First Architecture', bento2Desc: 'Every feature is accessible via our REST and GraphQL APIs. Build custom integrations with comprehensive documentation.',
       bento3Title: 'Global Edge Network', bento3Desc: 'Deploy to 150+ edge locations worldwide. Your users get sub-100ms response times no matter where they are.',
+      bento4Title: 'Team Dashboard', bento4Desc: 'A unified command center for your entire organization. Monitor projects, track progress, and manage resources from a single view.',
       stepsTitle: 'How It Works', stepsDesc: 'Get up and running in three simple steps.',
       step1Title: 'Create Your Account', step1Desc: 'Sign up in seconds with your email or SSO provider. No credit card required to get started.',
       step2Title: 'Configure Your Workspace', step2Desc: 'Import your existing data, invite your team, and customize your workspace to match your workflow.',
@@ -369,6 +370,7 @@ async function main() {
       bento1Title: 'Visueller Workflow-Builder', bento1Desc: 'Entwerfen Sie komplexe Workflows mit einer intuitiven Drag-and-Drop-Oberflaeche. Kein Code noetig.',
       bento2Title: 'API-First-Architektur', bento2Desc: 'Jede Funktion ist ueber unsere REST- und GraphQL-APIs verfuegbar. Umfassende Dokumentation inklusive.',
       bento3Title: 'Globales Edge-Netzwerk', bento3Desc: 'Deployment auf 150+ Edge-Standorten weltweit. Antwortzeiten unter 100ms, egal wo Ihre Nutzer sind.',
+      bento4Title: 'Team-Dashboard', bento4Desc: 'Eine zentrale Kommandozentrale fuer Ihre gesamte Organisation. Projekte ueberwachen, Fortschritte verfolgen und Ressourcen verwalten.',
       stepsTitle: 'So funktioniert es', stepsDesc: 'In drei einfachen Schritten startklar.',
       step1Title: 'Konto erstellen', step1Desc: 'Registrieren Sie sich in Sekunden mit E-Mail oder SSO. Keine Kreditkarte erforderlich.',
       step2Title: 'Workspace konfigurieren', step2Desc: 'Importieren Sie bestehende Daten, laden Sie Ihr Team ein und passen Sie den Workspace an.',
@@ -411,6 +413,7 @@ async function main() {
       bento1Title: 'Editeur visuel de workflows', bento1Desc: 'Concevez des workflows complexes avec une interface intuitive par glisser-deposer. Aucun code requis.',
       bento2Title: 'Architecture API-First', bento2Desc: 'Chaque fonctionnalite est accessible via nos API REST et GraphQL. Documentation complete incluse.',
       bento3Title: 'Reseau Edge mondial', bento3Desc: 'Deploiement sur plus de 150 emplacements Edge dans le monde. Temps de reponse inferieur a 100 ms.',
+      bento4Title: 'Tableau de bord equipe', bento4Desc: 'Un centre de commande unifie pour toute votre organisation. Suivez les projets, la progression et gerez les ressources.',
       stepsTitle: 'Comment ca marche', stepsDesc: 'Soyez operationnel en trois etapes simples.',
       step1Title: 'Creez votre compte', step1Desc: 'Inscrivez-vous en quelques secondes avec votre e-mail ou SSO. Aucune carte bancaire requise.',
       step2Title: 'Configurez votre espace', step2Desc: 'Importez vos donnees, invitez votre equipe et personnalisez votre espace de travail.',
@@ -453,6 +456,7 @@ async function main() {
       bento1Title: 'Editor visual de flujos', bento1Desc: 'Disena flujos de trabajo complejos con una interfaz intuitiva de arrastrar y soltar. Sin necesidad de codigo.',
       bento2Title: 'Arquitectura API-First', bento2Desc: 'Cada funcion es accesible a traves de nuestras API REST y GraphQL. Documentacion completa incluida.',
       bento3Title: 'Red Edge global', bento3Desc: 'Despliega en mas de 150 ubicaciones Edge en todo el mundo. Tiempos de respuesta inferiores a 100 ms.',
+      bento4Title: 'Panel de equipo', bento4Desc: 'Un centro de mando unificado para toda tu organizacion. Supervisa proyectos, sigue el progreso y gestiona recursos.',
       stepsTitle: 'Como funciona', stepsDesc: 'Empieza a trabajar en tres sencillos pasos.',
       step1Title: 'Crea tu cuenta', step1Desc: 'Registrate en segundos con tu correo o SSO. No se requiere tarjeta de credito.',
       step2Title: 'Configura tu espacio', step2Desc: 'Importa tus datos, invita a tu equipo y personaliza tu espacio de trabajo.',
@@ -505,9 +509,10 @@ description: "${t.metaDesc}"
 </Features>
 
 <BentoGrid title="${t.bentoTitle}" description="${t.bentoDesc}">
-  <BentoItem title="${t.bento1Title}" description="${t.bento1Desc}" span={2} />
-  <BentoItem title="${t.bento2Title}" description="${t.bento2Desc}" />
-  <BentoItem title="${t.bento3Title}" description="${t.bento3Desc}" />
+  <BentoItem title="${t.bento1Title}" description="${t.bento1Desc}" visual="aurora" span={2} />
+  <BentoItem title="${t.bento2Title}" description="${t.bento2Desc}" visual="orbs" />
+  <BentoItem title="${t.bento3Title}" description="${t.bento3Desc}" visual="rings" />
+  <BentoItem title="${t.bento4Title}" description="${t.bento4Desc}" visual="dots" span={2} />
 </BentoGrid>
 
 <Steps id="how-it-works" title="${t.stepsTitle}" description="${t.stepsDesc}">
@@ -580,10 +585,10 @@ description: "Explore the full suite of tools and capabilities that make ${proje
 </Features>
 
 <BentoGrid title="Deep Dive" description="See how each capability helps your team move faster.">
-  <BentoItem title="Workflow Automation" description="Set up triggers, conditions, and actions to automate any process. From onboarding sequences to deployment pipelines, eliminate manual work." span={2} />
-  <BentoItem title="Version Control" description="Built-in versioning for every change. Roll back instantly, compare diffs, and audit who changed what and when." />
-  <BentoItem title="Custom Integrations" description="Connect ${projectName} to your stack with pre-built connectors for Slack, GitHub, Jira, Salesforce, and 100+ more." />
-  <BentoItem title="Team Management" description="Organize members into teams and projects with fine-grained permissions. Manage access at scale with SCIM and directory sync." span={2} />
+  <BentoItem title="Workflow Automation" description="Set up triggers, conditions, and actions to automate any process. From onboarding sequences to deployment pipelines, eliminate manual work." visual="aurora" span={2} />
+  <BentoItem title="Version Control" description="Built-in versioning for every change. Roll back instantly, compare diffs, and audit who changed what and when." visual="orbs" />
+  <BentoItem title="Custom Integrations" description="Connect ${projectName} to your stack with pre-built connectors for Slack, GitHub, Jira, Salesforce, and 100+ more." visual="rings" />
+  <BentoItem title="Team Management" description="Organize members into teams and projects with fine-grained permissions. Manage access at scale with SCIM and directory sync." visual="dots" span={2} />
 </BentoGrid>
 
 <Testimonial
