@@ -1,6 +1,6 @@
 {
   "name": "create-shipsite",
-  "version": "0.1.0",
+  "version": "0.2.25",
   "repository": { "type": "git", "url": "https://github.com/shipsite/shipsite", "directory": "packages/create-shipsite" },
   "type": "module",
   "bin": {

@@ -8,7 +8,16 @@ import { deflateSync } from 'zlib';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
-const { version } = require('../package.json');
+const { version: ownVersion } = require('../package.json');
+
+/** Fetch the latest published version of @shipsite.dev/cli from npm. */
+function getLatestVersion(): string {
+  try {
+    return execSync('npm view @shipsite.dev/cli version', { encoding: 'utf-8', timeout: 10_000 }).trim();
+  } catch {
+    return ownVersion;
+  }
+}
 
 // --- Minimal PNG generator (zero dependencies) ---
 
@@ -105,7 +114,7 @@ function localizedLabel(
 
 async function main() {
   console.log();
-  p.intro(`Create a new ShipSite project (v${version})`);
+  p.intro(`Create a new ShipSite project (v${ownVersion})`);
 
   const projectName = (await p.text({
     message: 'Project name',
@@ -155,6 +164,7 @@ async function main() {
   const s = p.spinner();
   s.start('Creating project...');
 
+  const version = getLatestVersion();
   const projectDir = resolve(projectName);
   mkdirSync(projectDir, { recursive: true });
 
