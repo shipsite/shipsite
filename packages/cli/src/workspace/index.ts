@@ -12,6 +12,7 @@ import { generatePage } from './generators/page.js';
 import { generateSitemapAndRobots } from './generators/sitemap-robots.js';
 import { generateProjectFiles } from './generators/project-files.js';
 import { generateAiConfig } from './generators/ai-config.js';
+import { syncDependencies } from './sync-dependencies.js';
 import type { GeneratorContext } from './types.js';
 
 export function generateWorkspace({ rootDir, mode }: { rootDir: string; mode: 'dev' | 'build' }): void {
@@ -59,6 +60,10 @@ export async function prepareWorkspace(rootDir: string, mode: 'dev' | 'build'): 
   }
 
   generateWorkspace({ rootDir, mode });
+
+  // Sync analytics dependencies into the user's package.json
+  const config = JSON.parse(readFileSync(configPath, 'utf-8'));
+  syncDependencies(rootDir, config);
 
   // Generate slug map
   const { generateSlugMap } = await import('@shipsite.dev/core/generate-slug-map');
