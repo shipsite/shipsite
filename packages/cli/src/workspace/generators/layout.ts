@@ -13,6 +13,35 @@ export function generateLayout(ctx: GeneratorContext): void {
   },`;
   }
 
+  const analytics = ctx.config.analytics;
+  const needsVercel = analytics?.vercel === true;
+  const needsCloudflareScript = !!analytics?.cloudflare;
+  const needsGtm = !!analytics?.googleTagManager;
+
+  let analyticsImports = '';
+  if (needsVercel) {
+    analyticsImports += `import { Analytics } from '@vercel/analytics/next';\n`;
+  }
+  if (needsGtm) {
+    analyticsImports += `import { GoogleTagManager } from '@next/third-parties/google';\n`;
+  }
+  if (needsCloudflareScript) {
+    analyticsImports += `import Script from 'next/script';\n`;
+  }
+
+  let analyticsHeadComponents = '';
+  if (needsGtm) {
+    analyticsHeadComponents += `\n      <GoogleTagManager gtmId="${analytics!.googleTagManager}" />`;
+  }
+
+  let analyticsBodyComponents = '';
+  if (needsVercel) {
+    analyticsBodyComponents += `\n          <Analytics />`;
+  }
+  if (needsCloudflareScript) {
+    analyticsBodyComponents += `\n          <Script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${analytics!.cloudflare}"}' strategy="afterInteractive" />`;
+  }
+
   const defaultLocale = ctx.config.i18n?.defaultLocale || 'en';
 
   // Root layout — static shell with default lang for /_not-found and other
@@ -42,6 +71,7 @@ import { Header, Footer } from '@shipsite.dev/components';
 import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl } from '@shipsite.dev/core';
 import '../../styles/globals.css';
 import type { Metadata, Viewport } from 'next';
+${analyticsImports}
 
 const config = getConfig();
 
@@ -91,7 +121,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   };
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>${analyticsHeadComponents}
       <body>
         <ThemeProvider>
         <ShipSiteProvider value={{
@@ -117,7 +147,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           <main id="main-content">{children}</main>
           <Footer />
         </ShipSiteProvider>
-        </ThemeProvider>
+        </ThemeProvider>${analyticsBodyComponents}
       </body>
     </html>
   );

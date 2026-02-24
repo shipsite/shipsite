@@ -197,6 +197,8 @@
     "analytics": {
       "type": "object",
       "properties": {
+        "vercel": { "type": "boolean", "description": "Enable Vercel Analytics." },
+        "cloudflare": { "type": "string", "description": "Cloudflare Web Analytics beacon token." },
         "googleTagManager": { "type": "string", "description": "GTM container ID (e.g. \"GTM-XXXXX\")." }
       },
       "additionalProperties": false

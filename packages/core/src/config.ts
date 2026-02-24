@@ -98,6 +98,8 @@ const ShipSiteConfigSchema = z.object({
   blog: BlogConfigSchema,
   analytics: z
     .object({
+      vercel: z.boolean().optional(),
+      cloudflare: z.string().optional(),
       googleTagManager: z.string().optional(),
     })
     .optional(),

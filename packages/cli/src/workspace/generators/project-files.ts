@@ -43,17 +43,24 @@ export function generateProjectFiles(ctx: GeneratorContext): void {
   );
 
   // package.json
+  const pkg: Record<string, unknown> = {
+    name: 'shipsite-workspace',
+    private: true,
+    type: 'module',
+  };
+  const deps: Record<string, string> = {};
+  if (ctx.config.analytics?.vercel) {
+    deps['@vercel/analytics'] = '^1.5.0';
+  }
+  if (ctx.config.analytics?.googleTagManager) {
+    deps['@next/third-parties'] = '^15.0.0';
+  }
+  if (Object.keys(deps).length > 0) {
+    pkg.dependencies = deps;
+  }
   writeFileSync(
     join(ctx.shipSiteDir, 'package.json'),
-    JSON.stringify(
-      {
-        name: 'shipsite-workspace',
-        private: true,
-        type: 'module',
-      },
-      null,
-      2,
-    ),
+    JSON.stringify(pkg, null, 2),
   );
 
   // postcss.config.mjs
