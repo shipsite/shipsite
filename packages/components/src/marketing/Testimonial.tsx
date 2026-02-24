@@ -3,6 +3,7 @@ import { Section } from '../ui/section';
 import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface TestimonialProps {
+  id?: string;
   quote: string;
   author: string;
   role?: string;
@@ -10,9 +11,9 @@ interface TestimonialProps {
   company?: string;
 }
 
-export function Testimonial({ quote, author, role, image, company }: TestimonialProps) {
+export function Testimonial({ id, quote, author, role, image, company }: TestimonialProps) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main max-w-3xl">
         <div className="glass-2 rounded-2xl p-8 md:p-12">
           <blockquote className="text-lg md:text-xl text-foreground/80 italic mb-6">&ldquo;{quote}&rdquo;</blockquote>

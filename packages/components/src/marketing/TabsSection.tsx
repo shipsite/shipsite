@@ -18,12 +18,13 @@ export function TabItem(_props: TabItemProps) {
 }
 
 interface TabsSectionProps {
+  id?: string;
   title?: string;
   description?: string;
   children: React.ReactNode;
 }
 
-export function TabsSection({ title, description, children }: TabsSectionProps) {
+export function TabsSection({ id, title, description, children }: TabsSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const tabs: TabItemProps[] = [];
@@ -36,7 +37,7 @@ export function TabsSection({ title, description, children }: TabsSectionProps) 
   const activeTab = tabs[activeIndex];
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">

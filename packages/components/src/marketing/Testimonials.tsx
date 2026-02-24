@@ -36,17 +36,18 @@ export function TestimonialCard({ quote, author, role, company, image, rating }:
 }
 
 interface TestimonialsProps {
+  id?: string;
   title?: string;
   description?: string;
   columns?: 2 | 3;
   children: React.ReactNode;
 }
 
-export function Testimonials({ title, description, columns = 3, children }: TestimonialsProps) {
+export function Testimonials({ id, title, description, columns = 3, children }: TestimonialsProps) {
   const gridCols = columns === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3';
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">

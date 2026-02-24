@@ -19,14 +19,15 @@ export function CardGridItem({ title, description, icon, href }: CardGridItemPro
 }
 
 interface CardGridProps {
+  id?: string;
   columns?: 2 | 3 | 4;
   children: React.ReactNode;
 }
 
-export function CardGrid({ columns = 3, children }: CardGridProps) {
+export function CardGrid({ id, columns = 3, children }: CardGridProps) {
   const gridCols = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' };
   return (
-    <div className="mx-auto w-full max-w-[76rem] px-[clamp(1rem,3vw,3rem)] py-8">
+    <div id={id} className="mx-auto w-full max-w-[76rem] px-[clamp(1rem,3vw,3rem)] py-8">
       <div className={`grid grid-cols-1 ${gridCols[columns]} gap-6`}>{children}</div>
     </div>
   );

@@ -2,14 +2,15 @@ import React from 'react';
 import { Section } from '../ui/section';
 
 interface BlogIndexProps {
+  id?: string;
   title?: string;
   description?: string;
   children?: React.ReactNode;
 }
 
-export function BlogIndex({ title, description, children }: BlogIndexProps) {
+export function BlogIndex({ id, title, description, children }: BlogIndexProps) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">

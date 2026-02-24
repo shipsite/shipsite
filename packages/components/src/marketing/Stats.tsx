@@ -13,11 +13,12 @@ export function Stat(_props: StatProps) {
 }
 
 interface StatsProps {
+  id?: string;
   title?: string;
   children: React.ReactNode;
 }
 
-export function Stats({ title, children }: StatsProps) {
+export function Stats({ id, title, children }: StatsProps) {
   const items: StatProps[] = [];
   React.Children.forEach(children, (child) => {
     if (React.isValidElement(child) && child.type === Stat) {
@@ -26,7 +27,7 @@ export function Stats({ title, children }: StatsProps) {
   });
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main max-w-[960px]">
         {title && (
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">{title}</h2>

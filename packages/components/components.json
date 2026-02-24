@@ -7,6 +7,7 @@
       "category": "marketing",
       "description": "Full-width hero section with animated title, description, optional badge, primary/secondary CTAs, and a responsive device mockup image. Uses a top glow effect for visual emphasis.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"pricing\" enables #pricing navigation)." },
         { "name": "title", "type": "string", "required": true, "description": "Main headline text displayed as an h1." },
         { "name": "description", "type": "string", "required": true, "description": "Supporting paragraph text below the title." },
         { "name": "primaryCta", "type": "{ label: string; href: string }", "required": false, "description": "Primary call-to-action button with label and link." },
@@ -33,6 +34,7 @@
       "category": "marketing",
       "description": "Section that displays a grid of Feature cards with an optional section title and description. Supports 2, 3, or 4 column layouts.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"features\" enables #features navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the grid." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "columns", "type": "2 | 3 | 4", "required": false, "description": "Number of grid columns. Defaults to 3." },
@@ -69,6 +71,7 @@
       "category": "marketing",
       "description": "Container section for alternating feature rows. Renders rows with alternating text/image layout separated by dividers.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"features\" enables #features navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the rows." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "AlternatingFeatureRow children." }
@@ -114,6 +117,7 @@
       "category": "marketing",
       "description": "Full pricing section with plan cards, optional monthly/yearly toggle, and an optional feature comparison table. Consumes PricingPlan, ComparisonRow, and ComparisonCategory children.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"pricing\" enables #pricing navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "monthlyLabel", "type": "string", "required": false, "description": "Label for the monthly toggle. Defaults to 'Monthly'." },
@@ -128,6 +132,7 @@
       "category": "marketing",
       "description": "Logo showcase section with two variants: a continuous marquee scroll animation or a static inline flex layout. Supports logo names, versions, and badges in inline mode.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"companies\" enables #companies navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Title text above the logos." },
         { "name": "logos", "type": "Array<{ src: ImageSource; alt: string; width?: number; name?: string; version?: string; badge?: string }>", "required": true, "description": "Array of logo items. Each has an image src (string or { light, dark }), alt text, and optional width, name, version, and badge." },
         { "name": "variant", "type": "'marquee' | 'inline'", "required": false, "description": "Display variant. 'marquee' (default) shows a scrolling animation; 'inline' shows a static flexbox layout with names and badges." }
@@ -139,6 +144,7 @@
       "category": "marketing",
       "description": "Single large testimonial quote block with author info, displayed in a centered glass card.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"testimonial\" enables #testimonial navigation)." },
         { "name": "quote", "type": "string", "required": true, "description": "The testimonial quote text." },
         { "name": "author", "type": "string", "required": true, "description": "Name of the person giving the testimonial." },
         { "name": "role", "type": "string", "required": false, "description": "Job title or role of the author." },
@@ -166,6 +172,7 @@
       "category": "marketing",
       "description": "Grid section that displays multiple TestimonialCard components with an optional section title and description.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"testimonials\" enables #testimonials navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the grid." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "columns", "type": "2 | 3", "required": false, "description": "Number of grid columns. Defaults to 3." },
@@ -178,6 +185,7 @@
       "category": "marketing",
       "description": "Full-width call-to-action banner with a centered glow effect, title, optional subtext, and a primary button. Supports additional children content.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"cta\" enables #cta navigation)." },
         { "name": "title", "type": "string", "required": true, "description": "Banner headline text." },
         { "name": "buttonText", "type": "string", "required": true, "description": "Text displayed on the CTA button." },
         { "name": "buttonHref", "type": "string", "required": false, "description": "URL the button links to." },
@@ -211,6 +219,7 @@
       "category": "marketing",
       "description": "FAQ section with a collapsible accordion. Contains FAQItem children with question/answer pairs.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"faq\" enables #faq navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the accordion." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "FAQItem children." }
@@ -232,6 +241,7 @@
       "category": "marketing",
       "description": "Numbered step-by-step section with connected timeline indicators. Consumes Step children to display a vertical progression.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"steps\" enables #steps navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the steps." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "Step children." }
@@ -255,6 +265,7 @@
       "category": "marketing",
       "description": "Responsive grid container for CardGridItem children. Supports 2, 3, or 4 column layouts.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"cards\" enables #cards navigation)." },
         { "name": "columns", "type": "2 | 3 | 4", "required": false, "description": "Number of grid columns. Defaults to 3." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "CardGridItem children." }
       ],
@@ -265,6 +276,7 @@
       "category": "marketing",
       "description": "Highlighted callout box with a colored border for info, success, or warning messages. Useful for drawing attention to important content within a page.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"callout\" enables #callout navigation)." },
         { "name": "title", "type": "string", "required": true, "description": "Callout heading text." },
         { "name": "description", "type": "string", "required": true, "description": "Callout body text." },
         { "name": "variant", "type": "'info' | 'success' | 'warning'", "required": false, "description": "Color variant for the callout. Defaults to 'info'." },
@@ -289,6 +301,7 @@
       "category": "marketing",
       "description": "Section displaying key statistics in a 2x2 or 4-column grid with large gradient numbers. Consumes Stat children.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"stats\" enables #stats navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the stats." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "Stat children." }
       ],
@@ -312,6 +325,7 @@
       "category": "marketing",
       "description": "Asymmetric grid layout section for showcasing features in a bento-box style. Uses a 3-column grid with equal-height rows. Contains BentoItem children.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"bento\" enables #bento navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the grid." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "BentoItem children." }
@@ -334,6 +348,7 @@
       "category": "marketing",
       "description": "Responsive image gallery section with optional title and description. Displays GalleryItem children in a configurable grid.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"gallery\" enables #gallery navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the gallery." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "columns", "type": "2 | 3 | 4", "required": false, "description": "Number of grid columns. Defaults to 3." },
@@ -346,6 +361,7 @@
       "category": "marketing",
       "description": "Compact social proof section showing stacked user avatars with a text message and optional subtext. Ideal for displaying user counts or trust indicators.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"social-proof\" enables #social-proof navigation)." },
         { "name": "avatars", "type": "string[]", "required": false, "description": "Array of avatar image URLs displayed as overlapping circles." },
         { "name": "text", "type": "string", "required": true, "description": "Main social proof text (e.g. 'Loved by 10,000+ users')." },
         { "name": "subtext", "type": "string", "required": false, "description": "Secondary text displayed below the main text." }
@@ -369,6 +385,7 @@
       "category": "marketing",
       "description": "Horizontally scrollable carousel section with snap-scrolling, left/right navigation buttons, and optional title/description. Contains CarouselItem children.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"carousel\" enables #carousel navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the carousel." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "CarouselItem children." }
@@ -393,6 +410,7 @@
       "category": "marketing",
       "description": "Interactive tabbed section with pill-style tab buttons and a content panel that changes based on the active tab. Consumes TabItem children.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"tabs\" enables #tabs navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Section heading displayed above the tabs." },
         { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "TabItem children." }
@@ -404,6 +422,7 @@
       "category": "marketing",
       "description": "Lightweight page hero section with centered title, optional description, badge, and children. Suitable for inner pages that do not need the full Hero with image and CTAs.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"hero\" enables #hero navigation)." },
         { "name": "title", "type": "string", "required": true, "description": "Page title displayed as an h1." },
         { "name": "description", "type": "string", "required": false, "description": "Supporting paragraph text below the title." },
         { "name": "badge", "type": "string", "required": false, "description": "Small badge text displayed above the title." },
@@ -416,6 +435,7 @@
       "category": "blog",
       "description": "Top-level wrapper for blog article content. Renders a centered, max-width article container with vertical padding.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"article\" enables #article navigation)." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "Article content (headings, paragraphs, blog components)." },
         { "name": "contentFolder", "type": "string", "required": false, "description": "Content folder identifier for the blog article." }
       ],
@@ -426,6 +446,7 @@
       "category": "blog",
       "description": "Blog listing page wrapper with an optional title, description, and children for rendering blog post cards or custom content.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"blog\" enables #blog navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Page heading displayed above the blog list." },
         { "name": "description", "type": "string", "required": false, "description": "Page subheading text." },
         { "name": "children", "type": "React.ReactNode", "required": false, "description": "Blog post cards or other content." }
@@ -447,6 +468,7 @@
       "category": "content",
       "description": "Top-level wrapper for text-heavy pages (legal, about, contact, etc.). Renders a narrow, centered container with a title and optional last-updated date.",
       "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"content\" enables #content navigation)." },
         { "name": "title", "type": "string", "required": true, "description": "Page title displayed as an h1." },
         { "name": "lastUpdated", "type": "string", "required": false, "description": "Date string displayed below the title (e.g. '2024-01-15')." },
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "ContentSection children and other content." }

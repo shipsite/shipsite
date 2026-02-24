@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import Glow from '../ui/glow';
 
 interface BannerCTAProps {
+  id?: string;
   title: string;
   buttonText: string;
   buttonHref?: string;
@@ -11,9 +12,9 @@ interface BannerCTAProps {
   children?: React.ReactNode;
 }
 
-export function BannerCTA({ title, buttonText, buttonHref, subtext, children }: BannerCTAProps) {
+export function BannerCTA({ id, title, buttonText, buttonHref, subtext, children }: BannerCTAProps) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         <div className="relative overflow-hidden glass-4 rounded-3xl p-12 md:p-16 text-center">
           <Glow variant="center" />

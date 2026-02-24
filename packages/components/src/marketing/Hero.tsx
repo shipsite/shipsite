@@ -8,6 +8,7 @@ import Glow from '../ui/glow';
 import { ThemeImage, type ImageSource } from '../ui/theme-image';
 
 interface HeroProps {
+  id?: string;
   title: string;
   description: string;
   primaryCta?: { label: string; href: string };
@@ -17,9 +18,9 @@ interface HeroProps {
   children?: React.ReactNode;
 }
 
-export function Hero({ title, description, primaryCta, secondaryCta, badge, image, children }: HeroProps) {
+export function Hero({ id, title, description, primaryCta, secondaryCta, badge, image, children }: HeroProps) {
   return (
-    <Section className="relative overflow-hidden">
+    <Section id={id} className="relative overflow-hidden">
       <Glow variant="top" />
       <div className="container-main relative z-10">
         <div className="max-w-3xl mx-auto text-center">

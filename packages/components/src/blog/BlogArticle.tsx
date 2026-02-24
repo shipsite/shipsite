@@ -8,6 +8,7 @@ interface BlogArticleAuthor {
 }
 
 interface BlogArticleProps {
+  id?: string;
   children: React.ReactNode;
   contentFolder?: string;
   date?: string;
@@ -15,9 +16,9 @@ interface BlogArticleProps {
   author?: BlogArticleAuthor;
 }
 
-export function BlogArticle({ children, author, date, readingTime }: BlogArticleProps) {
+export function BlogArticle({ id, children, author, date, readingTime }: BlogArticleProps) {
   return (
-    <BlogArticleClient author={author} date={date} readingTime={readingTime}>
+    <BlogArticleClient id={id} author={author} date={date} readingTime={readingTime}>
       {children}
     </BlogArticleClient>
   );

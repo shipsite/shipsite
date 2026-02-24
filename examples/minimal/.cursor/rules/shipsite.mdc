@@ -153,6 +153,7 @@ description: "How we handle your data."
 3. **Page structure is defined in `shipsite.json`** — to add a page, add an entry to the `pages` array and create the content folder.
 4. **One MDX file per locale per page** — e.g. `content/landing/en.mdx`, `content/landing/de.mdx`.
 5. **Use the component catalog above** to pick the right component for each section.
-6. **Use straight quotes only** — curly/typographic quotes (“ ” ‘ ’) break MDX parsing. Always use straight quotes (" ').
+6. **Use straight quotes only** — curly/typographic quotes (“ “ ‘ ‘) break MDX parsing. Always use straight quotes (“ ‘).
+7. **Anchor links** — all section-level components accept an optional `id` prop for anchor navigation (e.g. `<FAQ id=”faq”>` enables `#faq` links). Do not wrap components in extra `<div id=”...”>` elements.
 
 <!-- END SHIPSITE AUTO-GENERATED -->

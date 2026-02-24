@@ -11,12 +11,13 @@ export function Step(_props: StepProps) {
 }
 
 interface StepsProps {
+  id?: string;
   title?: string;
   description?: string;
   children: React.ReactNode;
 }
 
-export function Steps({ title, description, children }: StepsProps) {
+export function Steps({ id, title, description, children }: StepsProps) {
   const steps: StepProps[] = [];
   React.Children.forEach(children, (child) => {
     if (React.isValidElement(child) && child.type === Step) {
@@ -25,7 +26,7 @@ export function Steps({ title, description, children }: StepsProps) {
   });
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main max-w-3xl">
         {(title || description) && (
           <div className="text-center mb-12">

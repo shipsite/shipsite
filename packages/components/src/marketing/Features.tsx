@@ -22,17 +22,18 @@ export function Feature({ icon, title, description }: FeatureProps) {
 }
 
 interface FeaturesProps {
+  id?: string;
   title?: string;
   description?: string;
   columns?: 2 | 3 | 4;
   children: React.ReactNode;
 }
 
-export function Features({ title, description, columns = 3, children }: FeaturesProps) {
+export function Features({ id, title, description, columns = 3, children }: FeaturesProps) {
   const gridCols = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-2 lg:grid-cols-4' };
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">

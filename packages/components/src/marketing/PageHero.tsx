@@ -3,15 +3,16 @@ import { Section } from '../ui/section';
 import { Badge } from '../ui/badge';
 
 interface PageHeroProps {
+  id?: string;
   title: string;
   description?: string;
   badge?: string;
   children?: React.ReactNode;
 }
 
-export function PageHero({ title, description, badge, children }: PageHeroProps) {
+export function PageHero({ id, title, description, badge, children }: PageHeroProps) {
   return (
-    <Section className="py-16 md:py-24">
+    <Section id={id} className="py-16 md:py-24">
       <div className="container-main text-center">
         {badge && (
           <Badge variant="outline" className="mb-4">

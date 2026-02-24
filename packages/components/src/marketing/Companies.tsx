@@ -14,15 +14,16 @@ interface LogoItem {
 }
 
 interface CompaniesProps {
+  id?: string;
   title?: string;
   logos: LogoItem[];
   variant?: 'marquee' | 'inline';
 }
 
-export function Companies({ title, logos, variant = 'marquee' }: CompaniesProps) {
+export function Companies({ id, title, logos, variant = 'marquee' }: CompaniesProps) {
   if (variant === 'inline') {
     return (
-      <Section className="py-12">
+      <Section id={id} className="py-12">
         <div className="container-main flex flex-col items-center gap-8 text-center">
           {title && <h2 className="text-base font-semibold sm:text-2xl text-foreground">{title}</h2>}
           <div className="flex flex-wrap items-center justify-center gap-8">
@@ -49,7 +50,7 @@ export function Companies({ title, logos, variant = 'marquee' }: CompaniesProps)
   }
 
   return (
-    <Section className="py-12">
+    <Section id={id} className="py-12">
       <div className="container-main">
         {title && <p className="text-center text-sm text-muted-foreground mb-8">{title}</p>}
         <div className="relative fade-x overflow-hidden">

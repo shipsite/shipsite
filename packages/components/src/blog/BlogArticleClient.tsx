@@ -17,6 +17,7 @@ interface BlogArticleAuthor {
 }
 
 interface BlogArticleClientProps {
+  id?: string;
   children: React.ReactNode;
   author?: BlogArticleAuthor;
   date?: string;
@@ -24,6 +25,7 @@ interface BlogArticleClientProps {
 }
 
 export function BlogArticleClient({
+  id,
   children,
   author,
   date,
@@ -114,7 +116,7 @@ export function BlogArticleClient({
     : '';
 
   return (
-    <article className="py-12 md:py-20">
+    <article id={id} className="py-12 md:py-20">
       <div className="mx-auto w-full max-w-[76rem] px-[clamp(1rem,3vw,3rem)]">
         <div className="flex gap-10 lg:gap-16">
           {/* Main content */}

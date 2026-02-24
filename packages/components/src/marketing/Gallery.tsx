@@ -27,13 +27,14 @@ export function GalleryItem({ src, alt, caption }: GalleryItemProps) {
 }
 
 interface GalleryProps {
+  id?: string;
   title?: string;
   description?: string;
   columns?: 2 | 3 | 4;
   children: React.ReactNode;
 }
 
-export function Gallery({ title, description, columns = 3, children }: GalleryProps) {
+export function Gallery({ id, title, description, columns = 3, children }: GalleryProps) {
   const gridCols = {
     2: 'md:grid-cols-2',
     3: 'md:grid-cols-2 lg:grid-cols-3',
@@ -41,7 +42,7 @@ export function Gallery({ title, description, columns = 3, children }: GalleryPr
   };
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">

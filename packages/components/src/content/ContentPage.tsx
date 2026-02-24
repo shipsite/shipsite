@@ -17,14 +17,15 @@ export function ContentSection({ title, children }: ContentSectionProps) {
 }
 
 interface ContentPageProps {
+  id?: string;
   title: string;
   lastUpdated?: string;
   children: React.ReactNode;
 }
 
-export function ContentPage({ title, lastUpdated, children }: ContentPageProps) {
+export function ContentPage({ id, title, lastUpdated, children }: ContentPageProps) {
   return (
-    <section className="py-12 md:py-20">
+    <section id={id} className="py-12 md:py-20">
       <div className="container-main max-w-3xl">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{title}</h1>
         {lastUpdated && <p className="text-sm text-muted-foreground mb-8">Last updated: {lastUpdated}</p>}

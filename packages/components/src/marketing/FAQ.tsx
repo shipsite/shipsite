@@ -26,14 +26,15 @@ export function FAQItem({ question, children }: FAQItemProps) {
 }
 
 interface FAQProps {
+  id?: string;
   title?: string;
   description?: string;
   children: React.ReactNode;
 }
 
-export function FAQ({ title, description, children }: FAQProps) {
+export function FAQ({ id, title, description, children }: FAQProps) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main max-w-3xl">
         {(title || description) && (
           <div className="text-center mb-12">

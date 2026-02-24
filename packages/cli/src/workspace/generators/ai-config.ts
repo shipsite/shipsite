@@ -161,6 +161,7 @@ ${componentCatalog}
 4. **One MDX file per locale per page** — e.g. \`content/landing/en.mdx\`, \`content/landing/de.mdx\`.
 5. **Use the component catalog above** to pick the right component for each section.
 6. **Use straight quotes only** — curly/typographic quotes (\u201C \u201D \u2018 \u2019) break MDX parsing. Always use straight quotes (" ').
+7. **Anchor links** — all section-level components accept an optional \`id\` prop for anchor navigation (e.g. \`<FAQ id="faq">\` enables \`#faq\` links). Do not wrap components in extra \`<div id="...">\` elements.
 `;
 }
 

@@ -45,14 +45,15 @@ export function AlternatingFeatureRow({ title, description, image, imageAlt, chi
 }
 
 interface AlternatingFeaturesProps {
+  id?: string;
   title?: string;
   description?: string;
   children: React.ReactNode;
 }
 
-export function AlternatingFeatures({ title, description, children }: AlternatingFeaturesProps) {
+export function AlternatingFeatures({ id, title, description, children }: AlternatingFeaturesProps) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-16">

@@ -38,6 +38,7 @@ export function ComparisonCategory(_props: ComparisonCategoryProps) {
 }
 
 interface PricingSectionProps {
+  id?: string;
   title?: string;
   description?: string;
   monthlyLabel?: string;
@@ -46,7 +47,7 @@ interface PricingSectionProps {
   children: React.ReactNode;
 }
 
-export function PricingSection({ title, description, monthlyLabel = 'Monthly', yearlyLabel = 'Yearly', mostPopularLabel = 'Most Popular', children }: PricingSectionProps) {
+export function PricingSection({ id, title, description, monthlyLabel = 'Monthly', yearlyLabel = 'Yearly', mostPopularLabel = 'Most Popular', children }: PricingSectionProps) {
   const [isYearly, setIsYearly] = useState(false);
 
   const plans: PricingPlanProps[] = [];
@@ -60,7 +61,7 @@ export function PricingSection({ title, description, monthlyLabel = 'Monthly', y
   });
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">

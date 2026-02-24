@@ -27,12 +27,13 @@ export function CarouselItem({ title, description, image, children }: CarouselIt
 }
 
 interface CarouselProps {
+  id?: string;
   title?: string;
   description?: string;
   children: React.ReactNode;
 }
 
-export function Carousel({ title, description, children }: CarouselProps) {
+export function Carousel({ id, title, description, children }: CarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -45,7 +46,7 @@ export function Carousel({ title, description, children }: CarouselProps) {
   };
 
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">

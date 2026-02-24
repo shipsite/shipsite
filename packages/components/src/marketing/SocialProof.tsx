@@ -2,14 +2,15 @@ import React from 'react';
 import { Section } from '../ui/section';
 
 interface SocialProofProps {
+  id?: string;
   avatars?: string[];
   text: string;
   subtext?: string;
 }
 
-export function SocialProof({ avatars, text, subtext }: SocialProofProps) {
+export function SocialProof({ id, avatars, text, subtext }: SocialProofProps) {
   return (
-    <Section className="py-12">
+    <Section id={id} className="py-12">
       <div className="container-main">
         <div className="flex flex-col items-center gap-4 text-center">
           {avatars && avatars.length > 0 && (

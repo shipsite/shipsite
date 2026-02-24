@@ -30,14 +30,15 @@ export function BentoItem({ title, description, image, span = 1, children }: Ben
 }
 
 interface BentoGridProps {
+  id?: string;
   title?: string;
   description?: string;
   children: React.ReactNode;
 }
 
-export function BentoGrid({ title, description, children }: BentoGridProps) {
+export function BentoGrid({ id, title, description, children }: BentoGridProps) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="container-main">
         {(title || description) && (
           <div className="text-center mb-12">
