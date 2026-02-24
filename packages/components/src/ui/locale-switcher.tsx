@@ -36,6 +36,9 @@ export function LocaleSwitcher() {
             ) : (
               <a
                 href={href}
+                onClick={() => {
+                  document.cookie = `NEXT_LOCALE=${loc}; path=/; max-age=31536000; SameSite=Lax`;
+                }}
                 className="text-muted-foreground hover:text-foreground transition-colors uppercase"
               >
                 {loc}
