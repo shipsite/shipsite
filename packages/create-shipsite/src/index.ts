@@ -5,6 +5,10 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { resolve, join } from 'path';
 import { execSync } from 'child_process';
 import { deflateSync } from 'zlib';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
 
 // --- Minimal PNG generator (zero dependencies) ---
 
@@ -101,7 +105,7 @@ function localizedLabel(
 
 async function main() {
   console.log();
-  p.intro('Create a new ShipSite project');
+  p.intro(`Create a new ShipSite project (v${version})`);
 
   const projectName = (await p.text({
     message: 'Project name',
