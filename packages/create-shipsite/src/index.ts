@@ -304,84 +304,258 @@ async function main() {
 
   const today = new Date().toISOString().split('T')[0];
 
-  // Landing page
-  writeFileSync(
-    join(projectDir, 'content', 'landing', 'en.mdx'),
-    `---
-title: "${projectName} \u2014 Ship Products Faster"
-description: "The modern platform that helps teams build, launch, and scale products with confidence."
+  // Landing page (one file per locale)
+  const landingStrings: Record<string, Record<string, string>> = {
+    en: {
+      metaTitle: `${projectName} \u2014 Ship Products Faster`,
+      metaDesc: 'The modern platform that helps teams build, launch, and scale products with confidence.',
+      heroBadge: 'Just launched',
+      heroTitle: 'Ship Products Faster Than Ever',
+      heroDesc: 'The modern platform that helps teams build, launch, and scale with confidence. Stop wrestling with infrastructure and start delivering value.',
+      primaryCta: 'Start Free Trial',
+      secondaryCta: 'See How It Works',
+      socialProof: 'Trusted by 2,000+ teams worldwide',
+      featuresTitle: 'Everything You Need to Succeed',
+      featuresDesc: 'Powerful features designed to streamline your workflow from day one.',
+      feat1Title: 'Lightning-Fast Setup', feat1Desc: 'Go from zero to production in under five minutes. Our guided onboarding handles the heavy lifting so you can focus on what matters.',
+      feat2Title: 'Real-Time Collaboration', feat2Desc: 'Work together seamlessly with live editing, comments, and shared workspaces. Keep your entire team on the same page.',
+      feat3Title: 'Advanced Analytics', feat3Desc: 'Understand your users with built-in analytics dashboards. Track engagement, retention, and growth metrics out of the box.',
+      feat4Title: 'Workflow Automation', feat4Desc: 'Automate repetitive tasks with powerful triggers and actions. Set up once and let the system handle the rest.',
+      feat5Title: 'Enterprise-Grade Security', feat5Desc: 'SOC 2 compliant with end-to-end encryption, SSO, and role-based access controls. Your data stays safe.',
+      feat6Title: 'Seamless Integrations', feat6Desc: 'Connect with the tools you already use. Slack, GitHub, Jira, and 100+ integrations available out of the box.',
+      bentoTitle: 'Built for Modern Teams', bentoDesc: `See what sets ${projectName} apart from the rest.`,
+      bento1Title: 'Visual Workflow Builder', bento1Desc: 'Design complex workflows with an intuitive drag-and-drop interface. No coding required for common automation tasks.',
+      bento2Title: 'API-First Architecture', bento2Desc: 'Every feature is accessible via our REST and GraphQL APIs. Build custom integrations with comprehensive documentation.',
+      bento3Title: 'Global Edge Network', bento3Desc: 'Deploy to 150+ edge locations worldwide. Your users get sub-100ms response times no matter where they are.',
+      stepsTitle: 'How It Works', stepsDesc: 'Get up and running in three simple steps.',
+      step1Title: 'Create Your Account', step1Desc: 'Sign up in seconds with your email or SSO provider. No credit card required to get started.',
+      step2Title: 'Configure Your Workspace', step2Desc: 'Import your existing data, invite your team, and customize your workspace to match your workflow.',
+      step3Title: 'Launch and Scale', step3Desc: 'Go live with one click. Our infrastructure scales automatically to handle any amount of traffic.',
+      testimonialsTitle: 'Loved by Teams Everywhere',
+      t1Quote: 'We cut our development time in half after switching. The workflow automation alone saved us 20 hours a week.', t1Author: 'Sarah Chen', t1Role: 'VP of Engineering', t1Company: 'Acme Corp',
+      t2Quote: 'The best developer experience I have ever used. Everything just works, and the API documentation is phenomenal.', t2Author: 'Marcus Rivera', t2Role: 'Lead Developer', t2Company: 'TechFlow',
+      t3Quote: 'Finally a platform that scales with us. We went from 1,000 to 100,000 users without changing a single config.', t3Author: 'Emily Nakamura', t3Role: 'CTO', t3Company: 'ScaleUp Inc',
+      statsTitle: 'The Numbers Speak for Themselves',
+      stat1Label: 'Active Teams', stat1Desc: `Teams shipping with ${projectName}`,
+      stat2Label: 'Uptime', stat2Desc: 'Enterprise-grade reliability',
+      stat3Label: 'Integrations', stat3Desc: 'Connect your favorite tools',
+      stat4Label: 'Rating', stat4Desc: 'Average customer satisfaction',
+      faqTitle: 'Frequently Asked Questions',
+      faq1Q: 'Is there a free plan?', faq1A: 'Yes! Our free plan includes all core features for up to 5 team members. No credit card required and no time limit.',
+      faq2Q: 'How long does setup take?', faq2A: 'Most teams are up and running in under 5 minutes. Our guided onboarding walks you through everything, and you can import existing data with a single click.',
+      faq3Q: 'Can I cancel anytime?', faq3A: 'Absolutely. There are no long-term contracts or cancellation fees. You can upgrade, downgrade, or cancel your plan at any time.',
+      faq4Q: 'Is my data secure?', faq4A: 'Security is our top priority. We are SOC 2 Type II compliant, use end-to-end encryption, and offer SSO and role-based access controls on all paid plans.',
+      faq5Q: 'Do you offer support?', faq5A: 'We provide email support on all plans and priority support with a dedicated account manager on Pro and Enterprise plans. Our average response time is under 2 hours.',
+      ctaTitle: 'Ready to ship faster?', ctaButton: 'Start Your Free Trial', ctaSubtext: 'No credit card required. Free plan available forever.',
+    },
+    de: {
+      metaTitle: `${projectName} \u2014 Produkte schneller ausliefern`,
+      metaDesc: 'Die moderne Plattform, die Teams hilft, Produkte zu entwickeln, zu launchen und zu skalieren.',
+      heroBadge: 'Gerade gestartet',
+      heroTitle: 'Produkte schneller ausliefern als je zuvor',
+      heroDesc: 'Die moderne Plattform, die Teams hilft, mit Zuversicht zu entwickeln, zu launchen und zu skalieren. Schluss mit Infrastruktur-Problemen \u2014 konzentrieren Sie sich auf das Wesentliche.',
+      primaryCta: 'Kostenlos testen',
+      secondaryCta: 'So funktioniert es',
+      socialProof: 'Bereits von 2.000+ Teams weltweit genutzt',
+      featuresTitle: 'Alles, was Sie brauchen',
+      featuresDesc: 'Leistungsstarke Funktionen, die Ihren Workflow vom ersten Tag an optimieren.',
+      feat1Title: 'Blitzschnelle Einrichtung', feat1Desc: 'In weniger als fuenf Minuten produktionsbereit. Unser Onboarding-Assistent nimmt Ihnen die schwere Arbeit ab.',
+      feat2Title: 'Echtzeit-Zusammenarbeit', feat2Desc: 'Arbeiten Sie nahtlos zusammen mit Live-Bearbeitung, Kommentaren und geteilten Arbeitsbereichen.',
+      feat3Title: 'Erweiterte Analysen', feat3Desc: 'Verstehen Sie Ihre Nutzer mit integrierten Analyse-Dashboards. Engagement, Retention und Wachstum auf einen Blick.',
+      feat4Title: 'Workflow-Automatisierung', feat4Desc: 'Automatisieren Sie wiederkehrende Aufgaben mit Triggern und Aktionen. Einmal einrichten, dauerhaft profitieren.',
+      feat5Title: 'Enterprise-Sicherheit', feat5Desc: 'SOC 2-konform mit Ende-zu-Ende-Verschluesselung, SSO und rollenbasierter Zugriffskontrolle.',
+      feat6Title: 'Nahtlose Integrationen', feat6Desc: 'Verbinden Sie die Tools, die Sie bereits nutzen. Slack, GitHub, Jira und 100+ weitere Integrationen.',
+      bentoTitle: 'Fuer moderne Teams gebaut', bentoDesc: `Entdecken Sie, was ${projectName} von anderen unterscheidet.`,
+      bento1Title: 'Visueller Workflow-Builder', bento1Desc: 'Entwerfen Sie komplexe Workflows mit einer intuitiven Drag-and-Drop-Oberflaeche. Kein Code noetig.',
+      bento2Title: 'API-First-Architektur', bento2Desc: 'Jede Funktion ist ueber unsere REST- und GraphQL-APIs verfuegbar. Umfassende Dokumentation inklusive.',
+      bento3Title: 'Globales Edge-Netzwerk', bento3Desc: 'Deployment auf 150+ Edge-Standorten weltweit. Antwortzeiten unter 100ms, egal wo Ihre Nutzer sind.',
+      stepsTitle: 'So funktioniert es', stepsDesc: 'In drei einfachen Schritten startklar.',
+      step1Title: 'Konto erstellen', step1Desc: 'Registrieren Sie sich in Sekunden mit E-Mail oder SSO. Keine Kreditkarte erforderlich.',
+      step2Title: 'Workspace konfigurieren', step2Desc: 'Importieren Sie bestehende Daten, laden Sie Ihr Team ein und passen Sie den Workspace an.',
+      step3Title: 'Starten und skalieren', step3Desc: 'Mit einem Klick live gehen. Unsere Infrastruktur skaliert automatisch mit Ihrem Traffic.',
+      testimonialsTitle: 'Von Teams weltweit geschaetzt',
+      t1Quote: 'Wir haben unsere Entwicklungszeit halbiert. Allein die Workflow-Automatisierung spart uns 20 Stunden pro Woche.', t1Author: 'Sarah Chen', t1Role: 'VP of Engineering', t1Company: 'Acme Corp',
+      t2Quote: 'Die beste Developer Experience, die ich je genutzt habe. Alles funktioniert einfach, und die API-Dokumentation ist hervorragend.', t2Author: 'Marcus Rivera', t2Role: 'Lead Developer', t2Company: 'TechFlow',
+      t3Quote: 'Endlich eine Plattform, die mit uns skaliert. Wir sind von 1.000 auf 100.000 Nutzer gewachsen, ohne eine einzige Einstellung zu aendern.', t3Author: 'Emily Nakamura', t3Role: 'CTO', t3Company: 'ScaleUp Inc',
+      statsTitle: 'Die Zahlen sprechen fuer sich',
+      stat1Label: 'Aktive Teams', stat1Desc: `Teams, die mit ${projectName} arbeiten`,
+      stat2Label: 'Verfuegbarkeit', stat2Desc: 'Enterprise-Zuverlaessigkeit',
+      stat3Label: 'Integrationen', stat3Desc: 'Verbinden Sie Ihre Lieblings-Tools',
+      stat4Label: 'Bewertung', stat4Desc: 'Durchschnittliche Kundenzufriedenheit',
+      faqTitle: 'Haeufig gestellte Fragen',
+      faq1Q: 'Gibt es einen kostenlosen Plan?', faq1A: 'Ja! Unser kostenloser Plan umfasst alle Kernfunktionen fuer bis zu 5 Teammitglieder. Keine Kreditkarte noetig, kein Zeitlimit.',
+      faq2Q: 'Wie lange dauert die Einrichtung?', faq2A: 'Die meisten Teams sind in weniger als 5 Minuten startklar. Unser Onboarding fuehrt Sie durch alles, und Sie koennen bestehende Daten mit einem Klick importieren.',
+      faq3Q: 'Kann ich jederzeit kuendigen?', faq3A: 'Selbstverstaendlich. Keine langfristigen Vertraege, keine Kuendigungsgebuehren. Sie koennen jederzeit upgraden, downgraden oder kuendigen.',
+      faq4Q: 'Sind meine Daten sicher?', faq4A: 'Sicherheit hat oberste Prioritaet. Wir sind SOC 2 Type II-zertifiziert, nutzen Ende-zu-Ende-Verschluesselung und bieten SSO und rollenbasierte Zugriffskontrollen.',
+      faq5Q: 'Bieten Sie Support an?', faq5A: 'Wir bieten E-Mail-Support bei allen Plaenen und Prioritaets-Support mit dediziertem Account Manager bei Pro- und Enterprise-Plaenen.',
+      ctaTitle: 'Bereit, schneller zu liefern?', ctaButton: 'Kostenlos testen', ctaSubtext: 'Keine Kreditkarte noetig. Kostenloser Plan fuer immer verfuegbar.',
+    },
+    fr: {
+      metaTitle: `${projectName} \u2014 Livrez vos produits plus vite`,
+      metaDesc: 'La plateforme moderne qui aide les equipes a concevoir, lancer et faire evoluer leurs produits en toute confiance.',
+      heroBadge: 'Nouveau',
+      heroTitle: 'Livrez vos produits plus vite que jamais',
+      heroDesc: 'La plateforme moderne qui aide les equipes a concevoir, lancer et faire evoluer leurs produits en toute confiance. Oubliez les problemes d\'infrastructure.',
+      primaryCta: 'Essai gratuit',
+      secondaryCta: 'Decouvrir le fonctionnement',
+      socialProof: 'Adopte par plus de 2 000 equipes dans le monde',
+      featuresTitle: 'Tout ce dont vous avez besoin',
+      featuresDesc: 'Des fonctionnalites puissantes pour optimiser votre flux de travail des le premier jour.',
+      feat1Title: 'Mise en route ultra-rapide', feat1Desc: 'Passez de zero a la production en moins de cinq minutes. Notre assistant d\'integration s\'occupe du plus difficile.',
+      feat2Title: 'Collaboration en temps reel', feat2Desc: 'Travaillez ensemble avec l\'edition en direct, les commentaires et les espaces de travail partages.',
+      feat3Title: 'Analyses avancees', feat3Desc: 'Comprenez vos utilisateurs grace a des tableaux de bord analytiques integres. Suivi de l\'engagement et de la croissance.',
+      feat4Title: 'Automatisation des workflows', feat4Desc: 'Automatisez les taches repetitives avec des declencheurs et des actions. Configurez une fois, profitez en permanence.',
+      feat5Title: 'Securite entreprise', feat5Desc: 'Conforme SOC 2 avec chiffrement de bout en bout, SSO et controles d\'acces bases sur les roles.',
+      feat6Title: 'Integrations fluides', feat6Desc: 'Connectez les outils que vous utilisez deja. Slack, GitHub, Jira et plus de 100 integrations disponibles.',
+      bentoTitle: 'Concu pour les equipes modernes', bentoDesc: `Decouvrez ce qui distingue ${projectName}.`,
+      bento1Title: 'Editeur visuel de workflows', bento1Desc: 'Concevez des workflows complexes avec une interface intuitive par glisser-deposer. Aucun code requis.',
+      bento2Title: 'Architecture API-First', bento2Desc: 'Chaque fonctionnalite est accessible via nos API REST et GraphQL. Documentation complete incluse.',
+      bento3Title: 'Reseau Edge mondial', bento3Desc: 'Deploiement sur plus de 150 emplacements Edge dans le monde. Temps de reponse inferieur a 100 ms.',
+      stepsTitle: 'Comment ca marche', stepsDesc: 'Soyez operationnel en trois etapes simples.',
+      step1Title: 'Creez votre compte', step1Desc: 'Inscrivez-vous en quelques secondes avec votre e-mail ou SSO. Aucune carte bancaire requise.',
+      step2Title: 'Configurez votre espace', step2Desc: 'Importez vos donnees, invitez votre equipe et personnalisez votre espace de travail.',
+      step3Title: 'Lancez et evoluez', step3Desc: 'Passez en production en un clic. Notre infrastructure evolue automatiquement avec votre trafic.',
+      testimonialsTitle: 'Apprecie par des equipes partout',
+      t1Quote: 'Nous avons reduit notre temps de developpement de moitie. L\'automatisation des workflows nous fait gagner 20 heures par semaine.', t1Author: 'Sarah Chen', t1Role: 'VP of Engineering', t1Company: 'Acme Corp',
+      t2Quote: 'La meilleure experience developpeur que j\'aie jamais utilisee. Tout fonctionne et la documentation API est remarquable.', t2Author: 'Marcus Rivera', t2Role: 'Lead Developer', t2Company: 'TechFlow',
+      t3Quote: 'Enfin une plateforme qui evolue avec nous. Nous sommes passes de 1 000 a 100 000 utilisateurs sans modifier une seule configuration.', t3Author: 'Emily Nakamura', t3Role: 'CTO', t3Company: 'ScaleUp Inc',
+      statsTitle: 'Les chiffres parlent d\'eux-memes',
+      stat1Label: 'Equipes actives', stat1Desc: `Equipes qui utilisent ${projectName}`,
+      stat2Label: 'Disponibilite', stat2Desc: 'Fiabilite niveau entreprise',
+      stat3Label: 'Integrations', stat3Desc: 'Connectez vos outils preferes',
+      stat4Label: 'Note', stat4Desc: 'Satisfaction client moyenne',
+      faqTitle: 'Questions frequentes',
+      faq1Q: 'Existe-t-il un plan gratuit?', faq1A: 'Oui! Notre plan gratuit inclut toutes les fonctionnalites de base pour 5 membres d\'equipe maximum. Sans carte bancaire et sans limite de temps.',
+      faq2Q: 'Combien de temps prend la mise en route?', faq2A: 'La plupart des equipes sont operationnelles en moins de 5 minutes. Notre assistant vous guide a chaque etape.',
+      faq3Q: 'Puis-je annuler a tout moment?', faq3A: 'Absolument. Pas de contrat a long terme ni de frais d\'annulation. Vous pouvez changer de plan a tout moment.',
+      faq4Q: 'Mes donnees sont-elles securisees?', faq4A: 'La securite est notre priorite. Nous sommes certifies SOC 2 Type II avec chiffrement de bout en bout et controles d\'acces granulaires.',
+      faq5Q: 'Proposez-vous un support?', faq5A: 'Nous offrons un support par e-mail sur tous les plans et un support prioritaire avec un gestionnaire de compte dedie sur les plans Pro et Enterprise.',
+      ctaTitle: 'Pret a livrer plus vite?', ctaButton: 'Essai gratuit', ctaSubtext: 'Sans carte bancaire. Plan gratuit disponible pour toujours.',
+    },
+    es: {
+      metaTitle: `${projectName} \u2014 Lanza productos mas rapido`,
+      metaDesc: 'La plataforma moderna que ayuda a los equipos a crear, lanzar y escalar productos con confianza.',
+      heroBadge: 'Recien lanzado',
+      heroTitle: 'Lanza productos mas rapido que nunca',
+      heroDesc: 'La plataforma moderna que ayuda a los equipos a crear, lanzar y escalar con confianza. Deja de luchar con la infraestructura y empieza a generar valor.',
+      primaryCta: 'Prueba gratuita',
+      secondaryCta: 'Ver como funciona',
+      socialProof: 'Utilizado por mas de 2000 equipos en todo el mundo',
+      featuresTitle: 'Todo lo que necesitas para triunfar',
+      featuresDesc: 'Funciones potentes disenadas para optimizar tu flujo de trabajo desde el primer dia.',
+      feat1Title: 'Configuracion ultrarapida', feat1Desc: 'De cero a produccion en menos de cinco minutos. Nuestro asistente de incorporacion se encarga del trabajo pesado.',
+      feat2Title: 'Colaboracion en tiempo real', feat2Desc: 'Trabaja en equipo con edicion en vivo, comentarios y espacios de trabajo compartidos.',
+      feat3Title: 'Analisis avanzados', feat3Desc: 'Comprende a tus usuarios con paneles de analisis integrados. Seguimiento de engagement, retencion y crecimiento.',
+      feat4Title: 'Automatizacion de flujos', feat4Desc: 'Automatiza tareas repetitivas con disparadores y acciones. Configura una vez, beneficiate siempre.',
+      feat5Title: 'Seguridad empresarial', feat5Desc: 'Cumplimiento SOC 2 con cifrado de extremo a extremo, SSO y controles de acceso basados en roles.',
+      feat6Title: 'Integraciones perfectas', feat6Desc: 'Conecta las herramientas que ya utilizas. Slack, GitHub, Jira y mas de 100 integraciones disponibles.',
+      bentoTitle: 'Creado para equipos modernos', bentoDesc: `Descubre lo que distingue a ${projectName}.`,
+      bento1Title: 'Editor visual de flujos', bento1Desc: 'Disena flujos de trabajo complejos con una interfaz intuitiva de arrastrar y soltar. Sin necesidad de codigo.',
+      bento2Title: 'Arquitectura API-First', bento2Desc: 'Cada funcion es accesible a traves de nuestras API REST y GraphQL. Documentacion completa incluida.',
+      bento3Title: 'Red Edge global', bento3Desc: 'Despliega en mas de 150 ubicaciones Edge en todo el mundo. Tiempos de respuesta inferiores a 100 ms.',
+      stepsTitle: 'Como funciona', stepsDesc: 'Empieza a trabajar en tres sencillos pasos.',
+      step1Title: 'Crea tu cuenta', step1Desc: 'Registrate en segundos con tu correo o SSO. No se requiere tarjeta de credito.',
+      step2Title: 'Configura tu espacio', step2Desc: 'Importa tus datos, invita a tu equipo y personaliza tu espacio de trabajo.',
+      step3Title: 'Lanza y escala', step3Desc: 'Pasa a produccion con un clic. Nuestra infraestructura escala automaticamente con tu trafico.',
+      testimonialsTitle: 'Querido por equipos en todas partes',
+      t1Quote: 'Redujimos nuestro tiempo de desarrollo a la mitad. Solo la automatizacion de flujos nos ahorra 20 horas por semana.', t1Author: 'Sarah Chen', t1Role: 'VP of Engineering', t1Company: 'Acme Corp',
+      t2Quote: 'La mejor experiencia de desarrollador que he usado. Todo simplemente funciona, y la documentacion de la API es fenomenal.', t2Author: 'Marcus Rivera', t2Role: 'Lead Developer', t2Company: 'TechFlow',
+      t3Quote: 'Por fin una plataforma que escala con nosotros. Pasamos de 1000 a 100 000 usuarios sin cambiar ni una sola configuracion.', t3Author: 'Emily Nakamura', t3Role: 'CTO', t3Company: 'ScaleUp Inc',
+      statsTitle: 'Los numeros hablan por si solos',
+      stat1Label: 'Equipos activos', stat1Desc: `Equipos que trabajan con ${projectName}`,
+      stat2Label: 'Disponibilidad', stat2Desc: 'Fiabilidad de nivel empresarial',
+      stat3Label: 'Integraciones', stat3Desc: 'Conecta tus herramientas favoritas',
+      stat4Label: 'Valoracion', stat4Desc: 'Satisfaccion media del cliente',
+      faqTitle: 'Preguntas frecuentes',
+      faq1Q: 'Hay un plan gratuito?', faq1A: 'Si. Nuestro plan gratuito incluye todas las funciones principales para hasta 5 miembros del equipo. Sin tarjeta de credito y sin limite de tiempo.',
+      faq2Q: 'Cuanto tiempo lleva la configuracion?', faq2A: 'La mayoria de los equipos estan operativos en menos de 5 minutos. Nuestro asistente te guia en cada paso.',
+      faq3Q: 'Puedo cancelar en cualquier momento?', faq3A: 'Por supuesto. Sin contratos a largo plazo ni cargos de cancelacion. Puedes cambiar de plan en cualquier momento.',
+      faq4Q: 'Estan seguros mis datos?', faq4A: 'La seguridad es nuestra prioridad. Contamos con certificacion SOC 2 Type II, cifrado de extremo a extremo y controles de acceso granulares.',
+      faq5Q: 'Ofrecen soporte?', faq5A: 'Ofrecemos soporte por correo en todos los planes y soporte prioritario con un gestor de cuenta dedicado en los planes Pro y Enterprise.',
+      ctaTitle: 'Listo para lanzar mas rapido?', ctaButton: 'Prueba gratuita', ctaSubtext: 'Sin tarjeta de credito. Plan gratuito disponible para siempre.',
+    },
+  };
+
+  for (const locale of locales) {
+    const t = landingStrings[locale] || landingStrings['en']!;
+    writeFileSync(
+      join(projectDir, 'content', 'landing', `${locale}.mdx`),
+      `---
+title: "${t.metaTitle}"
+description: "${t.metaDesc}"
 ---
 
 <Hero
-  badge="Just launched"
-  title="Ship Products Faster Than Ever"
-  description="The modern platform that helps teams build, launch, and scale with confidence. Stop wrestling with infrastructure and start delivering value."
-  primaryCta={{ label: "Start Free Trial", href: "https://app.${projectName}.com/signup" }}
-  secondaryCta={{ label: "See How It Works", href: "#how-it-works" }}
+  badge="${t.heroBadge}"
+  title="${t.heroTitle}"
+  description="${t.heroDesc}"
+  primaryCta={{ label: "${t.primaryCta}", href: "https://app.${projectName}.com/signup" }}
+  secondaryCta={{ label: "${t.secondaryCta}", href: "#how-it-works" }}
 />
 
-<SocialProof text="Trusted by 2,000+ teams worldwide" />
+<SocialProof text="${t.socialProof}" />
 
-<Features title="Everything You Need to Succeed" description="Powerful features designed to streamline your workflow from day one." columns={3}>
-  <Feature title="Lightning-Fast Setup" description="Go from zero to production in under five minutes. Our guided onboarding handles the heavy lifting so you can focus on what matters." />
-  <Feature title="Real-Time Collaboration" description="Work together seamlessly with live editing, comments, and shared workspaces. Keep your entire team on the same page." />
-  <Feature title="Advanced Analytics" description="Understand your users with built-in analytics dashboards. Track engagement, retention, and growth metrics out of the box." />
-  <Feature title="Workflow Automation" description="Automate repetitive tasks with powerful triggers and actions. Set up once and let the system handle the rest." />
-  <Feature title="Enterprise-Grade Security" description="SOC 2 compliant with end-to-end encryption, SSO, and role-based access controls. Your data stays safe." />
-  <Feature title="Seamless Integrations" description="Connect with the tools you already use. Slack, GitHub, Jira, and 100+ integrations available out of the box." />
+<Features title="${t.featuresTitle}" description="${t.featuresDesc}" columns={3}>
+  <Feature title="${t.feat1Title}" description="${t.feat1Desc}" />
+  <Feature title="${t.feat2Title}" description="${t.feat2Desc}" />
+  <Feature title="${t.feat3Title}" description="${t.feat3Desc}" />
+  <Feature title="${t.feat4Title}" description="${t.feat4Desc}" />
+  <Feature title="${t.feat5Title}" description="${t.feat5Desc}" />
+  <Feature title="${t.feat6Title}" description="${t.feat6Desc}" />
 </Features>
 
-<BentoGrid title="Built for Modern Teams" description="See what sets ${projectName} apart from the rest.">
-  <BentoItem title="Visual Workflow Builder" description="Design complex workflows with an intuitive drag-and-drop interface. No coding required for common automation tasks." span={2} />
-  <BentoItem title="API-First Architecture" description="Every feature is accessible via our REST and GraphQL APIs. Build custom integrations with comprehensive documentation." />
-  <BentoItem title="Global Edge Network" description="Deploy to 150+ edge locations worldwide. Your users get sub-100ms response times no matter where they are." />
+<BentoGrid title="${t.bentoTitle}" description="${t.bentoDesc}">
+  <BentoItem title="${t.bento1Title}" description="${t.bento1Desc}" span={2} />
+  <BentoItem title="${t.bento2Title}" description="${t.bento2Desc}" />
+  <BentoItem title="${t.bento3Title}" description="${t.bento3Desc}" />
 </BentoGrid>
 
-<Steps id="how-it-works" title="How It Works" description="Get up and running in three simple steps.">
-  <Step title="Create Your Account" description="Sign up in seconds with your email or SSO provider. No credit card required to get started." />
-  <Step title="Configure Your Workspace" description="Import your existing data, invite your team, and customize your workspace to match your workflow." />
-  <Step title="Launch and Scale" description="Go live with one click. Our infrastructure scales automatically to handle any amount of traffic." />
+<Steps id="how-it-works" title="${t.stepsTitle}" description="${t.stepsDesc}">
+  <Step title="${t.step1Title}" description="${t.step1Desc}" />
+  <Step title="${t.step2Title}" description="${t.step2Desc}" />
+  <Step title="${t.step3Title}" description="${t.step3Desc}" />
 </Steps>
 
-<Testimonials title="Loved by Teams Everywhere" columns={3}>
-  <TestimonialCard quote="We cut our development time in half after switching. The workflow automation alone saved us 20 hours a week." author="Sarah Chen" role="VP of Engineering" company="Acme Corp" rating={5} />
-  <TestimonialCard quote="The best developer experience I have ever used. Everything just works, and the API documentation is phenomenal." author="Marcus Rivera" role="Lead Developer" company="TechFlow" rating={5} />
-  <TestimonialCard quote="Finally a platform that scales with us. We went from 1,000 to 100,000 users without changing a single config." author="Emily Nakamura" role="CTO" company="ScaleUp Inc" rating={5} />
+<Testimonials title="${t.testimonialsTitle}" columns={3}>
+  <TestimonialCard quote="${t.t1Quote}" author="${t.t1Author}" role="${t.t1Role}" company="${t.t1Company}" rating={5} />
+  <TestimonialCard quote="${t.t2Quote}" author="${t.t2Author}" role="${t.t2Role}" company="${t.t2Company}" rating={5} />
+  <TestimonialCard quote="${t.t3Quote}" author="${t.t3Author}" role="${t.t3Role}" company="${t.t3Company}" rating={5} />
 </Testimonials>
 
-<Stats title="The Numbers Speak for Themselves">
-  <Stat value="10K+" label="Active Teams" description="Teams shipping with ${projectName}" />
-  <Stat value="99.9%" label="Uptime" description="Enterprise-grade reliability" />
-  <Stat value="150+" label="Integrations" description="Connect your favorite tools" />
-  <Stat value="4.9/5" label="Rating" description="Average customer satisfaction" />
+<Stats title="${t.statsTitle}">
+  <Stat value="10K+" label="${t.stat1Label}" description="${t.stat1Desc}" />
+  <Stat value="99.9%" label="${t.stat2Label}" description="${t.stat2Desc}" />
+  <Stat value="150+" label="${t.stat3Label}" description="${t.stat3Desc}" />
+  <Stat value="4.9/5" label="${t.stat4Label}" description="${t.stat4Desc}" />
 </Stats>
 
-<FAQ title="Frequently Asked Questions">
-  <FAQItem question="Is there a free plan?">
-    Yes! Our free plan includes all core features for up to 5 team members. No credit card required and no time limit.
+<FAQ title="${t.faqTitle}">
+  <FAQItem question="${t.faq1Q}">
+    ${t.faq1A}
   </FAQItem>
-  <FAQItem question="How long does setup take?">
-    Most teams are up and running in under 5 minutes. Our guided onboarding walks you through everything, and you can import existing data with a single click.
+  <FAQItem question="${t.faq2Q}">
+    ${t.faq2A}
   </FAQItem>
-  <FAQItem question="Can I cancel anytime?">
-    Absolutely. There are no long-term contracts or cancellation fees. You can upgrade, downgrade, or cancel your plan at any time.
+  <FAQItem question="${t.faq3Q}">
+    ${t.faq3A}
   </FAQItem>
-  <FAQItem question="Is my data secure?">
-    Security is our top priority. We are SOC 2 Type II compliant, use end-to-end encryption, and offer SSO and role-based access controls on all paid plans.
+  <FAQItem question="${t.faq4Q}">
+    ${t.faq4A}
   </FAQItem>
-  <FAQItem question="Do you offer support?">
-    We provide email support on all plans and priority support with a dedicated account manager on Pro and Enterprise plans. Our average response time is under 2 hours.
+  <FAQItem question="${t.faq5Q}">
+    ${t.faq5A}
   </FAQItem>
 </FAQ>
 
 <BannerCTA
-  title="Ready to ship faster?"
-  buttonText="Start Your Free Trial"
+  title="${t.ctaTitle}"
+  buttonText="${t.ctaButton}"
   buttonHref="https://app.${projectName}.com/signup"
-  subtext="No credit card required. Free plan available forever."
+  subtext="${t.ctaSubtext}"
 />
 `,
-  );
+    );
+  }
 
   // Features page
   writeFileSync(
