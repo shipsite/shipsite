@@ -14,9 +14,9 @@ export function generatePage(ctx: GeneratorContext): void {
   writeFileSync(
     join(ctx.srcDir, 'app', '[locale]', '[[...slug]]', 'page.tsx'),
     `import { setRequestLocale } from 'next-intl/server';
-import { notFound, redirect } from 'next/navigation';
-import { getPageContent, getAvailableLocales } from '@shipsite.dev/core/mdx';
-import { getPageBySlug, generateAllStaticParams, buildCanonicalUrl, getAlternateUrls, isNoIndexPage, resolvePageHref } from '@shipsite.dev/core/pages';
+import { notFound } from 'next/navigation';
+import { getPageContent } from '@shipsite.dev/core/mdx';
+import { getPageBySlug, generateAllStaticParams, buildCanonicalUrl, getAlternateUrls, isNoIndexPage } from '@shipsite.dev/core/pages';
 import { resolveAuthor } from '@shipsite.dev/core/blog';
 import { getConfig, getSiteUrl, getDefaultLocale } from '@shipsite.dev/core/config';
 import * as Components from '@shipsite.dev/components';
@@ -101,16 +101,19 @@ export default async function DynamicPage({ params }: PageProps) {
   try {
     const result = await getPageContent(pageConfig.content, locale, AllComponents);
     content = result.content;
-  } catch (error) {
-    // Check if content exists in default locale → redirect instead of 404
+  } catch {
+    // Content missing in requested locale — try serving default locale content
     const defaultLocale = getDefaultLocale();
     if (locale !== defaultLocale) {
-      const availableLocales = getAvailableLocales(pageConfig.content);
-      if (availableLocales.includes(defaultLocale)) {
-        redirect(resolvePageHref(slugPath, defaultLocale));
+      try {
+        const result = await getPageContent(pageConfig.content, defaultLocale, AllComponents);
+        content = result.content;
+      } catch {
+        notFound();
       }
+    } else {
+      notFound();
     }
-    notFound();
   }
 
   return <div className="page-prose">{content}</div>;
