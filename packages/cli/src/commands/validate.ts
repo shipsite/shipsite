@@ -1,5 +1,6 @@
 import { join, relative } from 'path';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
+import { validateLinks } from './validate-links.js';
 
 const errors: string[] = [];
 const warnings: string[] = [];
@@ -409,6 +410,9 @@ export async function validate() {
     }
   }
   walkContentDirs(contentDir, '');
+
+  // Link validation
+  validateLinks(config, contentDir, fail, warn);
 
   // Output results
   if (warnings.length) {
