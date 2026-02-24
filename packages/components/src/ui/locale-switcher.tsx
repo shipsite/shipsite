@@ -1,16 +1,15 @@
 'use client';
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import { useShipSite, useAlternateLinks } from '../context/ShipSiteProvider';
 
 export function LocaleSwitcher() {
   const { locale, locales } = useShipSite();
   const alternatePathMap = useAlternateLinks();
+  const pathname = usePathname();
 
   if (locales.length <= 1) return null;
-
-  const pathname =
-    typeof window !== 'undefined' ? window.location.pathname : '';
 
   // Find the alternatePathMap entry where the current locale's path matches
   let alternates: Record<string, string> | undefined;
