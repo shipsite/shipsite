@@ -4,9 +4,9 @@
   "url": "https://testsite.com",
   "logo": "/images/logo.svg",
   "favicon": "/favicon.png",
-  "ogImage": "/images/og-image.jpg",
+  "ogImage": "/images/og-image.png",
   "colors": {
-    "primary": "#5d5bd4",
+    "primary": "#059669",
     "accent": "#067647",
     "background": "#ffffff",
     "text": "#1f2a37"

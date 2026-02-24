@@ -130,7 +130,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           logo: config.logo,
           ogImage: config.ogImage,
           colors: {
-            primary: config.colors?.primary || '#5d5bd4',
+            primary: config.colors?.primary || '#059669',
             accent: config.colors?.accent || '#067647',
             background: config.colors?.background || '#ffffff',
             text: config.colors?.text || '#1f2a37',

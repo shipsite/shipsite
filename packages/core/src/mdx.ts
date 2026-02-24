@@ -59,10 +59,13 @@ export async function getPageContent(
           Orig({
             ...props,
             contentFolder: pageName,
+            title: page.title,
+            heroImage: page.image || '',
+            blogHref: resolvePageHref('blog', locale),
             date: page?.date || '',
             readingTime: page?.readingTime || 0,
             author: authorData
-              ? { name: authorData.name, role: authorData.role, image: authorData.image }
+              ? { name: authorData.name, role: authorData.role, image: authorData.image, bio: authorData.bio }
               : undefined,
           });
       }

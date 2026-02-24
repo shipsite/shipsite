@@ -47,18 +47,18 @@ function pngChunk(type: string, data: Buffer): Buffer {
   return Buffer.concat([len, typeB, data, crcB]);
 }
 
-/** Generate a solid-color square PNG (RGB, no alpha). */
-function generatePng(size: number, hex: string): Buffer {
+/** Generate a solid-color PNG (RGB, no alpha). */
+function generatePng(width: number, height: number, hex: string): Buffer {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
 
-  const rowBytes = 1 + size * 3;
-  const raw = Buffer.alloc(rowBytes * size);
-  for (let y = 0; y < size; y++) {
+  const rowBytes = 1 + width * 3;
+  const raw = Buffer.alloc(rowBytes * height);
+  for (let y = 0; y < height; y++) {
     const off = y * rowBytes;
     raw[off] = 0; // filter: none
-    for (let x = 0; x < size; x++) {
+    for (let x = 0; x < width; x++) {
       const px = off + 1 + x * 3;
       raw[px] = r;
       raw[px + 1] = g;
@@ -67,8 +67,48 @@ function generatePng(size: number, hex: string): Buffer {
   }
 
   const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(size, 0);
-  ihdr.writeUInt32BE(size, 4);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(height, 4);
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 2; // color type: RGB
+
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    pngChunk('IHDR', ihdr),
+    pngChunk('IDAT', deflateSync(raw)),
+    pngChunk('IEND', Buffer.alloc(0)),
+  ]);
+}
+
+/** Generate an OG image PNG (1200x630) with a vertical gradient. */
+function generateOgPng(hex: string): Buffer {
+  const width = 1200;
+  const height = 630;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+
+  const rowBytes = 1 + width * 3;
+  const raw = Buffer.alloc(rowBytes * height);
+  for (let y = 0; y < height; y++) {
+    const off = y * rowBytes;
+    raw[off] = 0; // filter: none
+    // Gradient: top is lighter (+40), bottom is darker (-40)
+    const t = y / (height - 1);
+    const pr = Math.min(255, Math.max(0, Math.round(r + 40 * (1 - t) - 40 * t)));
+    const pg = Math.min(255, Math.max(0, Math.round(g + 40 * (1 - t) - 40 * t)));
+    const pb = Math.min(255, Math.max(0, Math.round(b + 40 * (1 - t) - 40 * t)));
+    for (let x = 0; x < width; x++) {
+      const px = off + 1 + x * 3;
+      raw[px] = pr;
+      raw[px + 1] = pg;
+      raw[px + 2] = pb;
+    }
+  }
+
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(height, 4);
   ihdr[8] = 8; // bit depth
   ihdr[9] = 2; // color type: RGB
 
@@ -176,8 +216,8 @@ async function main() {
 
   const primaryColor = (await p.text({
     message: 'Primary color (hex)',
-    placeholder: '#5d5bd4',
-    initialValue: '#5d5bd4',
+    placeholder: '#059669',
+    initialValue: '#059669',
   })) as string;
 
   if (p.isCancel(primaryColor)) {
@@ -219,7 +259,7 @@ async function main() {
     url: `https://${projectName}.com`,
     logo: '/images/logo.svg',
     favicon: '/favicon.png',
-    ogImage: '/images/og-image.jpg',
+    ogImage: '/images/og-image.png',
     colors: {
       primary: primaryColor,
       accent: '#067647',
@@ -875,8 +915,11 @@ description: "Terms and conditions for using our service."
   );
 
   // Default favicon and apple-touch-icon (solid primary color — swap with your real icons)
-  writeFileSync(join(projectDir, 'public', 'favicon.png'), generatePng(32, primaryColor));
-  writeFileSync(join(projectDir, 'public', 'apple-touch-icon.png'), generatePng(180, primaryColor));
+  writeFileSync(join(projectDir, 'public', 'favicon.png'), generatePng(32, 32, primaryColor));
+  writeFileSync(join(projectDir, 'public', 'apple-touch-icon.png'), generatePng(180, 180, primaryColor));
+
+  // Default OG image (gradient — swap with your real OG image)
+  writeFileSync(join(projectDir, 'public', 'images', 'og-image.png'), generateOgPng(primaryColor));
 
   // Blog cover images
   mkdirSync(join(projectDir, 'public', 'images', 'blog'), { recursive: true });

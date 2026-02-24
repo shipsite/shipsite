@@ -72,7 +72,7 @@ export function generateCSSVariables(config: {
   };
 }): string {
   const colors = config.colors || {};
-  const primary = colors.primary || '#5d5bd4';
+  const primary = colors.primary || '#059669';
   const accent = colors.accent || '#067647';
   const background = colors.background || '#ffffff';
   const text = colors.text || '#1f2a37';
@@ -98,121 +98,61 @@ export function generateCSSVariables(config: {
 }
 
 /**
- * Generate shadcn/ui-compatible CSS tokens from user colors.
- * Produces a :root block with --primary, --background, --foreground, etc.
+ * Generate shadcn/ui-compatible CSS tokens using the Launch UI emerald theme.
+ * Uses oklch color space for perceptually uniform colors.
  */
-export function generateShadcnTokens(config: {
-  colors?: {
-    primary?: string;
-    accent?: string;
-    background?: string;
-    text?: string;
-  };
-}): string {
-  const colors = config.colors || {};
-  const primary = colors.primary || '#5d5bd4';
+export function generateShadcnTokens(colors: {
+  primary?: string;
+  accent?: string;
+  background?: string;
+  text?: string;
+} = {}): string {
+  const primary = colors.primary || '#059669';
   const accent = colors.accent || '#067647';
   const background = colors.background || '#ffffff';
   const text = colors.text || '#1f2a37';
 
-  const [pH, pS, pL] = hexToHsl(primary);
-  const [aH, aS, aL] = hexToHsl(accent);
-  const [bH, bS, bL] = hexToHsl(background);
-  const [tH, tS, tL] = hexToHsl(text);
-
-  // Generate derived colors
-  // Saturated colors appear darker than their HSL lightness — adjust threshold
-  const primaryFg = pL > 70 ? `${tH} ${tS}% 15%` : `0 0% 98%`;
-  const brandFg = `${pH} ${Math.min(pS + 10, 100)}% ${Math.min(pL + 10, 85)}%`;
-
-  // Muted: desaturated, lighter version of background
-  const mutedS = Math.max(bS - 2, 0);
-  const muted = `${bH} ${mutedS}% 93%`;
-  const mutedFg = `${tH} ${Math.max(tS - 5, 0)}% 45%`;
-
-  // Card: slightly different from background
-  const card = `${bH} ${bS}% 100%`;
-  const cardFg = `${tH} ${tS}% ${tL}%`;
-
-  // Border/input
-  const borderL = Math.max(bL - 8, 0);
-  const border = `${bH} ${Math.max(bS - 3, 0)}% ${borderL}%`;
-  const input = border;
-  const ring = `${tH} ${Math.max(tS - 5, 0)}% 70%`;
-
-  // Secondary
-  const secondary = muted;
-  const secondaryFg = `${tH} ${tS}% 20%`;
-
-  // Accent (shadcn meaning: hover background)
-  const accentBg = `${bH} ${mutedS}% 90%`;
-  const accentFg = `${tH} ${tS}% 20%`;
-
-  // Destructive
-  const destructive = `0 72% 51%`;
-  const destructiveFg = `0 72% 51%`;
-
-  // Popover = card
-  const popover = card;
-  const popoverFg = cardFg;
-
-  // Shadow
-  const shadow = '#00000008';
-
-  // Dark mode tokens derived from primary hue
-  const darkBgH = pH;
-  const darkBgS = Math.min(Math.round(pS * 0.6), 50);
-  const darkBg = `${darkBgH} ${darkBgS}% 4%`;
-  const darkFg = `0 0% 98%`;
-  const darkCard = `${darkBgH} ${darkBgS}% 6%`;
-  const darkMuted = `${darkBgH} ${Math.round(darkBgS * 0.8)}% 15%`;
-  const darkMutedFg = `${darkBgH} ${Math.round(darkBgS * 0.4)}% 65%`;
-  const darkBorder = `${darkBgH} ${Math.round(darkBgS * 0.7)}% 14%`;
-  const darkInput = `${darkBgH} ${Math.round(darkBgS * 0.7)}% 18%`;
-  const darkRing = `${pH} ${Math.round(pS * 0.5)}% 60%`;
-  const darkBrandFg = `${pH} ${Math.min(pS + 10, 100)}% ${Math.min(pL + 15, 80)}%`;
-
   return `:root {
-  /* Brand colors */
-  --brand: hsl(${pH} ${pS}% ${pL}%);
-  --brand-foreground: hsl(${brandFg});
+  /* Brand colors — emerald */
+  --brand: oklch(0.6531 0.1436 161.43);
+  --brand-foreground: oklch(0.8097 0.1579 162.13);
 
   /* Primary */
-  --primary: hsl(${pH} ${pS}% ${pL}%);
-  --primary-foreground: hsl(${primaryFg});
+  --primary: oklch(0.6531 0.1436 161.43);
+  --primary-foreground: oklch(0.985 0 0);
 
   /* Background & Foreground */
-  --background: hsl(${bH} ${bS}% ${bL}%);
-  --foreground: hsl(${tH} ${tS}% ${tL}%);
+  --background: oklch(0.9753 0.0045 254.98);
+  --foreground: oklch(0.141 0.005 285.823);
 
   /* Card */
-  --card: hsl(${card});
-  --card-foreground: hsl(${cardFg});
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
 
   /* Popover */
-  --popover: hsl(${popover});
-  --popover-foreground: hsl(${popoverFg});
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
 
   /* Secondary */
-  --secondary: hsl(${secondary});
-  --secondary-foreground: hsl(${secondaryFg});
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
 
   /* Muted */
-  --muted: hsl(${muted});
-  --muted-foreground: hsl(${mutedFg});
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
 
   /* Accent */
-  --accent: hsl(${accentBg});
-  --accent-foreground: hsl(${accentFg});
+  --accent: oklch(0.927 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
 
   /* Destructive */
-  --destructive: hsl(${destructive});
-  --destructive-foreground: hsl(${destructiveFg});
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
 
   /* Borders & Input */
-  --border: hsl(${border});
-  --input: hsl(${input});
-  --ring: hsl(${ring});
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
 
   /* Radius */
   --radius: 0.625rem;
@@ -221,10 +161,10 @@ export function generateShadcnTokens(config: {
   --line-width: 1px;
 
   /* Shadows */
-  --shadow: ${shadow};
-  --shadow-strong: #00000010;
+  --shadow: #00000008;
+  --shadow-strong: #00000008;
 
-  /* Legacy --ss-* tokens (keep for backwards compat during transition) */
+  /* Legacy --ss-* tokens */
   --ss-primary: ${primary};
   --ss-accent: ${accent};
   --ss-background: ${background};
@@ -232,31 +172,31 @@ export function generateShadcnTokens(config: {
 }
 
 .dark {
-  --brand: hsl(${pH} ${pS}% ${pL}%);
-  --brand-foreground: hsl(${darkBrandFg});
-  --primary: hsl(${pH} ${pS}% ${pL}%);
-  --primary-foreground: hsl(0 0% 98%);
-  --background: hsl(${darkBg});
-  --foreground: hsl(${darkFg});
-  --card: hsl(${darkCard});
-  --card-foreground: hsl(${darkFg});
-  --popover: hsl(${darkCard});
-  --popover-foreground: hsl(${darkFg});
-  --secondary: hsl(${darkMuted});
-  --secondary-foreground: hsl(${darkFg});
-  --muted: hsl(${darkMuted});
-  --muted-foreground: hsl(${darkMutedFg});
-  --accent: hsl(${darkMuted});
-  --accent-foreground: hsl(${darkFg});
-  --destructive: hsl(0 62% 30%);
-  --destructive-foreground: hsl(${darkFg});
-  --border: hsl(${darkBorder});
-  --input: hsl(${darkInput});
-  --ring: hsl(${darkRing});
+  --brand: oklch(0.8453 0.1298 164.99);
+  --brand-foreground: oklch(0.6958 0.1491 162.46);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  --background: oklch(0.1405 0.0044 285.82);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.141 0.005 285.823);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.141 0.005 285.823);
+  --popover-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.885 0.006 286.033);
+  --input: oklch(0.274 0.006 286.033);
+  --ring: oklch(0.442 0.017 285.786);
   --radius: 0.625rem;
   --line-width: 1px;
-  --shadow: #00000040;
-  --shadow-strong: #00000060;
+  --shadow: #00000020;
+  --shadow-strong: #00000088;
   --ss-primary: ${primary};
   --ss-accent: ${accent};
 }

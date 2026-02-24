@@ -39,13 +39,13 @@ describe('hexToHsl', () => {
   });
 
   it('converts the default primary color', () => {
-    const [h, s, l] = hexToHsl('#5d5bd4');
-    // Roughly purple
-    expect(h).toBeGreaterThan(230);
-    expect(h).toBeLessThan(250);
-    expect(s).toBeGreaterThan(50);
-    expect(l).toBeGreaterThan(50);
-    expect(l).toBeLessThan(65);
+    const [h, s, l] = hexToHsl('#059669');
+    // Roughly emerald green
+    expect(h).toBeGreaterThan(155);
+    expect(h).toBeLessThan(170);
+    expect(s).toBeGreaterThan(90);
+    expect(l).toBeGreaterThan(25);
+    expect(l).toBeLessThan(35);
   });
 
   it('converts the default accent color', () => {
@@ -106,7 +106,7 @@ describe('hexToHsl ↔ hslToHex roundtrip', () => {
   }
 
   // Complex colors lose precision from HSL integer rounding — verify they're close
-  const approxColors = ['#5d5bd4', '#067647'];
+  const approxColors = ['#059669', '#067647'];
   for (const hex of approxColors) {
     it(`roundtrips ${hex} approximately (within rounding tolerance)`, () => {
       const [h, s, l] = hexToHsl(hex);
@@ -125,7 +125,7 @@ describe('hexToHsl ↔ hslToHex roundtrip', () => {
 
 describe('generateColorScale', () => {
   it('produces all 11 scale steps', () => {
-    const scale = generateColorScale('#5d5bd4');
+    const scale = generateColorScale('#059669');
     const keys = Object.keys(scale);
     expect(keys).toHaveLength(11);
     expect(keys).toEqual(
@@ -141,7 +141,7 @@ describe('generateColorScale', () => {
   });
 
   it('scale-50 is lighter than scale-950', () => {
-    const scale = generateColorScale('#5d5bd4');
+    const scale = generateColorScale('#059669');
     const l50 = hexToHsl(scale['50'])[2];
     const l950 = hexToHsl(scale['950'])[2];
     expect(l50).toBeGreaterThan(l950);
@@ -160,7 +160,7 @@ describe('generateCSSVariables', () => {
 
   it('uses default colors when empty config provided', () => {
     const css = generateCSSVariables({});
-    expect(css).toContain('#5d5bd4');
+    expect(css).toContain('#059669');
     expect(css).toContain('#067647');
   });
 
@@ -225,35 +225,26 @@ describe('generateShadcnTokens', () => {
     }
   });
 
-  it('uses custom primary color in output', () => {
-    const css = generateShadcnTokens({ colors: { primary: '#ff0000' } });
+  it('uses custom primary color in legacy tokens', () => {
+    const css = generateShadcnTokens({ primary: '#ff0000' });
     expect(css).toContain('--ss-primary: #ff0000');
   });
 
-  it('primary-foreground switches based on lightness', () => {
-    // Dark primary (pL < 50) → light foreground in :root
-    const darkPrimary = generateShadcnTokens({ colors: { primary: '#1a1a8a' } });
-    const darkRoot = darkPrimary.split('.dark {')[0];
-    expect(darkRoot).toContain('--primary-foreground: hsl(0 0% 98%)');
-
-    // Light primary (pL > 50) → dark foreground in :root
-    const lightPrimary = generateShadcnTokens({ colors: { primary: '#c0c0ff' } });
-    const lightRoot = lightPrimary.split('.dark {')[0];
-    // Should NOT have the 98% white foreground in :root
-    expect(lightRoot).not.toMatch(/--primary-foreground: hsl\(0 0% 98%\)/);
-    // Should have a dark foreground instead
-    expect(lightRoot).toMatch(/--primary-foreground: hsl\(\d+ \d+% 15%\)/);
+  it('uses emerald oklch brand colors', () => {
+    const css = generateShadcnTokens({});
+    const rootBlock = css.split('.dark {')[0];
+    expect(rootBlock).toContain('--brand: oklch(0.6531 0.1436 161.43)');
+    expect(rootBlock).toContain('--primary: oklch(0.6531 0.1436 161.43)');
   });
 
-  it('destructive is hardcoded red', () => {
+  it('destructive uses oklch red', () => {
     const css = generateShadcnTokens({});
-    expect(css).toContain('--destructive: hsl(0 72% 51%)');
+    expect(css).toContain('--destructive: oklch(0.577 0.245 27.325)');
   });
 
-  it('dark mode uses darker background than light mode', () => {
+  it('dark mode uses oklch dark background', () => {
     const css = generateShadcnTokens({});
-    // Dark mode background has 4% lightness
     const darkBlock = css.split('.dark {')[1];
-    expect(darkBlock).toMatch(/--background: hsl\(\d+ \d+% 4%\)/);
+    expect(darkBlock).toContain('--background: oklch(0.1405 0.0044 285.82)');
   });
 });
