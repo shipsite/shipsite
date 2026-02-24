@@ -1034,8 +1034,19 @@ export default config;
     // Git not available
   }
 
+  // Install dependencies
+  const installSpinner = p.spinner();
+  installSpinner.start('Installing dependencies...');
+  try {
+    execSync('npm install', { cwd: projectDir, stdio: 'ignore', timeout: 120_000 });
+    installSpinner.stop('Dependencies installed!');
+  } catch {
+    installSpinner.stop('Failed to install dependencies');
+    p.log.warning('Run `npm install` manually to install dependencies.');
+  }
+
   p.note(
-    [`cd ${projectName}`, 'npm install', 'npx shipsite dev'].join('\n'),
+    [`cd ${projectName}`, 'npx shipsite dev'].join('\n'),
     'Next steps',
   );
 
