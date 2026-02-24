@@ -75,10 +75,16 @@ export async function getPageContent(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Orig = (components as Record<string, React.FC<any>>)['BlogIndex'];
     if (Orig) {
-      const articles = getBlogArticles(locale).map((a) => ({
-        ...a,
-        href: resolvePageHref(`blog/${a.slug}`, locale),
-      }));
+      const articles = getBlogArticles(locale).map((a) => {
+        const authorData = a.authorKey ? resolveAuthor(a.authorKey, locale) : undefined;
+        return {
+          ...a,
+          href: resolvePageHref(`blog/${a.slug}`, locale),
+          author: authorData
+            ? { name: authorData.name, role: authorData.role, image: authorData.image }
+            : undefined,
+        };
+      });
       allComponents['BlogIndex'] = async (props: Record<string, unknown>) =>
         Orig({ ...props, articles });
     }

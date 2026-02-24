@@ -80,6 +80,50 @@ function generatePng(size: number, hex: string): Buffer {
   ]);
 }
 
+/** Generate an abstract SVG blog cover image (1200×800, 3:2). */
+function generateBlogSvg(hex: string, variant: 'a' | 'b' | 'c'): string {
+  // Derive lighter/darker shades from the primary color
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const light = `rgba(${Math.min(r + 60, 255)},${Math.min(g + 60, 255)},${Math.min(b + 60, 255)},0.6)`;
+  const dark = `rgba(${Math.max(r - 40, 0)},${Math.max(g - 40, 0)},${Math.max(b - 40, 0)},0.5)`;
+
+  const shapes: Record<'a' | 'b' | 'c', string> = {
+    a: `<circle cx="900" cy="200" r="180" fill="${light}"/><circle cx="300" cy="600" r="120" fill="${dark}"/><rect x="500" y="350" width="300" height="300" rx="40" fill="${light}"/>`,
+    b: `<rect x="100" y="100" width="250" height="250" rx="50" fill="${dark}"/><circle cx="800" cy="500" r="200" fill="${light}"/><rect x="950" y="150" width="150" height="400" rx="30" fill="${dark}"/>`,
+    c: `<circle cx="600" cy="400" r="250" fill="${light}"/><rect x="80" y="500" width="200" height="200" rx="60" fill="${dark}"/><circle cx="1000" cy="250" r="130" fill="${dark}"/>`,
+  };
+
+  const gradDirs: Record<'a' | 'b' | 'c', [string, string]> = {
+    a: ['0%', '100%'],
+    b: ['100%', '0%'],
+    c: ['50%', '100%'],
+  };
+
+  const [gx, gy] = gradDirs[variant];
+
+  return `<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="${gx}" y2="${gy}">
+      <stop offset="0%" stop-color="${hex}"/>
+      <stop offset="100%" stop-color="${dark}"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  ${shapes[variant]}
+</svg>`;
+}
+
+/** Generate a simple circle avatar placeholder SVG. */
+function generateTeamSvg(hex: string): string {
+  return `<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="100" fill="${hex}"/>
+  <circle cx="100" cy="80" r="30" fill="white" opacity="0.9"/>
+  <ellipse cx="100" cy="150" rx="45" ry="30" fill="white" opacity="0.9"/>
+</svg>`;
+}
+
 // ─── Default label translations ───────────────────────────────
 const translations: Record<string, Record<string, string>> = {
   Features:         { en: 'Features',         de: 'Funktionen',          fr: 'Fonctionnalités',       es: 'Características' },
@@ -275,7 +319,7 @@ async function main() {
         default: {
           name: 'Team',
           role: 'Author',
-          image: '/images/team.avif',
+          image: '/images/team.svg',
         },
       },
     },
@@ -655,6 +699,7 @@ title: "Getting Started with ${projectName}"
 description: "A complete guide to setting up your account, configuring your workspace, and launching your first project."
 excerpt: "Everything you need to go from sign-up to production in under five minutes."
 date: "${today}"
+image: "/images/blog/getting-started.svg"
 readingTime: 5
 author: default
 featured: true
@@ -698,6 +743,7 @@ title: "Building Your First Project"
 description: "A hands-on tutorial that walks you through creating, configuring, and deploying your first project."
 excerpt: "Follow along as we build a project from scratch and deploy it to production."
 date: "${today}"
+image: "/images/blog/building-your-first-project.svg"
 readingTime: 6
 author: default
 ---
@@ -748,6 +794,7 @@ title: "Best Practices for Teams"
 description: "Proven strategies for getting the most out of ${projectName}, from workspace organization to deployment workflows."
 excerpt: "Tips and patterns from teams that ship fast and stay organized."
 date: "${today}"
+image: "/images/blog/best-practices.svg"
 readingTime: 4
 author: default
 ---
@@ -830,6 +877,15 @@ description: "Terms and conditions for using our service."
   // Default favicon and apple-touch-icon (solid primary color — swap with your real icons)
   writeFileSync(join(projectDir, 'public', 'favicon.png'), generatePng(32, primaryColor));
   writeFileSync(join(projectDir, 'public', 'apple-touch-icon.png'), generatePng(180, primaryColor));
+
+  // Blog cover images
+  mkdirSync(join(projectDir, 'public', 'images', 'blog'), { recursive: true });
+  writeFileSync(join(projectDir, 'public', 'images', 'blog', 'getting-started.svg'), generateBlogSvg(primaryColor, 'a'));
+  writeFileSync(join(projectDir, 'public', 'images', 'blog', 'building-your-first-project.svg'), generateBlogSvg(primaryColor, 'b'));
+  writeFileSync(join(projectDir, 'public', 'images', 'blog', 'best-practices.svg'), generateBlogSvg(primaryColor, 'c'));
+
+  // Team avatar placeholder
+  writeFileSync(join(projectDir, 'public', 'images', 'team.svg'), generateTeamSvg(primaryColor));
 
   // Custom components directory
   mkdirSync(join(projectDir, 'components'), { recursive: true });
