@@ -484,9 +484,9 @@ export default config;
           validate: 'shipsite validate',
         },
         dependencies: {
-          '@shipsite.dev/cli': '^0.1.0',
-          '@shipsite.dev/core': '^0.1.0',
-          '@shipsite.dev/components': '^0.1.0',
+          '@shipsite.dev/cli': `^${version}`,
+          '@shipsite.dev/core': `^${version}`,
+          '@shipsite.dev/components': `^${version}`,
           next: '16.1.6',
           react: '19.2.3',
           'react-dom': '19.2.3',
