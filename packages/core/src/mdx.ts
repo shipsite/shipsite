@@ -2,7 +2,8 @@ import type React from 'react';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
 import { allSitePages } from 'content-collections';
-import { resolveAuthor } from './blog';
+import { resolveAuthor, getBlogArticles } from './blog';
+import { resolvePageHref } from './pages';
 
 export interface PageFrontmatter {
   title: string;
@@ -65,6 +66,21 @@ export async function getPageContent(
               : undefined,
           });
       }
+    }
+  }
+
+  // Inject articles into BlogIndex for blog index pages
+  const isBlogIndex = pageName === 'blog';
+  if (isBlogIndex) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Orig = (components as Record<string, React.FC<any>>)['BlogIndex'];
+    if (Orig) {
+      const articles = getBlogArticles(locale).map((a) => ({
+        ...a,
+        href: resolvePageHref(`blog/${a.slug}`, locale),
+      }));
+      allComponents['BlogIndex'] = async (props: Record<string, unknown>) =>
+        Orig({ ...props, articles });
     }
   }
 
