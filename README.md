@@ -128,12 +128,16 @@ German, English, Spanish — fully automatic sync.
 
 ---
 
-## Deploy (one click)
+## Deploy
 
-- **Vercel** (recommended)
+**[ShipSite Cloud](https://shipsite.dev/cloud)** — The easiest way to deploy. Connect your GitHub repo and get auto-deploy, SEO dashboard, and a web editor.
+
+Or self-host anywhere:
+
+- **Vercel**
 - **Cloudflare Pages**
 - **Netlify**
-- Self-hosting (static export possible)
+- Static export
 
 ---
 
@@ -149,15 +153,26 @@ npx shipsite add blog     # New blog post
 
 ---
 
-## Open Source & Community
+## ShipSite Cloud
 
-ShipSite is **100 % open source (MIT)** and actively developed.
+Want a managed experience? **[ShipSite Cloud](https://shipsite.dev/cloud)** gives you:
 
-- [GitHub Discussions](https://github.com/shipsite/shipsite/discussions)
+- Web-based MDX editor
+- Auto-deploy on git push
+- SEO dashboard with validation scores
+- Custom domain management
+- Built-in analytics
+
+[Get started for free](https://shipsite.dev/cloud)
 
 ---
 
-**Built for humans & AI agents.**
+## Community
+
+ShipSite is open source (MIT) and actively developed.
+
+- [GitHub Discussions](https://github.com/shipsite/shipsite/discussions)
+- [Report a bug](https://github.com/shipsite/shipsite/issues)
 
 ---
 

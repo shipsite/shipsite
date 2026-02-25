@@ -6,5 +6,6 @@ dist/
 *.tsbuildinfo
 .content-collections/
 
-# Personal notes
-PLAN.md
+# Internal docs (not for public repo)
+internal/
+CLAUDE.md
