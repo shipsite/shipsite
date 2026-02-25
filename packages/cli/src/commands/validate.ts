@@ -2,16 +2,29 @@ import { join, relative } from 'path';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { validateLinks } from './validate-links.js';
 
-const errors: string[] = [];
-const warnings: string[] = [];
+// ── Public types ───────────────────────────────────────────────
 
-function fail(message: string) {
-  errors.push(message);
+export interface SeoIssue {
+  page: string;
+  message: string;
 }
 
-function warn(message: string) {
-  warnings.push(message);
+export interface PageSeoStatus {
+  slug: string;
+  title: string;
+  description: string;
+  titleLength: number;
+  descriptionLength: number;
 }
+
+export interface SeoValidationResult {
+  score: number;
+  errors: SeoIssue[];
+  warnings: SeoIssue[];
+  pages: PageSeoStatus[];
+}
+
+// ── Internal helpers ───────────────────────────────────────────
 
 function parseFrontmatter(source: string): Record<string, string> | null {
   const match = source.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
@@ -58,104 +71,57 @@ function extractComponentProps(
   return props;
 }
 
-function requireComponent(
-  source: string,
-  componentName: string,
-  filePath: string,
-): Set<string> | null {
-  const props = extractComponentProps(source, componentName);
-  if (!props) {
-    fail(`Missing <${componentName}> in: ${filePath}`);
-    return null;
-  }
-  return props;
-}
+// ── Core validation logic ──────────────────────────────────────
 
-function requireProps(
-  props: Set<string>,
-  required: string[],
-  componentName: string,
-  filePath: string,
-) {
-  for (const prop of required) {
-    if (!props.has(prop)) {
-      fail(`Missing prop "${prop}" in <${componentName}>: ${filePath}`);
+export function runValidation(rootDir?: string): SeoValidationResult {
+  const dir = rootDir || process.cwd();
+  const configPath = join(dir, 'shipsite.json');
+  const contentDir = join(dir, 'content');
+
+  const errors: SeoIssue[] = [];
+  const warnings: SeoIssue[] = [];
+  const pageStatuses: PageSeoStatus[] = [];
+
+  function fail(page: string, message: string) {
+    errors.push({ page, message });
+  }
+
+  function warn(page: string, message: string) {
+    warnings.push({ page, message });
+  }
+
+  // Legacy wrappers for validateLinks compatibility
+  function failLegacy(message: string) {
+    // Parse "context: message" or use as-is
+    const colonIdx = message.lastIndexOf(' in ');
+    if (colonIdx !== -1) {
+      const ctx = message.slice(colonIdx + 4);
+      const msg = message.slice(0, colonIdx);
+      errors.push({ page: ctx, message: msg });
+    } else {
+      errors.push({ page: '', message });
     }
   }
-}
 
-function warnOnSeo(
-  frontmatter: Record<string, string>,
-  filePath: string,
-) {
-  const title = frontmatter.title || '';
-  const description = frontmatter.description || '';
-  const titleLength = title.trim().length;
-  const descriptionLength = description.trim().length;
-
-  if (titleLength < 30 || titleLength > 70) {
-    warn(
-      `SEO title length (${titleLength}) out of range 30-70: ${filePath}`,
-    );
-  }
-  if (descriptionLength < 70 || descriptionLength > 160) {
-    warn(
-      `SEO description length (${descriptionLength}) out of range 70-160: ${filePath}`,
-    );
-  }
-  if (description.endsWith('...')) {
-    warn(`SEO description ends with ellipsis: ${filePath}`);
-  }
-  if (title.toLowerCase() === description.toLowerCase()) {
-    warn(`SEO title equals description: ${filePath}`);
-  }
-
-  const descriptionLower = description.toLowerCase().trim();
-  const titleLower = title.toLowerCase().trim();
-  if (descriptionLower.startsWith(titleLower) && titleLower.length > 0) {
-    warn(`SEO description starts with title: ${filePath}`);
-  }
-
-  const punctuation = /[.!?]$/;
-  if (descriptionLength > 0 && !punctuation.test(description.trim())) {
-    warn(`SEO description should end with punctuation: ${filePath}`);
-  }
-
-  const stopwords = new Set([
-    'the', 'and', 'or', 'for', 'with', 'from', 'that', 'this',
-    'your', 'you', 'are', 'our', 'to', 'of', 'in', 'a', 'an',
-  ]);
-  const tokens = descriptionLower.split(/[^a-z0-9]+/).filter(Boolean);
-  const counts = new Map<string, number>();
-  for (const token of tokens) {
-    if (token.length < 3 || stopwords.has(token)) continue;
-    counts.set(token, (counts.get(token) || 0) + 1);
-  }
-  for (const [token, count] of counts.entries()) {
-    if (count >= 4) {
-      warn(
-        `SEO description repeats "${token}" ${count}x: ${filePath}`,
-      );
-      break;
+  function warnLegacy(message: string) {
+    const colonIdx = message.lastIndexOf(' in ');
+    if (colonIdx !== -1) {
+      const ctx = message.slice(colonIdx + 4);
+      const msg = message.slice(0, colonIdx);
+      warnings.push({ page: ctx, message: msg });
+    } else {
+      warnings.push({ page: '', message });
     }
   }
-}
-
-export async function validate() {
-  const rootDir = process.cwd();
-  const configPath = join(rootDir, 'shipsite.json');
-  const contentDir = join(rootDir, 'content');
-
-  console.log('\n  Validating content...\n');
 
   if (!existsSync(configPath)) {
-    console.error('  Error: shipsite.json not found in current directory');
-    process.exit(1);
+    fail('shipsite.json', 'shipsite.json not found in current directory');
+    return buildResult(errors, warnings, pageStatuses);
   }
 
   if (!existsSync(contentDir)) {
-    console.error('  Error: content/ directory not found');
-    process.exit(1);
+    fail('content/', 'content/ directory not found');
+    return buildResult(errors, warnings, pageStatuses);
   }
 
   const config = JSON.parse(readFileSync(configPath, 'utf-8'));
@@ -166,22 +132,20 @@ export async function validate() {
     locales?: string[];
   }> = config.pages || [];
   const blogAuthors = Object.keys(config.blog?.authors || {});
-
   const contentSet = new Set(pages.map((page) => page.content));
 
-  // Track titles/descriptions per locale for duplicate detection
   const titlesByLocale = new Map<string, Map<string, string[]>>();
   const descriptionsByLocale = new Map<string, Map<string, string[]>>();
 
   for (const page of pages) {
     if (!page.content) {
-      fail(`Page is missing "content" path for slug "${page.slug}"`);
+      fail(page.slug, `Page is missing "content" path`);
       continue;
     }
 
     const pageDir = join(contentDir, page.content);
     if (!existsSync(pageDir)) {
-      fail(`Missing content folder: content/${page.content}`);
+      fail(`content/${page.content}`, 'Missing content folder');
       continue;
     }
 
@@ -189,156 +153,171 @@ export async function validate() {
     for (const locale of pageLocales) {
       const mdxPath = join(pageDir, `${locale}.mdx`);
       if (!existsSync(mdxPath)) {
-        fail(`Missing MDX file: content/${page.content}/${locale}.mdx`);
+        fail(`content/${page.content}/${locale}.mdx`, 'Missing MDX file');
         continue;
       }
 
       const source = readFileSync(mdxPath, 'utf-8');
       const rel = relative(contentDir, mdxPath);
+      const filePath = `content/${rel}`;
       const frontmatter = parseFrontmatter(source);
 
       if (!frontmatter) {
-        fail(`Missing frontmatter in: content/${rel}`);
+        fail(filePath, 'Missing frontmatter');
         continue;
       }
       if (!frontmatter.title) {
-        fail(`Missing "title" in frontmatter: content/${rel}`);
+        fail(filePath, 'Missing "title" in frontmatter');
       }
       if (!frontmatter.description) {
-        fail(`Missing "description" in frontmatter: content/${rel}`);
+        fail(filePath, 'Missing "description" in frontmatter');
       }
 
-      warnOnSeo(frontmatter, `content/${rel}`);
+      // SEO checks
+      const title = frontmatter.title || '';
+      const description = frontmatter.description || '';
+      const titleLength = title.trim().length;
+      const descriptionLength = description.trim().length;
 
-      // Collect titles/descriptions for duplicate detection
+      pageStatuses.push({
+        slug: page.slug,
+        title,
+        description,
+        titleLength,
+        descriptionLength,
+      });
+
+      if (titleLength > 0 && (titleLength < 30 || titleLength > 70)) {
+        warn(filePath, `SEO title length (${titleLength}) out of range 30-70`);
+      }
+      if (descriptionLength > 0 && (descriptionLength < 70 || descriptionLength > 160)) {
+        warn(filePath, `SEO description length (${descriptionLength}) out of range 70-160`);
+      }
+      if (description.endsWith('...')) {
+        warn(filePath, 'SEO description ends with ellipsis');
+      }
+      if (title.toLowerCase() === description.toLowerCase() && title.length > 0) {
+        warn(filePath, 'SEO title equals description');
+      }
+      if (
+        description.toLowerCase().trim().startsWith(title.toLowerCase().trim()) &&
+        title.trim().length > 0
+      ) {
+        warn(filePath, 'SEO description starts with title');
+      }
+      if (descriptionLength > 0 && !/[.!?]$/.test(description.trim())) {
+        warn(filePath, 'SEO description should end with punctuation');
+      }
+
+      // Keyword stuffing
+      const stopwords = new Set([
+        'the', 'and', 'or', 'for', 'with', 'from', 'that', 'this',
+        'your', 'you', 'are', 'our', 'to', 'of', 'in', 'a', 'an',
+      ]);
+      const tokens = description.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      const counts = new Map<string, number>();
+      for (const token of tokens) {
+        if (token.length < 3 || stopwords.has(token)) continue;
+        counts.set(token, (counts.get(token) || 0) + 1);
+      }
+      for (const [token, count] of counts.entries()) {
+        if (count >= 4) {
+          warn(filePath, `SEO description repeats "${token}" ${count}x`);
+          break;
+        }
+      }
+
+      // Collect for duplicate detection
       if (frontmatter.title) {
-        if (!titlesByLocale.has(locale))
-          titlesByLocale.set(locale, new Map());
+        if (!titlesByLocale.has(locale)) titlesByLocale.set(locale, new Map());
         const titles = titlesByLocale.get(locale)!;
         const key = frontmatter.title.trim();
         if (!titles.has(key)) titles.set(key, []);
-        titles.get(key)!.push(`content/${rel}`);
+        titles.get(key)!.push(filePath);
       }
       if (frontmatter.description) {
-        if (!descriptionsByLocale.has(locale))
-          descriptionsByLocale.set(locale, new Map());
+        if (!descriptionsByLocale.has(locale)) descriptionsByLocale.set(locale, new Map());
         const descriptions = descriptionsByLocale.get(locale)!;
         const key = frontmatter.description.trim();
         if (!descriptions.has(key)) descriptions.set(key, []);
-        descriptions.get(key)!.push(`content/${rel}`);
+        descriptions.get(key)!.push(filePath);
       }
 
-      // Blog slugs must not contain "blog/" prefix
+      // Blog slug prefix check
       const parts = page.content.split('/');
-      if (
-        parts[0] === 'blog' &&
-        frontmatter.slug &&
-        frontmatter.slug.startsWith('blog/')
-      ) {
-        fail(
-          `Blog slug "${frontmatter.slug}" must not start with "blog/": content/${rel}`,
-        );
+      if (parts[0] === 'blog' && frontmatter.slug && frontmatter.slug.startsWith('blog/')) {
+        fail(filePath, `Blog slug "${frontmatter.slug}" must not start with "blog/"`);
       }
 
       // Raw <img> tags
       if (/<img\b(?![^>]*\bsrc\s*=\s*["']https?:\/\/)/i.test(source)) {
-        fail(`Raw <img> tag found — use MDX components: content/${rel}`);
+        fail(filePath, 'Raw <img> tag found — use MDX components');
       }
 
-      // Curly quotes in JSX props (break MDX parsing)
+      // Curly quotes in JSX props
       const curlyQuoteRe = /[\u201C\u201D\u2018\u2019]/;
       const jsxAttrRe = /\w+=\s*["'\u201C\u201D\u2018\u2019]/;
       const lines = source.split('\n');
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         if (jsxAttrRe.test(line) && curlyQuoteRe.test(line)) {
-          fail(
-            `Curly quote in JSX prop — use straight quotes: content/${rel} (line ${i + 1})`,
-          );
+          fail(filePath, `Curly quote in JSX prop — use straight quotes (line ${i + 1})`);
         }
       }
 
-      // --- Component checks per page type ---
-
+      // Component checks per page type
       if (page.type === 'landing') {
-        const props = requireComponent(source, 'Hero', `content/${rel}`);
-        if (props) {
-          requireProps(
-            props,
-            ['title', 'description'],
-            'Hero',
-            `content/${rel}`,
-          );
+        const props = extractComponentProps(source, 'Hero');
+        if (!props) {
+          fail(filePath, 'Missing <Hero> component');
+        } else {
+          for (const prop of ['title', 'description']) {
+            if (!props.has(prop)) fail(filePath, `Missing prop "${prop}" in <Hero>`);
+          }
         }
       }
 
       if (page.type === 'blog-index') {
-        const props = requireComponent(
-          source,
-          'BlogIndex',
-          `content/${rel}`,
-        );
-        if (props) {
-          requireProps(
-            props,
-            ['title', 'description'],
-            'BlogIndex',
-            `content/${rel}`,
-          );
+        const props = extractComponentProps(source, 'BlogIndex');
+        if (!props) {
+          fail(filePath, 'Missing <BlogIndex> component');
+        } else {
+          for (const prop of ['title', 'description']) {
+            if (!props.has(prop)) fail(filePath, `Missing prop "${prop}" in <BlogIndex>`);
+          }
         }
       }
 
       if (page.type === 'blog-article') {
-        requireComponent(source, 'BlogArticle', `content/${rel}`);
+        if (!extractComponentProps(source, 'BlogArticle')) {
+          fail(filePath, 'Missing <BlogArticle> component');
+        }
 
-        // Required frontmatter fields
-        const requiredBlogFields = ['date', 'author', 'readingTime'];
-        for (const field of requiredBlogFields) {
+        for (const field of ['date', 'author', 'readingTime']) {
           if (!frontmatter[field]) {
-            fail(
-              `Missing frontmatter "${field}" for blog article: content/${rel}`,
-            );
+            fail(filePath, `Missing frontmatter "${field}" for blog article`);
           }
         }
         if (!frontmatter.image) {
-          warn(
-            `Missing frontmatter "image" for blog article (fallback will be used): content/${rel}`,
-          );
+          warn(filePath, 'Missing frontmatter "image" for blog article (fallback will be used)');
         }
-
-        // Validate author exists in shipsite.json
         if (frontmatter.author && !blogAuthors.includes(frontmatter.author)) {
-          fail(
-            `Unknown author "${frontmatter.author}" (not in shipsite.json blog.authors): content/${rel}`,
-          );
+          fail(filePath, `Unknown author "${frontmatter.author}" (not in shipsite.json blog.authors)`);
         }
-
-        // Validate date format YYYY-MM-DD
-        if (
-          frontmatter.date &&
-          !/^\d{4}-\d{2}-\d{2}$/.test(frontmatter.date)
-        ) {
-          fail(
-            `Invalid date format "${frontmatter.date}" (expected YYYY-MM-DD): content/${rel}`,
-          );
+        if (frontmatter.date && !/^\d{4}-\d{2}-\d{2}$/.test(frontmatter.date)) {
+          fail(filePath, `Invalid date format "${frontmatter.date}" (expected YYYY-MM-DD)`);
         }
-
-        // Validate readingTime is a number
         if (frontmatter.readingTime && isNaN(Number(frontmatter.readingTime))) {
-          fail(`readingTime must be a number: content/${rel}`);
+          fail(filePath, 'readingTime must be a number');
         }
-
-        // Validate image file exists
         if (frontmatter.image) {
-          const imagePath = join(rootDir, 'public', frontmatter.image);
+          const imagePath = join(dir, 'public', frontmatter.image);
           if (!existsSync(imagePath)) {
-            warn(
-              `Blog image not found: public${frontmatter.image} (referenced in content/${rel})`,
-            );
+            warn(filePath, `Blog image not found: public${frontmatter.image}`);
           }
         }
 
-        // Minimum word count (300 words)
+        // Minimum word count
         const bodyContent = source
           .replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '')
           .replace(/<[^>]+>/g, '')
@@ -346,78 +325,58 @@ export async function validate() {
           .trim();
         const wordCount = bodyContent.split(/\s+/).filter(Boolean).length;
         if (wordCount < 300) {
-          warn(
-            `Blog article has only ${wordCount} words (minimum 300): content/${rel}`,
-          );
+          warn(filePath, `Blog article has only ${wordCount} words (minimum 300)`);
         }
 
-        // Heading structure validation
-        const headingLines = source
-          .split('\n')
-          .filter((l) => /^#{2,6}\s/.test(l));
+        // Heading structure
+        const headingLines = source.split('\n').filter((l) => /^#{2,6}\s/.test(l));
         const hasH2 = headingLines.some((l) => /^##\s/.test(l));
         if (!hasH2) {
-          warn(`Blog article has no ## headings: content/${rel}`);
+          warn(filePath, 'Blog article has no ## headings');
         }
         const firstH2Index = headingLines.findIndex((l) => /^##\s/.test(l));
-        const firstH3Index = headingLines.findIndex((l) =>
-          /^###\s/.test(l),
-        );
-        if (
-          firstH3Index !== -1 &&
-          (firstH2Index === -1 || firstH3Index < firstH2Index)
-        ) {
-          warn(
-            `Blog article has ### before first ##: content/${rel}`,
-          );
+        const firstH3Index = headingLines.findIndex((l) => /^###\s/.test(l));
+        if (firstH3Index !== -1 && (firstH2Index === -1 || firstH3Index < firstH2Index)) {
+          warn(filePath, 'Blog article has ### before first ##');
         }
       }
 
-      // Component-level checks by presence (any page type)
+      // BannerCTA check (any page type)
       const bannerProps = extractComponentProps(source, 'BannerCTA');
       if (bannerProps) {
-        requireProps(
-          bannerProps,
-          ['title', 'buttonText'],
-          'BannerCTA',
-          `content/${rel}`,
-        );
+        for (const prop of ['title', 'buttonText']) {
+          if (!bannerProps.has(prop)) fail(filePath, `Missing prop "${prop}" in <BannerCTA>`);
+        }
       }
     }
   }
 
-  // Cross-page duplicate title/description detection
+  // Cross-page duplicate detection
   for (const [locale, titles] of titlesByLocale.entries()) {
     for (const [title, files] of titles.entries()) {
       if (files.length > 1) {
-        warn(
-          `Duplicate title "${title}" in locale "${locale}": ${files.join(', ')}`,
-        );
+        warn(files[0], `Duplicate title "${title}" in locale "${locale}": ${files.join(', ')}`);
       }
     }
   }
   for (const [locale, descriptions] of descriptionsByLocale.entries()) {
     for (const [, files] of descriptions.entries()) {
       if (files.length > 1) {
-        warn(
-          `Duplicate description in locale "${locale}": ${files.join(', ')}`,
-        );
+        warn(files[0], `Duplicate description in locale "${locale}": ${files.join(', ')}`);
       }
     }
   }
 
-  // Warn about orphan content not in shipsite.json
-  function walkContentDirs(dir: string, prefix: string) {
-    for (const entry of readdirSync(dir)) {
+  // Orphan content detection
+  function walkContentDirs(walkDir: string, prefix: string) {
+    for (const entry of readdirSync(walkDir)) {
       if (entry.startsWith('_') || entry.startsWith('.')) continue;
-      const entryPath = join(dir, entry);
+      const entryPath = join(walkDir, entry);
       if (!statSync(entryPath).isDirectory()) continue;
       const contentPath = prefix ? `${prefix}/${entry}` : entry;
       const hasMdx = readdirSync(entryPath).some((f) => f.endsWith('.mdx'));
       if (hasMdx && !contentSet.has(contentPath)) {
-        warn(
-          `Content folder not referenced in shipsite.json pages: content/${contentPath}`,
-        );
+        warn(`content/${contentPath}`, 'Content folder not referenced in shipsite.json pages');
       }
       walkContentDirs(entryPath, contentPath);
     }
@@ -425,30 +384,58 @@ export async function validate() {
   walkContentDirs(contentDir, '');
 
   // Link validation
-  validateLinks(config, contentDir, fail, warn);
+  validateLinks(config, contentDir, failLegacy, warnLegacy);
 
-  // Output results
-  if (warnings.length) {
+  return buildResult(errors, warnings, pageStatuses);
+}
+
+function buildResult(
+  errors: SeoIssue[],
+  warnings: SeoIssue[],
+  pages: PageSeoStatus[],
+): SeoValidationResult {
+  const score = Math.max(0, 100 - errors.length * 10 - warnings.length * 2);
+  return { score, errors, warnings, pages };
+}
+
+// ── CLI entry point ────────────────────────────────────────────
+
+export async function validate() {
+  const args = process.argv.slice(2);
+  const jsonFlag = args.includes('--json');
+
+  const result = runValidation();
+
+  if (jsonFlag) {
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+    if (result.errors.length > 0) process.exit(1);
+    return;
+  }
+
+  // Pretty console output (default)
+  console.log('\n  Validating content...\n');
+
+  if (result.warnings.length) {
     console.warn('  Warnings:');
-    for (const message of warnings) {
-      console.warn(`    - ${message}`);
+    for (const w of result.warnings) {
+      console.warn(`    - ${w.message}${w.page ? `: ${w.page}` : ''}`);
     }
     console.log();
   }
 
-  if (errors.length) {
+  if (result.errors.length) {
     console.error('  Errors:');
-    for (const message of errors) {
-      console.error(`    - ${message}`);
+    for (const e of result.errors) {
+      console.error(`    - ${e.message}${e.page ? `: ${e.page}` : ''}`);
     }
     console.log();
     console.error(
-      `  Validation failed: ${errors.length} error(s), ${warnings.length} warning(s)`,
+      `  Validation failed: ${result.errors.length} error(s), ${result.warnings.length} warning(s) — Score: ${result.score}/100`,
     );
     process.exit(1);
   }
 
   console.log(
-    `  Validation passed. (${warnings.length} warning${warnings.length !== 1 ? 's' : ''})`,
+    `  Validation passed. (${result.warnings.length} warning${result.warnings.length !== 1 ? 's' : ''}) — Score: ${result.score}/100`,
   );
 }

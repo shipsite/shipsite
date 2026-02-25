@@ -35,6 +35,7 @@ async function main() {
     shipsite add page <name>           Add a new page
     shipsite add blog <title>          Add a new blog post
     shipsite validate                  Validate content and SEO
+    shipsite validate --json           Output validation as JSON
 
   Options:
     --help    Show this help message
