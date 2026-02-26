@@ -1,5 +1,6 @@
 import { join, relative } from 'path';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
+import yaml from 'js-yaml';
 import { validateLinks } from './validate-links.js';
 import { validateA11y, type A11yResult } from './validate-a11y.js';
 
@@ -31,28 +32,21 @@ export interface SeoValidationResult {
 function parseFrontmatter(source: string): Record<string, string> | null {
   const match = source.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
   if (!match) return null;
-  const raw = match[1];
-  const data: Record<string, string> = {};
 
-  for (const line of raw.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const idx = trimmed.indexOf(':');
-    if (idx === -1) continue;
-    const key = trimmed.slice(0, idx).trim();
-    let value = trimmed.slice(idx + 1).trim();
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1);
+  try {
+    const parsed = yaml.load(match[1]);
+    if (typeof parsed !== 'object' || parsed === null) return null;
+    // Coerce all values to strings for validation
+    const data: Record<string, string> = {};
+    for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
+      if (value !== null && value !== undefined) {
+        data[key] = String(value);
+      }
     }
-    if (key) {
-      data[key] = value;
-    }
+    return data;
+  } catch {
+    return null;
   }
-
-  return data;
 }
 
 function extractComponentProps(
