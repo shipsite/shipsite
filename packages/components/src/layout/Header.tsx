@@ -13,6 +13,7 @@ import {
   SheetTitle,
 } from '../ui/sheet';
 import { ThemeToggle } from '../ui/theme-toggle';
+import { ClientOnly } from '../ui/client-only';
 
 export function Header() {
   const { siteName, logo, navigation, locale, defaultLocale } = useShipSite();
@@ -59,34 +60,40 @@ export function Header() {
           </NavbarRight>
 
           <div className="md:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Toggle menu">
-                  <Menu className="size-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right">
-                <SheetTitle className="sr-only">Navigation</SheetTitle>
-                <nav className="flex flex-col gap-4 mt-8">
-                  {navigation.items.map((item) => (
-                    <a
-                      key={item.href}
-                      href={resolveHref(item.href)}
-                      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                  {navigation.cta && (
-                    <Button asChild className="mt-2">
-                      <a href={navigation.cta.href}>
-                        {navigation.cta.label}
+            <ClientOnly fallback={
+              <Button variant="ghost" size="icon" aria-label="Toggle menu">
+                <Menu className="size-5" />
+              </Button>
+            }>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label="Toggle menu">
+                    <Menu className="size-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right">
+                  <SheetTitle className="sr-only">Navigation</SheetTitle>
+                  <nav className="flex flex-col gap-4 mt-8">
+                    {navigation.items.map((item) => (
+                      <a
+                        key={item.href}
+                        href={resolveHref(item.href)}
+                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {item.label}
                       </a>
-                    </Button>
-                  )}
-                </nav>
-              </SheetContent>
-            </Sheet>
+                    ))}
+                    {navigation.cta && (
+                      <Button asChild className="mt-2">
+                        <a href={navigation.cta.href}>
+                          {navigation.cta.label}
+                        </a>
+                      </Button>
+                    )}
+                  </nav>
+                </SheetContent>
+              </Sheet>
+            </ClientOnly>
           </div>
         </Navbar>
       </div>

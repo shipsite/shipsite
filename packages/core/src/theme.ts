@@ -24,6 +24,50 @@ export function hexToHsl(hex: string): [number, number, number] {
   return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
 }
 
+/**
+ * Convert a hex color to OKLch (Lightness, Chroma, Hue).
+ * Uses the standard sRGB → linear RGB → XYZ → OKLab → OKLch pipeline.
+ */
+export function hexToOklch(hex: string): [number, number, number] {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+
+  // sRGB → linear sRGB (undo gamma)
+  const toLinear = (c: number) =>
+    c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  const lr = toLinear(r);
+  const lg = toLinear(g);
+  const lb = toLinear(b);
+
+  // linear sRGB → LMS (cone response)
+  const l = 0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb;
+  const m = 0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb;
+  const s = 0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb;
+
+  // Cube root (nonlinear compression)
+  const l_ = Math.cbrt(l);
+  const m_ = Math.cbrt(m);
+  const s_ = Math.cbrt(s);
+
+  // LMS → OKLab
+  const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+  const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+  const bVal = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+  // OKLab → OKLch
+  const C = Math.sqrt(a * a + bVal * bVal);
+  let H = Math.atan2(bVal, a) * (180 / Math.PI);
+  if (H < 0) H += 360;
+
+  return [L, C, H];
+}
+
+/** Format an oklch value as a CSS string with 4 decimal places. */
+function oklchStr(l: number, c: number, h: number): string {
+  return `oklch(${l.toFixed(4)} ${c.toFixed(4)} ${h.toFixed(2)})`;
+}
+
 export function hslToHex(h: number, s: number, l: number): string {
   s /= 100;
   l /= 100;
@@ -98,8 +142,8 @@ export function generateCSSVariables(config: {
 }
 
 /**
- * Generate shadcn/ui-compatible CSS tokens using the Launch UI emerald theme.
- * Uses oklch color space for perceptually uniform colors.
+ * Generate shadcn/ui-compatible CSS tokens derived from the user's primary color.
+ * Converts the primary hex color to oklch and generates light/dark mode variants.
  */
 export function generateShadcnTokens(colors: {
   primary?: string;
@@ -112,13 +156,24 @@ export function generateShadcnTokens(colors: {
   const background = colors.background || '#ffffff';
   const text = colors.text || '#1f2a37';
 
+  // Convert primary to oklch for brand/primary tokens
+  const [pL, pC, pH] = hexToOklch(primary);
+
+  // Light mode: use the color as-is; foreground is a lighter tint
+  const brandLight = oklchStr(pL, pC, pH);
+  const brandFgLight = oklchStr(Math.min(pL + 0.16, 0.95), pC, pH);
+
+  // Dark mode: boost lightness for visibility on dark backgrounds
+  const brandDark = oklchStr(Math.min(pL + 0.2, 0.85), pC * 0.9, pH);
+  const brandFgDark = oklchStr(Math.max(pL, 0.7), pC, pH);
+
   return `:root {
-  /* Brand colors — emerald */
-  --brand: oklch(0.6531 0.1436 161.43);
-  --brand-foreground: oklch(0.8097 0.1579 162.13);
+  /* Brand colors — derived from primary ${primary} */
+  --brand: ${brandLight};
+  --brand-foreground: ${brandFgLight};
 
   /* Primary */
-  --primary: oklch(0.6531 0.1436 161.43);
+  --primary: ${brandLight};
   --primary-foreground: oklch(0.985 0 0);
 
   /* Background & Foreground */
@@ -172,8 +227,8 @@ export function generateShadcnTokens(colors: {
 }
 
 .dark {
-  --brand: oklch(0.8453 0.1298 164.99);
-  --brand-foreground: oklch(0.6958 0.1491 162.46);
+  --brand: ${brandDark};
+  --brand-foreground: ${brandFgDark};
   --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.21 0.006 285.885);
   --background: oklch(0.1405 0.0044 285.82);
@@ -190,7 +245,7 @@ export function generateShadcnTokens(colors: {
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.885 0.006 286.033);
+  --border: oklch(0.274 0.006 286.033);
   --input: oklch(0.274 0.006 286.033);
   --ring: oklch(0.442 0.017 285.786);
   --radius: 0.625rem;

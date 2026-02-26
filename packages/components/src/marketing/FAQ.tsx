@@ -1,13 +1,6 @@
-'use client';
-
 import React from 'react';
+import { ChevronDownIcon } from 'lucide-react';
 import { Section } from '../ui/section';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from '../ui/accordion';
 
 interface FAQItemProps {
   question: string;
@@ -16,12 +9,15 @@ interface FAQItemProps {
 
 export function FAQItem({ question, children }: FAQItemProps) {
   return (
-    <AccordionItem value={question}>
-      <AccordionTrigger>{question}</AccordionTrigger>
-      <AccordionContent>
-        <div className="text-muted-foreground leading-relaxed">{children}</div>
-      </AccordionContent>
-    </AccordionItem>
+    <details className="border-border dark:border-border/15 border-b group">
+      <summary className="flex flex-1 items-center justify-between py-4 text-left text-md font-medium transition-all hover:underline cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+        {question}
+        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4 shrink-0 transition-transform duration-200 group-open:rotate-180" />
+      </summary>
+      <div className="pb-4 text-sm text-muted-foreground leading-relaxed">
+        {children}
+      </div>
+    </details>
   );
 }
 
@@ -42,9 +38,9 @@ export function FAQ({ id, title, description, children }: FAQProps) {
             {description && <p className="text-lg text-muted-foreground">{description}</p>}
           </div>
         )}
-        <Accordion type="single" collapsible>
+        <div data-slot="accordion" data-orientation="vertical">
           {children}
-        </Accordion>
+        </div>
       </div>
     </Section>
   );

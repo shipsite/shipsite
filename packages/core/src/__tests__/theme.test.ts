@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   hexToHsl,
   hslToHex,
+  hexToOklch,
   generateColorScale,
   generateCSSVariables,
   generateShadcnTokens,
@@ -121,6 +122,48 @@ describe('hexToHsl ↔ hslToHex roundtrip', () => {
   }
 });
 
+// ─── hexToOklch ─────────────────────────────────────────────────
+
+describe('hexToOklch', () => {
+  it('converts pure black to L≈0', () => {
+    const [l, c] = hexToOklch('#000000');
+    expect(l).toBeCloseTo(0, 2);
+    expect(c).toBeCloseTo(0, 2);
+  });
+
+  it('converts pure white to L≈1', () => {
+    const [l, c] = hexToOklch('#ffffff');
+    expect(l).toBeCloseTo(1, 2);
+    expect(c).toBeCloseTo(0, 2);
+  });
+
+  it('converts pure red to hue ≈ 29', () => {
+    const [l, c, h] = hexToOklch('#ff0000');
+    expect(l).toBeGreaterThan(0.5);
+    expect(c).toBeGreaterThan(0.2);
+    expect(h).toBeGreaterThan(20);
+    expect(h).toBeLessThan(35);
+  });
+
+  it('converts emerald green with expected oklch values', () => {
+    const [l, c, h] = hexToOklch('#059669');
+    expect(l).toBeCloseTo(0.596, 2);
+    expect(c).toBeCloseTo(0.127, 2);
+    expect(h).toBeGreaterThan(160);
+    expect(h).toBeLessThan(170);
+  });
+
+  it('converts indigo/purple', () => {
+    const [l, c, h] = hexToOklch('#5d5bd4');
+    expect(l).toBeGreaterThan(0.4);
+    expect(l).toBeLessThan(0.7);
+    expect(c).toBeGreaterThan(0.1);
+    // Purple hue is around 280-310 in oklch
+    expect(h).toBeGreaterThan(270);
+    expect(h).toBeLessThan(320);
+  });
+});
+
 // ─── generateColorScale ────────────────────────────────────────
 
 describe('generateColorScale', () => {
@@ -230,11 +273,48 @@ describe('generateShadcnTokens', () => {
     expect(css).toContain('--ss-primary: #ff0000');
   });
 
-  it('uses emerald oklch brand colors', () => {
+  it('derives brand/primary from user primary color', () => {
+    const css = generateShadcnTokens({ primary: '#5d5bd4' });
+    const rootBlock = css.split('.dark {')[0];
+    // Should NOT contain hardcoded emerald green
+    expect(rootBlock).not.toContain('oklch(0.6531 0.1436 161.43)');
+    // Should contain oklch values derived from the indigo primary
+    expect(rootBlock).toMatch(/--brand: oklch\([\d.]+ [\d.]+ [\d.]+\)/);
+    expect(rootBlock).toMatch(/--primary: oklch\([\d.]+ [\d.]+ [\d.]+\)/);
+  });
+
+  it('default primary produces emerald oklch brand colors', () => {
     const css = generateShadcnTokens({});
     const rootBlock = css.split('.dark {')[0];
-    expect(rootBlock).toContain('--brand: oklch(0.6531 0.1436 161.43)');
-    expect(rootBlock).toContain('--primary: oklch(0.6531 0.1436 161.43)');
+    // Default #059669 should produce emerald-like oklch values
+    expect(rootBlock).toMatch(/--brand: oklch\(0\.5\d+ 0\.1\d+ 16\d\.\d+\)/);
+  });
+
+  it('brand and primary match in light mode', () => {
+    const css = generateShadcnTokens({ primary: '#ff0000' });
+    const rootBlock = css.split('.dark {')[0];
+    const brandMatch = rootBlock.match(/--brand: (oklch\([^)]+\))/);
+    const primaryMatch = rootBlock.match(/--primary: (oklch\([^)]+\))/);
+    expect(brandMatch).not.toBeNull();
+    expect(brandMatch![1]).toBe(primaryMatch![1]);
+  });
+
+  it('dark mode brand is lighter than light mode brand', () => {
+    const css = generateShadcnTokens({ primary: '#059669' });
+    const rootBlock = css.split('.dark {')[0];
+    const darkBlock = css.split('.dark {')[1];
+    const lightBrand = rootBlock.match(/--brand: oklch\(([\d.]+)/);
+    const darkBrand = darkBlock.match(/--brand: oklch\(([\d.]+)/);
+    expect(parseFloat(darkBrand![1])).toBeGreaterThan(parseFloat(lightBrand![1]));
+  });
+
+  it('dark mode border is not too bright', () => {
+    const css = generateShadcnTokens({});
+    const darkBlock = css.split('.dark {')[1];
+    const borderMatch = darkBlock.match(/--border: oklch\(([\d.]+)/);
+    expect(borderMatch).not.toBeNull();
+    // Border lightness should be below 0.4 for dark mode (not 0.885!)
+    expect(parseFloat(borderMatch![1])).toBeLessThan(0.4);
   });
 
   it('destructive uses oklch red', () => {
