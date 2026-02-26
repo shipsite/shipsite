@@ -194,6 +194,32 @@
       },
       "additionalProperties": false
     },
+    "redirects": {
+      "type": "array",
+      "description": "URL redirects. Evaluated by the edge worker before serving content.",
+      "items": {
+        "type": "object",
+        "required": ["source", "destination"],
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Source path starting with / (e.g. \"/old-pricing\").",
+            "pattern": "^/"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Destination path or full URL (e.g. \"/pricing\" or \"https://example.com\")."
+          },
+          "permanent": {
+            "type": "boolean",
+            "default": true,
+            "description": "301 (permanent) or 302 (temporary). Default: true (301)."
+          }
+        },
+        "additionalProperties": false
+      },
+      "default": []
+    },
     "analytics": {
       "type": "object",
       "properties": {

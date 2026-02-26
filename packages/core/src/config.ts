@@ -60,6 +60,12 @@ const BlogConfigSchema = z
   })
   .optional();
 
+const RedirectSchema = z.object({
+  source: z.string().startsWith('/'),
+  destination: z.string(),
+  permanent: z.boolean().default(true),
+});
+
 const ShipSiteConfigSchema = z.object({
   $schema: z.string().optional(),
   name: z.string(),
@@ -96,6 +102,7 @@ const ShipSiteConfigSchema = z.object({
   footer: FooterSchema.optional(),
   pages: z.array(PageConfigSchema),
   blog: BlogConfigSchema,
+  redirects: z.array(RedirectSchema).optional().default([]),
   analytics: z
     .object({
       vercel: z.boolean().optional(),
