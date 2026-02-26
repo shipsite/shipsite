@@ -1,6 +1,7 @@
 import { join, relative } from 'path';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { validateLinks } from './validate-links.js';
+import { validateA11y, type A11yResult } from './validate-a11y.js';
 
 // ── Public types ───────────────────────────────────────────────
 
@@ -22,6 +23,7 @@ export interface SeoValidationResult {
   errors: SeoIssue[];
   warnings: SeoIssue[];
   pages: PageSeoStatus[];
+  a11y?: A11yResult;
 }
 
 // ── Internal helpers ───────────────────────────────────────────
@@ -73,8 +75,9 @@ function extractComponentProps(
 
 // ── Core validation logic ──────────────────────────────────────
 
-export function runValidation(rootDir?: string): SeoValidationResult {
+export function runValidation(rootDir?: string, options?: { a11y?: boolean }): SeoValidationResult {
   const dir = rootDir || process.cwd();
+  const runA11y = options?.a11y !== false; // enabled by default
   const configPath = join(dir, 'shipsite.json');
   const contentDir = join(dir, 'content');
 
@@ -371,16 +374,20 @@ export function runValidation(rootDir?: string): SeoValidationResult {
   errors.push(...linkResults.errors);
   warnings.push(...linkResults.warnings);
 
-  return buildResult(errors, warnings, pageStatuses);
+  // Accessibility validation
+  const a11y = runA11y ? validateA11y(contentDir) : undefined;
+
+  return buildResult(errors, warnings, pageStatuses, a11y);
 }
 
 function buildResult(
   errors: SeoIssue[],
   warnings: SeoIssue[],
   pages: PageSeoStatus[],
+  a11y?: A11yResult,
 ): SeoValidationResult {
   const score = Math.max(0, 100 - errors.length * 10 - warnings.length * 2);
-  return { score, errors, warnings, pages };
+  return { score, errors, warnings, pages, ...(a11y && { a11y }) };
 }
 
 // ── CLI entry point ────────────────────────────────────────────
@@ -388,8 +395,10 @@ function buildResult(
 export async function validate() {
   const args = process.argv.slice(2);
   const jsonFlag = args.includes('--json');
+  const a11yOnly = args.includes('--a11y');
+  const noA11y = args.includes('--no-a11y');
 
-  const result = runValidation();
+  const result = runValidation(undefined, { a11y: !noA11y });
 
   if (jsonFlag) {
     process.stdout.write(JSON.stringify(result, null, 2) + '\n');
@@ -400,27 +409,44 @@ export async function validate() {
   // Pretty console output (default)
   console.log('\n  Validating content...\n');
 
-  if (result.warnings.length) {
-    console.warn('  Warnings:');
-    for (const w of result.warnings) {
-      console.warn(`    - ${w.message}${w.page ? `: ${w.page}` : ''}`);
+  if (!a11yOnly) {
+    if (result.warnings.length) {
+      console.warn('  Warnings:');
+      for (const w of result.warnings) {
+        console.warn(`    - ${w.message}${w.page ? `: ${w.page}` : ''}`);
+      }
+      console.log();
+    }
+
+    if (result.errors.length) {
+      console.error('  Errors:');
+      for (const e of result.errors) {
+        console.error(`    - ${e.message}${e.page ? `: ${e.page}` : ''}`);
+      }
+      console.log();
+    }
+  }
+
+  // A11y output
+  if (result.a11y && result.a11y.issues.length > 0) {
+    console.warn('  Accessibility issues:');
+    for (const issue of result.a11y.issues) {
+      const loc = issue.line ? ` (line ${issue.line})` : '';
+      console.warn(`    - [${issue.rule}] ${issue.message}${loc}: ${issue.page}`);
     }
     console.log();
   }
 
-  if (result.errors.length) {
-    console.error('  Errors:');
-    for (const e of result.errors) {
-      console.error(`    - ${e.message}${e.page ? `: ${e.page}` : ''}`);
-    }
-    console.log();
+  if (result.errors.length && !a11yOnly) {
+    const a11yInfo = result.a11y ? ` — A11y: ${result.a11y.score}/100` : '';
     console.error(
-      `  Validation failed: ${result.errors.length} error(s), ${result.warnings.length} warning(s) — Score: ${result.score}/100`,
+      `  Validation failed: ${result.errors.length} error(s), ${result.warnings.length} warning(s) — SEO: ${result.score}/100${a11yInfo}`,
     );
     process.exit(1);
   }
 
+  const a11yInfo = result.a11y ? ` — A11y: ${result.a11y.score}/100` : '';
   console.log(
-    `  Validation passed. (${result.warnings.length} warning${result.warnings.length !== 1 ? 's' : ''}) — Score: ${result.score}/100`,
+    `  Validation passed. (${result.warnings.length} warning${result.warnings.length !== 1 ? 's' : ''}) — SEO: ${result.score}/100${a11yInfo}`,
   );
 }
