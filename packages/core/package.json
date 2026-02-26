@@ -50,6 +50,10 @@
     "./llms-txt": {
       "types": "./dist/llms-txt.d.ts",
       "default": "./dist/llms-txt.js"
+    },
+    "./templates": {
+      "types": "./dist/templates.d.ts",
+      "default": "./dist/templates.js"
     }
   },
   "files": [
