@@ -35,6 +35,8 @@ export const sitePages = defineCollection({
     author: z.string().optional(),
     slug: z.string().optional(),
     excerpt: z.string().optional(),
+    hidden: z.boolean().optional(),
+    noindex: z.boolean().optional(),
   }),
   transform: (doc) => {
     const locale = doc._meta.fileName.replace(/\.mdx$/, '');

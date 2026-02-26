@@ -15,6 +15,8 @@ declare module 'content-collections' {
     featured?: boolean;
     author?: string;
     slug?: string;
+    hidden?: boolean;
+    noindex?: boolean;
     locale: string;
     contentFolder: string;
     contentId: string;

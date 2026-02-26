@@ -1,5 +1,5 @@
 import { allSitePages } from 'content-collections';
-import { getAllPages, buildCanonicalUrl } from './pages';
+import { getAllPages, buildCanonicalUrl, isHiddenPage } from './pages';
 import { getConfig, getDefaultLocale } from './config';
 
 /**
@@ -25,8 +25,9 @@ export function generateLlmsTxt(): string {
     lines.push('');
   }
 
-  // Page index
+  // Page index (exclude hidden/draft pages)
   for (const page of pages) {
+    if (isHiddenPage(page)) continue;
     const doc = allSitePages.find(
       (d) => d.contentFolder === page.content && d.locale === defaultLocale,
     );
@@ -57,6 +58,8 @@ export function generateLlmsFullTxt(): string {
   sections.push(`# ${config.name}\n`);
 
   for (const page of pages) {
+    if (isHiddenPage(page)) continue;
+
     const doc = allSitePages.find(
       (d) => d.contentFolder === page.content && d.locale === defaultLocale,
     );

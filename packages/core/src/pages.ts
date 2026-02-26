@@ -85,6 +85,30 @@ export function isNoIndexPage(page: PageConfig): boolean {
   return noIndexTypes.has(page.type) || noIndexSlugs.has(page.slug);
 }
 
+/**
+ * Check if a page is hidden (excluded from navigation and sitemap).
+ * Reads the `hidden` field from the default-locale content doc.
+ */
+export function isHiddenPage(page: PageConfig): boolean {
+  const defaultLocale = getDefaultLocale();
+  const doc = allSitePages.find(
+    (d) => d.contentFolder === page.content && d.locale === defaultLocale,
+  );
+  return doc?.hidden === true;
+}
+
+/**
+ * Check if a page should be excluded from search engine indexing.
+ */
+export function isExcludedFromIndex(page: PageConfig): boolean {
+  if (isNoIndexPage(page)) return true;
+  const defaultLocale = getDefaultLocale();
+  const doc = allSitePages.find(
+    (d) => d.contentFolder === page.content && d.locale === defaultLocale,
+  );
+  return doc?.hidden === true || doc?.noindex === true;
+}
+
 export function buildCanonicalUrl(locale: string, slug: string): string {
   const defaultLocale = getDefaultLocale();
   const prefix = locale === defaultLocale ? '' : `/${locale}`;

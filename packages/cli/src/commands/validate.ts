@@ -173,6 +173,9 @@ export function runValidation(rootDir?: string): SeoValidationResult {
         fail(filePath, 'Missing "description" in frontmatter');
       }
 
+      // Hidden/draft pages skip SEO checks
+      const isHidden = frontmatter.hidden === 'true';
+
       // SEO checks
       const title = frontmatter.title || '';
       const description = frontmatter.description || '';
@@ -187,60 +190,64 @@ export function runValidation(rootDir?: string): SeoValidationResult {
         descriptionLength,
       });
 
-      if (titleLength > 0 && (titleLength < 30 || titleLength > 70)) {
-        warn(filePath, `SEO title length (${titleLength}) out of range 30-70`);
-      }
-      if (descriptionLength > 0 && (descriptionLength < 70 || descriptionLength > 160)) {
-        warn(filePath, `SEO description length (${descriptionLength}) out of range 70-160`);
-      }
-      if (description.endsWith('...')) {
-        warn(filePath, 'SEO description ends with ellipsis');
-      }
-      if (title.toLowerCase() === description.toLowerCase() && title.length > 0) {
-        warn(filePath, 'SEO title equals description');
-      }
-      if (
-        description.toLowerCase().trim().startsWith(title.toLowerCase().trim()) &&
-        title.trim().length > 0
-      ) {
-        warn(filePath, 'SEO description starts with title');
-      }
-      if (descriptionLength > 0 && !/[.!?]$/.test(description.trim())) {
-        warn(filePath, 'SEO description should end with punctuation');
-      }
-
-      // Keyword stuffing
-      const stopwords = new Set([
-        'the', 'and', 'or', 'for', 'with', 'from', 'that', 'this',
-        'your', 'you', 'are', 'our', 'to', 'of', 'in', 'a', 'an',
-      ]);
-      const tokens = description.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
-      const counts = new Map<string, number>();
-      for (const token of tokens) {
-        if (token.length < 3 || stopwords.has(token)) continue;
-        counts.set(token, (counts.get(token) || 0) + 1);
-      }
-      for (const [token, count] of counts.entries()) {
-        if (count >= 4) {
-          warn(filePath, `SEO description repeats "${token}" ${count}x`);
-          break;
+      if (!isHidden) {
+        if (titleLength > 0 && (titleLength < 30 || titleLength > 70)) {
+          warn(filePath, `SEO title length (${titleLength}) out of range 30-70`);
+        }
+        if (descriptionLength > 0 && (descriptionLength < 70 || descriptionLength > 160)) {
+          warn(filePath, `SEO description length (${descriptionLength}) out of range 70-160`);
+        }
+        if (description.endsWith('...')) {
+          warn(filePath, 'SEO description ends with ellipsis');
+        }
+        if (title.toLowerCase() === description.toLowerCase() && title.length > 0) {
+          warn(filePath, 'SEO title equals description');
+        }
+        if (
+          description.toLowerCase().trim().startsWith(title.toLowerCase().trim()) &&
+          title.trim().length > 0
+        ) {
+          warn(filePath, 'SEO description starts with title');
+        }
+        if (descriptionLength > 0 && !/[.!?]$/.test(description.trim())) {
+          warn(filePath, 'SEO description should end with punctuation');
         }
       }
 
-      // Collect for duplicate detection
-      if (frontmatter.title) {
-        if (!titlesByLocale.has(locale)) titlesByLocale.set(locale, new Map());
-        const titles = titlesByLocale.get(locale)!;
-        const key = frontmatter.title.trim();
-        if (!titles.has(key)) titles.set(key, []);
-        titles.get(key)!.push(filePath);
-      }
-      if (frontmatter.description) {
-        if (!descriptionsByLocale.has(locale)) descriptionsByLocale.set(locale, new Map());
-        const descriptions = descriptionsByLocale.get(locale)!;
-        const key = frontmatter.description.trim();
-        if (!descriptions.has(key)) descriptions.set(key, []);
-        descriptions.get(key)!.push(filePath);
+      if (!isHidden) {
+        // Keyword stuffing
+        const stopwords = new Set([
+          'the', 'and', 'or', 'for', 'with', 'from', 'that', 'this',
+          'your', 'you', 'are', 'our', 'to', 'of', 'in', 'a', 'an',
+        ]);
+        const tokens = description.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+        const counts = new Map<string, number>();
+        for (const token of tokens) {
+          if (token.length < 3 || stopwords.has(token)) continue;
+          counts.set(token, (counts.get(token) || 0) + 1);
+        }
+        for (const [token, count] of counts.entries()) {
+          if (count >= 4) {
+            warn(filePath, `SEO description repeats "${token}" ${count}x`);
+            break;
+          }
+        }
+
+        // Collect for duplicate detection
+        if (frontmatter.title) {
+          if (!titlesByLocale.has(locale)) titlesByLocale.set(locale, new Map());
+          const titles = titlesByLocale.get(locale)!;
+          const key = frontmatter.title.trim();
+          if (!titles.has(key)) titles.set(key, []);
+          titles.get(key)!.push(filePath);
+        }
+        if (frontmatter.description) {
+          if (!descriptionsByLocale.has(locale)) descriptionsByLocale.set(locale, new Map());
+          const descriptions = descriptionsByLocale.get(locale)!;
+          const key = frontmatter.description.trim();
+          if (!descriptions.has(key)) descriptions.set(key, []);
+          descriptions.get(key)!.push(filePath);
+        }
       }
 
       // Blog slug prefix check

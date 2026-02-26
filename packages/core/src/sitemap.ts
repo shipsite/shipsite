@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { allSitePages } from 'content-collections';
-import { getAllPages, buildCanonicalUrl, isNoIndexPage } from './pages';
+import { getAllPages, buildCanonicalUrl, isExcludedFromIndex } from './pages';
 import { getDefaultLocale } from './config';
 
 const priorityMap: Record<string, number> = {
@@ -51,7 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [];
 
   for (const page of allPages) {
-    if (isNoIndexPage(page)) continue;
+    if (isExcludedFromIndex(page)) continue;
 
     const pageLocales = page.locales || [defaultLocale];
 
