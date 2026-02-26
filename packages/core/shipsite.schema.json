@@ -222,12 +222,60 @@
     },
     "analytics": {
       "type": "object",
+      "description": "Analytics and tracking integrations.",
       "properties": {
         "vercel": { "type": "boolean", "description": "Enable Vercel Analytics." },
         "cloudflare": { "type": "string", "description": "Cloudflare Web Analytics beacon token." },
-        "googleTagManager": { "type": "string", "description": "GTM container ID (e.g. \"GTM-XXXXX\")." }
+        "googleTagManager": { "type": "string", "description": "GTM container ID (e.g. \"GTM-XXXXX\")." },
+        "googleAnalytics": { "type": "string", "description": "Google Analytics 4 Measurement ID (e.g. \"G-XXXXXXX\")." },
+        "plausible": {
+          "description": "Plausible Analytics. Set to true to auto-detect domain from url, or provide a custom domain string.",
+          "oneOf": [
+            { "type": "boolean" },
+            { "type": "string" }
+          ]
+        },
+        "posthog": {
+          "type": "object",
+          "description": "PostHog product analytics.",
+          "required": ["apiKey"],
+          "properties": {
+            "apiKey": { "type": "string", "description": "PostHog project API key." },
+            "apiHost": { "type": "string", "description": "PostHog API host (default: https://us.i.posthog.com)." }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
+    },
+    "scripts": {
+      "type": "array",
+      "description": "Custom scripts to inject into the site. Each script can be an external URL or inline content.",
+      "items": {
+        "type": "object",
+        "description": "Must have either \"src\" or \"content\" (or both).",
+        "anyOf": [
+          { "required": ["src"] },
+          { "required": ["content"] }
+        ],
+        "properties": {
+          "src": { "type": "string", "description": "External script URL." },
+          "content": { "type": "string", "description": "Inline script content." },
+          "strategy": {
+            "type": "string",
+            "enum": ["afterInteractive", "beforeInteractive", "lazyOnload"],
+            "default": "afterInteractive",
+            "description": "Next.js Script loading strategy."
+          },
+          "location": {
+            "type": "string",
+            "enum": ["head", "body"],
+            "default": "head",
+            "description": "Where to inject the script (head or body)."
+          }
+        },
+        "additionalProperties": false
+      }
     }
   },
   "additionalProperties": false,

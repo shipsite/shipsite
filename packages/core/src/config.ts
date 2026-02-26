@@ -60,6 +60,19 @@ const BlogConfigSchema = z
   })
   .optional();
 
+const CustomScriptSchema = z
+  .object({
+    src: z.string().optional(),
+    content: z.string().optional(),
+    strategy: z
+      .enum(['afterInteractive', 'beforeInteractive', 'lazyOnload'])
+      .default('afterInteractive'),
+    location: z.enum(['head', 'body']).default('head'),
+  })
+  .refine((s) => s.src || s.content, {
+    message: 'Script must have either "src" or "content"',
+  });
+
 const RedirectSchema = z.object({
   source: z.string().startsWith('/'),
   destination: z.string(),
@@ -108,8 +121,17 @@ const ShipSiteConfigSchema = z.object({
       vercel: z.boolean().optional(),
       cloudflare: z.string().optional(),
       googleTagManager: z.string().optional(),
+      googleAnalytics: z.string().optional(),
+      plausible: z.union([z.boolean(), z.string()]).optional(),
+      posthog: z
+        .object({
+          apiKey: z.string(),
+          apiHost: z.string().optional(),
+        })
+        .optional(),
     })
     .optional(),
+  scripts: z.array(CustomScriptSchema).optional(),
 });
 
 export type ShipSiteConfig = z.infer<typeof ShipSiteConfigSchema>;

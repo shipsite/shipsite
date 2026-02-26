@@ -14,24 +14,46 @@ export function generateLayout(ctx: GeneratorContext): void {
   }
 
   const analytics = ctx.config.analytics;
+  const customScripts: { src?: string; content?: string; strategy?: string; location?: string }[] =
+    ctx.config.scripts || [];
   const needsVercel = analytics?.vercel === true;
   const needsCloudflareScript = !!analytics?.cloudflare;
   const needsGtm = !!analytics?.googleTagManager;
+  const needsGa4 = !!analytics?.googleAnalytics;
+  const needsPlausible = !!analytics?.plausible;
+  const needsPosthog = !!analytics?.posthog;
+  const needsScriptImport =
+    needsCloudflareScript || needsGa4 || needsPlausible || needsPosthog || customScripts.length > 0;
 
   let analyticsImports = '';
   if (needsVercel) {
     analyticsImports += `import { Analytics } from '@vercel/analytics/next';\n`;
   }
-  if (needsGtm) {
-    analyticsImports += `import { GoogleTagManager } from '@next/third-parties/google';\n`;
+  if (needsGtm || needsGa4) {
+    const googleImports = [needsGtm && 'GoogleTagManager', needsGa4 && 'GoogleAnalytics']
+      .filter(Boolean)
+      .join(', ');
+    analyticsImports += `import { ${googleImports} } from '@next/third-parties/google';\n`;
   }
-  if (needsCloudflareScript) {
+  if (needsScriptImport) {
     analyticsImports += `import Script from 'next/script';\n`;
   }
 
   let analyticsHeadComponents = '';
   if (needsGtm) {
     analyticsHeadComponents += `\n      <GoogleTagManager gtmId="${analytics!.googleTagManager}" />`;
+  }
+  if (needsGa4) {
+    analyticsHeadComponents += `\n      <GoogleAnalytics gaId="${analytics!.googleAnalytics}" />`;
+  }
+
+  // Custom scripts for <head>
+  for (const s of customScripts.filter((s) => (s.location ?? 'head') === 'head')) {
+    if (s.src) {
+      analyticsHeadComponents += `\n      <Script src="${s.src}" strategy="${s.strategy || 'afterInteractive'}" />`;
+    } else if (s.content) {
+      analyticsHeadComponents += `\n      <Script id="custom-${customScripts.indexOf(s)}" strategy="${s.strategy || 'afterInteractive'}" dangerouslySetInnerHTML={{ __html: \`${s.content.replace(/`/g, '\\`')}\` }} />`;
+    }
   }
 
   let analyticsBodyComponents = '';
@@ -40,6 +62,30 @@ export function generateLayout(ctx: GeneratorContext): void {
   }
   if (needsCloudflareScript) {
     analyticsBodyComponents += `\n          <Script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"${analytics!.cloudflare}"}' strategy="afterInteractive" />`;
+  }
+  if (needsPlausible) {
+    const plausibleDomain =
+      typeof analytics!.plausible === 'string'
+        ? analytics!.plausible
+        : new URL(ctx.config.url).hostname;
+    analyticsBodyComponents += `\n          <Script defer data-domain="${plausibleDomain}" src="https://plausible.io/js/script.js" strategy="afterInteractive" />`;
+  }
+  if (needsPosthog) {
+    const ph = analytics!.posthog!;
+    const apiHost = ph.apiHost || 'https://us.i.posthog.com';
+    analyticsBodyComponents += `\n          <Script id="posthog-init" strategy="afterInteractive" dangerouslySetInnerHTML={{ __html: \`
+            !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+            posthog.init('${ph.apiKey}', {api_host: '${apiHost}', person_profiles: 'identified_only'});
+          \` }} />`;
+  }
+
+  // Custom scripts for <body>
+  for (const s of customScripts.filter((s) => s.location === 'body')) {
+    if (s.src) {
+      analyticsBodyComponents += `\n          <Script src="${s.src}" strategy="${s.strategy || 'afterInteractive'}" />`;
+    } else if (s.content) {
+      analyticsBodyComponents += `\n          <Script id="custom-${customScripts.indexOf(s)}" strategy="${s.strategy || 'afterInteractive'}" dangerouslySetInnerHTML={{ __html: \`${s.content.replace(/`/g, '\\`')}\` }} />`;
+    }
   }
 
   const defaultLocale = ctx.config.i18n?.defaultLocale || 'en';
