@@ -248,6 +248,18 @@
       },
       "additionalProperties": false
     },
+    "seo": {
+      "type": "object",
+      "description": "SEO settings.",
+      "properties": {
+        "llmsTxt": {
+          "type": "boolean",
+          "default": true,
+          "description": "Generate /llms.txt and /llms-full.txt for AI discovery. Default: true."
+        }
+      },
+      "additionalProperties": false
+    },
     "scripts": {
       "type": "array",
       "description": "Custom scripts to inject into the site. Each script can be an external URL or inline content.",

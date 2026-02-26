@@ -46,6 +46,10 @@
     "./theme": {
       "types": "./dist/theme.d.ts",
       "default": "./dist/theme.js"
+    },
+    "./llms-txt": {
+      "types": "./dist/llms-txt.d.ts",
+      "default": "./dist/llms-txt.js"
     }
   },
   "files": [

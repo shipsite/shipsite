@@ -12,6 +12,7 @@ import { generatePage } from './generators/page.js';
 import { generateSitemapAndRobots } from './generators/sitemap-robots.js';
 import { generateProjectFiles } from './generators/project-files.js';
 import { generateAiConfig } from './generators/ai-config.js';
+import { generateLlmsTxt } from './generators/llms-txt.js';
 import { syncDependencies } from './sync-dependencies.js';
 import type { GeneratorContext } from './types.js';
 
@@ -48,6 +49,7 @@ export function generateWorkspace({ rootDir, mode }: { rootDir: string; mode: 'd
   generateSitemapAndRobots(ctx);
   generateProjectFiles(ctx);
   generateAiConfig(ctx);
+  generateLlmsTxt(ctx);
 
   console.log('  Generated .shipsite workspace');
 }

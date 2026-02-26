@@ -132,6 +132,11 @@ const ShipSiteConfigSchema = z.object({
     })
     .optional(),
   scripts: z.array(CustomScriptSchema).optional(),
+  seo: z
+    .object({
+      llmsTxt: z.boolean().optional().default(true),
+    })
+    .optional(),
 });
 
 export type ShipSiteConfig = z.infer<typeof ShipSiteConfigSchema>;
