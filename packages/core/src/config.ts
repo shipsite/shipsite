@@ -31,7 +31,7 @@ const FooterSchema = z.object({
   copyright: LocalizedString.optional(),
 });
 
-const PageConfigSchema = z.object({
+export const PageConfigSchema = z.object({
   slug: z.string(),
   type: z.string(),
   content: z.string(),
@@ -79,7 +79,7 @@ const RedirectSchema = z.object({
   permanent: z.boolean().default(true),
 });
 
-const ShipSiteConfigSchema = z.object({
+export const ShipSiteConfigSchema = z.object({
   $schema: z.string().optional(),
   name: z.string(),
   url: z.string().url(),
