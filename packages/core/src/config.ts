@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 // ─── Schema ────────────────────────────────────────────────────
-const LocalizedString = z.union([z.string(), z.record(z.string())]);
+const LocalizedString = z.union([z.string(), z.record(z.string(), z.string())]);
 
 const NavigationItemSchema = z.object({
   label: LocalizedString,
@@ -40,23 +40,23 @@ export const PageConfigSchema = z.object({
 
 const AuthorSchema = z.object({
   name: z.string(),
-  role: z.union([z.string(), z.record(z.string())]).optional(),
+  role: z.union([z.string(), z.record(z.string(), z.string())]).optional(),
   image: z.string().optional(),
-  bio: z.union([z.string(), z.record(z.string())]).optional(),
+  bio: z.union([z.string(), z.record(z.string(), z.string())]).optional(),
 });
 
 const BlogConfigSchema = z
   .object({
-    authors: z.record(AuthorSchema).optional(),
+    authors: z.record(z.string(), AuthorSchema).optional(),
     categories: z
       .array(
         z.object({
           key: z.string(),
-          label: z.record(z.string()),
+          label: z.record(z.string(), z.string()),
         }),
       )
       .optional(),
-    categoryMap: z.record(z.string()).optional(),
+    categoryMap: z.record(z.string(), z.string()).optional(),
   })
   .optional();
 
