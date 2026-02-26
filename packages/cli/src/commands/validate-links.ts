@@ -1,5 +1,6 @@
 import { join } from 'path';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
+import type { SeoIssue } from './validate.js';
 
 function isExternal(href: string): boolean {
   return /^(https?:\/\/|mailto:|tel:|#)/.test(href);
@@ -26,9 +27,10 @@ export function validateLinks(
     footer?: { columns?: Array<{ links?: Array<{ href: string }> }> };
   },
   contentDir: string,
-  fail: (msg: string) => void,
-  _warn: (msg: string) => void,
-): void {
+): { errors: SeoIssue[]; warnings: SeoIssue[] } {
+  const errors: SeoIssue[] = [];
+  const warnings: SeoIssue[] = [];
+
   // Step 1 — Build slug set
   const slugs = new Set<string>();
   for (const page of config.pages || []) {
@@ -41,7 +43,7 @@ export function validateLinks(
     // Strip trailing slash for comparison (but keep "/" as-is)
     const normalized = href.length > 1 ? href.replace(/\/$/, '') : href;
     if (!slugs.has(normalized)) {
-      fail(`Dead link "${href}" in ${context}`);
+      errors.push({ page: context, message: `Dead link "${href}"` });
     }
   }
 
@@ -61,7 +63,7 @@ export function validateLinks(
   }
 
   // Step 4 — MDX content
-  if (!existsSync(contentDir)) return;
+  if (!existsSync(contentDir)) return { errors, warnings };
 
   const mdxFiles = collectMdxFiles(contentDir);
   const markdownLinkRe = /\[(?:[^\]]*)\]\(([^)]+)\)/g;
@@ -83,4 +85,6 @@ export function validateLinks(
       checkHref(match[1], `content/${rel}`);
     }
   }
+
+  return { errors, warnings };
 }

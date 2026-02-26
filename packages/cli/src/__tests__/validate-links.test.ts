@@ -21,16 +21,16 @@ function run(
   config: Parameters<typeof validateLinks>[0],
   setupFs?: () => void,
 ) {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-
   // Default: contentDir does not exist (no MDX scanning)
   mockExistsSync.mockReturnValue(false);
 
   if (setupFs) setupFs();
 
-  validateLinks(config, '/content', (m) => errors.push(m), (m) => warnings.push(m));
-  return { errors, warnings };
+  const result = validateLinks(config, '/content');
+  return {
+    errors: result.errors.map((e) => `${e.message}${e.page ? ` in ${e.page}` : ''}`),
+    warnings: result.warnings.map((w) => `${w.message}${w.page ? ` in ${w.page}` : ''}`),
+  };
 }
 
 const basePages = [

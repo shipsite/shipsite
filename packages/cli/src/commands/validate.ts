@@ -90,30 +90,6 @@ export function runValidation(rootDir?: string): SeoValidationResult {
     warnings.push({ page, message });
   }
 
-  // Legacy wrappers for validateLinks compatibility
-  function failLegacy(message: string) {
-    // Parse "context: message" or use as-is
-    const colonIdx = message.lastIndexOf(' in ');
-    if (colonIdx !== -1) {
-      const ctx = message.slice(colonIdx + 4);
-      const msg = message.slice(0, colonIdx);
-      errors.push({ page: ctx, message: msg });
-    } else {
-      errors.push({ page: '', message });
-    }
-  }
-
-  function warnLegacy(message: string) {
-    const colonIdx = message.lastIndexOf(' in ');
-    if (colonIdx !== -1) {
-      const ctx = message.slice(colonIdx + 4);
-      const msg = message.slice(0, colonIdx);
-      warnings.push({ page: ctx, message: msg });
-    } else {
-      warnings.push({ page: '', message });
-    }
-  }
-
   if (!existsSync(configPath)) {
     fail('shipsite.json', 'shipsite.json not found in current directory');
     return buildResult(errors, warnings, pageStatuses);
@@ -391,7 +367,9 @@ export function runValidation(rootDir?: string): SeoValidationResult {
   walkContentDirs(contentDir, '');
 
   // Link validation
-  validateLinks(config, contentDir, failLegacy, warnLegacy);
+  const linkResults = validateLinks(config, contentDir);
+  errors.push(...linkResults.errors);
+  warnings.push(...linkResults.warnings);
 
   return buildResult(errors, warnings, pageStatuses);
 }
