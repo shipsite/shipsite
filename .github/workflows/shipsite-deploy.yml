@@ -1,0 +1,71 @@
+name: ShipSite Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_id:
+        required: true
+        type: string
+      project_id:
+        required: true
+        type: string
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Validate
+        run: npx shipsite validate --json > /tmp/seo-result.json 2>&1 || true
+
+      - name: Build
+        run: npx shipsite build 2>&1 | tee /tmp/build-log.txt
+        env:
+          SHIPSITE_OUTPUT: export
+
+      - name: Package build output
+        run: cd .shipsite/.next/out && zip -qr /tmp/build.zip .
+
+      - name: Get upload URL
+        id: presign
+        run: |
+          RESPONSE=$(curl -sf -X POST "${{ secrets.SHIPSITE_CLOUD_URL }}/api/webhooks/build-artifact" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.SHIPSITE_WEBHOOK_SECRET }}" \
+            -d "{\"deployment_id\": \"${{ inputs.deployment_id }}\", \"project_id\": \"${{ inputs.project_id }}\"}")
+          echo "upload_url=$(echo $RESPONSE | jq -r '.upload_url')" >> $GITHUB_OUTPUT
+
+      - name: Upload build artifact
+        run: |
+          curl -sf -X PUT "${{ steps.presign.outputs.upload_url }}" \
+            -H "Content-Type: application/zip" \
+            --data-binary @/tmp/build.zip
+
+      - name: Notify success
+        if: success()
+        run: |
+          SEO_RESULT=$(cat /tmp/seo-result.json 2>/dev/null || echo '{}')
+          BUILD_LOG=$(cat /tmp/build-log.txt 2>/dev/null | tail -c 200000 || echo '')
+          BUILD_LOG_JSON=$(echo "$BUILD_LOG" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))')
+          curl -sf --retry 3 --retry-delay 10 -X POST "${{ secrets.SHIPSITE_CLOUD_URL }}/api/webhooks/build-status" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.SHIPSITE_WEBHOOK_SECRET }}" \
+            -d "{\"deployment_id\": \"${{ inputs.deployment_id }}\", \"project_id\": \"${{ inputs.project_id }}\", \"status\": \"deploying\", \"seo_result\": $SEO_RESULT, \"build_log\": $BUILD_LOG_JSON}"
+
+      - name: Notify failure
+        if: failure()
+        run: |
+          BUILD_LOG=$(cat /tmp/build-log.txt 2>/dev/null | tail -c 200000 || echo '')
+          BUILD_LOG_JSON=$(echo "$BUILD_LOG" | python3 -c 'import sys,json; print(json.dumps(sys.stdin.read()))')
+          curl -sf --retry 3 --retry-delay 10 -X POST "${{ secrets.SHIPSITE_CLOUD_URL }}/api/webhooks/build-status" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.SHIPSITE_WEBHOOK_SECRET }}" \
+            -d "{\"deployment_id\": \"${{ inputs.deployment_id }}\", \"project_id\": \"${{ inputs.project_id }}\", \"status\": \"failed\", \"error_message\": \"Build failed\", \"build_log\": $BUILD_LOG_JSON}"
