@@ -1,8 +1,17 @@
 {
   "name": "create-shipsite",
-  "version": "0.2.25",
+  "version": "0.2.47",
   "repository": { "type": "git", "url": "https://github.com/shipsite/shipsite", "directory": "packages/create-shipsite" },
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/scaffold.js",
+      "types": "./dist/scaffold.d.ts"
+    },
+    "./cli": {
+      "import": "./dist/index.js"
+    }
+  },
   "bin": {
     "create-shipsite": "./dist/index.js"
   },
