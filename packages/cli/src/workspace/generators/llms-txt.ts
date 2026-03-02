@@ -14,6 +14,8 @@ export function generateLlmsTxt(ctx: GeneratorContext): void {
     join(ctx.srcDir, 'app', 'llms.txt', 'route.ts'),
     `import { generateLlmsTxt } from '@shipsite.dev/core/llms-txt';
 
+export const dynamic = 'force-static';
+
 export function GET() {
   const content = generateLlmsTxt();
   return new Response(content, {
@@ -27,6 +29,8 @@ export function GET() {
   writeFileSync(
     join(ctx.srcDir, 'app', 'llms-full.txt', 'route.ts'),
     `import { generateLlmsFullTxt } from '@shipsite.dev/core/llms-txt';
+
+export const dynamic = 'force-static';
 
 export function GET() {
   const content = generateLlmsFullTxt();
