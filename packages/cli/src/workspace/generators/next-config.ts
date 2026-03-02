@@ -15,7 +15,9 @@ export function generateNextConfig(ctx: GeneratorContext): void {
     ? `import userConfig from '${userConfigImportPath}';\n`
     : '';
   const userConfigSpread = userNextConfig ? '  ...userConfig,\n' : '';
+  const isExport = process.env.SHIPSITE_OUTPUT === 'export';
   const distDirLine = ctx.mode === 'build' ? "  distDir: '../.next',\n" : '';
+  const outputLine = isExport ? "  output: 'export',\n" : '';
 
   writeFileSync(
     join(ctx.shipSiteDir, 'next.config.ts'),
@@ -26,7 +28,7 @@ ${userConfigImport}
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
-${userConfigSpread}${distDirLine}  reactStrictMode: true,
+${userConfigSpread}${outputLine}${distDirLine}  reactStrictMode: true,
   poweredByHeader: false,
   turbopack: {
     resolveAlias: {
