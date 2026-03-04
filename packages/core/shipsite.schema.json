@@ -18,6 +18,11 @@
       "format": "uri",
       "description": "Canonical site URL (e.g. \"https://example.com\")."
     },
+    "darkMode": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable dark mode and show the theme switcher. Default: true."
+    },
     "logo": {
       "description": "Logo path or light/dark variants.",
       "oneOf": [

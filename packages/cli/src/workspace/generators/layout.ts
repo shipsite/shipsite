@@ -169,12 +169,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   return (
     <html lang={locale} suppressHydrationWarning>${analyticsHeadComponents}
       <body>
-        <ThemeProvider>
+        <ThemeProvider darkMode={config.darkMode}>
         <ShipSiteProvider value={{
           siteName: config.name,
           siteUrl: config.url,
           logo: config.logo,
           ogImage: config.ogImage,
+          darkMode: config.darkMode,
           colors: {
             primary: config.colors?.primary || '#059669',
             accent: config.colors?.accent || '#067647',

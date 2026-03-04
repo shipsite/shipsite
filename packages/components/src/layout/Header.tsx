@@ -16,7 +16,7 @@ import { ThemeToggle } from '../ui/theme-toggle';
 import { ClientOnly } from '../ui/client-only';
 
 export function Header() {
-  const { siteName, logo, navigation, locale, defaultLocale } = useShipSite();
+  const { siteName, logo, navigation, locale, defaultLocale, darkMode } = useShipSite();
   const resolveHref = useResolveHref();
 
   const logoSrc = typeof logo === 'string' ? logo : logo?.light;
@@ -49,7 +49,7 @@ export function Header() {
                 {item.label}
               </a>
             ))}
-            <ThemeToggle />
+            {darkMode && <ThemeToggle />}
             {navigation.cta && (
               <Button asChild size="sm">
                 <a href={navigation.cta.href}>
