@@ -7,6 +7,7 @@ export interface ShipSiteContextValue {
   siteUrl: string;
   logo?: string | { light: string; dark: string };
   ogImage?: string;
+  darkMode: boolean;
   colors: {
     primary: string;
     accent: string;

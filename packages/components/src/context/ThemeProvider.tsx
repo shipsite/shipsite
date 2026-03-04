@@ -3,12 +3,19 @@
 import React from 'react';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({
+  children,
+  darkMode = true,
+}: {
+  children: React.ReactNode;
+  darkMode?: boolean;
+}) {
   return (
     <NextThemeProvider
       attribute="class"
-      defaultTheme="system"
-      enableSystem
+      defaultTheme={darkMode ? 'system' : 'light'}
+      enableSystem={darkMode}
+      forcedTheme={darkMode ? undefined : 'light'}
     >
       {children}
     </NextThemeProvider>
