@@ -136,6 +136,12 @@ description: "How we handle your data."
 - **TabItem** — Data-only component that defines a single tab. Must be used as a child of TabsSection. Renders nothing on its own; its props are consumed by the parent.
 - **TabsSection** — Interactive tabbed section with pill-style tab buttons and a content panel that changes based on the active tab. Consumes TabItem children.
 - **PageHero** — Lightweight page hero section with centered title, optional description, badge, and children. Suitable for inner pages that do not need the full Hero with image and CTAs.
+- **ContactForm** — Contact form section with name, email, and message fields. Submits JSON to an external form backend (Formspree, Getform, Basin, etc.). Shows inline success/error states.
+- **NewsletterForm** — Compact email signup form with a single email input and submit button. Supports a full section layout or an inline layout for embedding inside BannerCTA or other components.
+- **WaitlistForm** — Waitlist signup form with optional name field and badge. Displays a centered section with a glass-1 card form and a success state after submission.
+- **FormField** — Data-only child component of Form. Defines a single field in a generic form. Renders nothing on its own — the parent Form component reads its props to build the form UI.
+- **Form** — Generic form section that renders a configurable form from FormField children. Supports multi-column layouts, various input types including select, and submits JSON to an external form backend. Uses the server-shell + client-island pattern.
+- **FormEmbed** — Embeds an external form (Tally, Typeform, or custom URL) via iframe. Supports an inline iframe mode or a popup mode that opens the form in a centered dialog.
 
 ### Blog
 - **BlogArticle** — Top-level wrapper for blog article content. Renders a centered, max-width article container with vertical padding.

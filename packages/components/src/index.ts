@@ -49,6 +49,13 @@ export { SocialProof } from './marketing/SocialProof';
 export { Carousel, CarouselItem } from './marketing/Carousel';
 export { TabsSection, TabItem } from './marketing/TabsSection';
 
+// Forms
+export { ContactForm } from './marketing/ContactForm';
+export { NewsletterForm } from './marketing/NewsletterForm';
+export { WaitlistForm } from './marketing/WaitlistForm';
+export { Form, FormField } from './marketing/Form';
+export { FormEmbed } from './marketing/FormEmbed';
+
 // Blog
 export { BlogArticle } from './blog/BlogArticle';
 export { BlogIndex } from './blog/BlogIndex';

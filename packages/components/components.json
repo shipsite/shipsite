@@ -473,6 +473,108 @@
         { "name": "children", "type": "React.ReactNode", "required": true, "description": "ContentSection children and other content." }
       ],
       "example": "<ContentPage title=\"About Us\">\n  <ContentSection title=\"Our Mission\">\n    We build tools that help developers ship faster.\n  </ContentSection>\n</ContentPage>"
+    },
+    {
+      "name": "ContactForm",
+      "category": "marketing",
+      "description": "Contact form section with name, email, and message fields. Submits JSON to an external form backend (Formspree, Getform, Basin, etc.). Shows inline success/error states.",
+      "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links." },
+        { "name": "action", "type": "string", "required": true, "description": "Form backend URL to POST JSON to (e.g. 'https://formspree.io/f/xpwzabcd')." },
+        { "name": "title", "type": "string", "required": false, "description": "Section heading. Defaults to 'Get in Touch'." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "nameLabel", "type": "string", "required": false, "description": "Label for the name field. Defaults to 'Name'." },
+        { "name": "emailLabel", "type": "string", "required": false, "description": "Label for the email field. Defaults to 'Email'." },
+        { "name": "messageLabel", "type": "string", "required": false, "description": "Label for the message field. Defaults to 'Message'." },
+        { "name": "submitLabel", "type": "string", "required": false, "description": "Submit button text. Defaults to 'Send Message'." },
+        { "name": "successTitle", "type": "string", "required": false, "description": "Heading shown after successful submission. Defaults to 'Message Sent!'." },
+        { "name": "successMessage", "type": "string", "required": false, "description": "Text shown after successful submission. Defaults to 'We'll get back to you as soon as possible.'." },
+        { "name": "variant", "type": "'section' | 'card'", "required": false, "description": "Layout variant. 'section' renders a full Section with glass-1 card. 'card' renders only the glass-2 card without a Section wrapper (for embedding inside other sections). Defaults to 'section'." }
+      ],
+      "example": "<ContactForm\n  action=\"https://formspree.io/f/xpwzabcd\"\n  title=\"Get in Touch\"\n  description=\"Have a question? We'd love to hear from you.\"\n/>"
+    },
+    {
+      "name": "NewsletterForm",
+      "category": "marketing",
+      "description": "Compact email signup form with a single email input and submit button. Supports a full section layout or an inline layout for embedding inside BannerCTA or other components.",
+      "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links." },
+        { "name": "action", "type": "string", "required": true, "description": "Form backend URL to POST JSON to (e.g. 'https://formspree.io/f/xpwzabcd')." },
+        { "name": "title", "type": "string", "required": false, "description": "Section heading." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "placeholder", "type": "string", "required": false, "description": "Email input placeholder. Defaults to 'Enter your email'." },
+        { "name": "submitLabel", "type": "string", "required": false, "description": "Submit button text. Defaults to 'Subscribe'." },
+        { "name": "successMessage", "type": "string", "required": false, "description": "Inline text shown after success. Defaults to 'You're subscribed!'." },
+        { "name": "variant", "type": "'section' | 'inline'", "required": false, "description": "Layout variant. 'section' renders a full Section. 'inline' renders only the form row (for use inside BannerCTA). Defaults to 'section'." }
+      ],
+      "example": "<NewsletterForm\n  action=\"https://formspree.io/f/xpwzabcd\"\n  title=\"Never miss an update\"\n  description=\"Join 5,000 developers getting our weekly newsletter.\"\n/>"
+    },
+    {
+      "name": "WaitlistForm",
+      "category": "marketing",
+      "description": "Waitlist signup form with optional name field and badge. Displays a centered section with a glass-1 card form and a success state after submission.",
+      "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links." },
+        { "name": "action", "type": "string", "required": true, "description": "Form backend URL to POST JSON to (e.g. 'https://formspree.io/f/xpwzabcd')." },
+        { "name": "title", "type": "string", "required": false, "description": "Section heading. Defaults to 'Join the Waitlist'." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "badge", "type": "string", "required": false, "description": "Badge text shown above the title (e.g. '2,400+ signups')." },
+        { "name": "showName", "type": "boolean", "required": false, "description": "Show a name input field in addition to email. Defaults to false." },
+        { "name": "nameLabel", "type": "string", "required": false, "description": "Label for the name field. Defaults to 'Name'." },
+        { "name": "emailLabel", "type": "string", "required": false, "description": "Label for the email field. Defaults to 'Email'." },
+        { "name": "submitLabel", "type": "string", "required": false, "description": "Submit button text. Defaults to 'Join Waitlist'." },
+        { "name": "successTitle", "type": "string", "required": false, "description": "Heading shown after success. Defaults to 'You're on the list!'." },
+        { "name": "successMessage", "type": "string", "required": false, "description": "Text shown after success. Defaults to 'We'll notify you when it's your turn.'." }
+      ],
+      "example": "<WaitlistForm\n  action=\"https://formspree.io/f/xpwzabcd\"\n  title=\"Be the first in line\"\n  description=\"Join the waitlist for early access.\"\n  badge=\"2,400+ signups\"\n  showName={true}\n/>"
+    },
+    {
+      "name": "FormField",
+      "category": "marketing",
+      "description": "Data-only child component of Form. Defines a single field in a generic form. Renders nothing on its own — the parent Form component reads its props to build the form UI.",
+      "props": [
+        { "name": "name", "type": "string", "required": true, "description": "Field name used as the key in the submitted JSON payload." },
+        { "name": "label", "type": "string", "required": true, "description": "Visible label text for the field." },
+        { "name": "type", "type": "'text' | 'email' | 'tel' | 'url' | 'textarea' | 'select'", "required": false, "description": "Input type. Defaults to 'text'." },
+        { "name": "placeholder", "type": "string", "required": false, "description": "Placeholder text." },
+        { "name": "required", "type": "boolean", "required": false, "description": "Whether the field is required." },
+        { "name": "options", "type": "string[]", "required": false, "description": "Options for select-type fields." },
+        { "name": "colSpan", "type": "number", "required": false, "description": "Number of grid columns this field spans (use with Form columns prop). E.g. colSpan={2} makes the field span the full width in a 2-column layout." }
+      ],
+      "example": "<FormField name=\"email\" type=\"email\" label=\"Work Email\" required={true} colSpan={2} />"
+    },
+    {
+      "name": "Form",
+      "category": "marketing",
+      "description": "Generic form section that renders a configurable form from FormField children. Supports multi-column layouts, various input types including select, and submits JSON to an external form backend. Uses the server-shell + client-island pattern.",
+      "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links." },
+        { "name": "action", "type": "string", "required": true, "description": "Form backend URL to POST JSON to (e.g. 'https://formspree.io/f/xpwzabcd')." },
+        { "name": "title", "type": "string", "required": false, "description": "Section heading." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text." },
+        { "name": "columns", "type": "number", "required": false, "description": "Number of grid columns (1, 2, 3, or 4). Defaults to 1." },
+        { "name": "submitLabel", "type": "string", "required": false, "description": "Submit button text. Defaults to 'Submit'." },
+        { "name": "successTitle", "type": "string", "required": false, "description": "Heading shown after success. Defaults to 'Submitted!'." },
+        { "name": "successMessage", "type": "string", "required": false, "description": "Text shown after success. Defaults to 'Thank you. We'll be in touch soon.'." },
+        { "name": "children", "type": "React.ReactNode", "required": true, "description": "FormField children defining the form fields." }
+      ],
+      "example": "<Form action=\"https://formspree.io/f/xpwzabcd\" title=\"Book a Demo\" columns={2}>\n  <FormField name=\"firstName\" label=\"First Name\" required={true} />\n  <FormField name=\"lastName\" label=\"Last Name\" required={true} />\n  <FormField name=\"email\" type=\"email\" label=\"Work Email\" required={true} colSpan={2} />\n  <FormField name=\"teamSize\" type=\"select\" label=\"Team Size\" options={[\"1-10\", \"11-50\", \"51-200\", \"200+\"]} />\n  <FormField name=\"message\" type=\"textarea\" label=\"Message\" colSpan={2} />\n</Form>"
+    },
+    {
+      "name": "FormEmbed",
+      "category": "marketing",
+      "description": "Embeds an external form (Tally, Typeform, or custom URL) via iframe. Supports an inline iframe mode or a popup mode that opens the form in a centered dialog.",
+      "props": [
+        { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links." },
+        { "name": "src", "type": "string", "required": true, "description": "Form ID or full URL. For Tally, pass the form ID (e.g. 'wMxKqA'). For Typeform, pass the form ID. For custom, pass the full URL." },
+        { "name": "provider", "type": "'tally' | 'typeform' | 'custom'", "required": false, "description": "Form provider. Determines URL resolution. Defaults to 'custom'." },
+        { "name": "title", "type": "string", "required": false, "description": "Section heading (iframe mode only)." },
+        { "name": "description", "type": "string", "required": false, "description": "Section subheading text (iframe mode only)." },
+        { "name": "height", "type": "number", "required": false, "description": "iframe height in pixels. Defaults to 500." },
+        { "name": "mode", "type": "'iframe' | 'popup'", "required": false, "description": "Display mode. 'iframe' embeds inline. 'popup' shows a button that opens a dialog. Defaults to 'iframe'." },
+        { "name": "buttonLabel", "type": "string", "required": false, "description": "Button text for popup mode. Defaults to 'Open Form'." }
+      ],
+      "example": "<FormEmbed src=\"wMxKqA\" provider=\"tally\" title=\"Contact Us\" height={500} />"
     }
   ]
 }
