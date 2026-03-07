@@ -64,7 +64,7 @@ export function ContactForm({
       successContent
     ) : (
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor={`${uid}-name`}>{nameLabel}</Label>
             <Input
@@ -107,7 +107,7 @@ export function ContactForm({
           type="submit"
           variant="default"
           size="lg"
-          className="w-full"
+          className="w-full mt-2"
           disabled={status === "loading"}
         >
           {status === "loading" ? (

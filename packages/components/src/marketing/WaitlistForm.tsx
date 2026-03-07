@@ -87,7 +87,7 @@ export function WaitlistForm({
         ) : (
           <form
             onSubmit={handleSubmit}
-            className="glass-1 rounded-2xl p-8 max-w-md mx-auto space-y-4"
+            className="glass-1 rounded-2xl p-8 max-w-md mx-auto space-y-6"
           >
             {showName && (
               <div className="space-y-2 text-left">

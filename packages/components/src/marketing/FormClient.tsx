@@ -110,7 +110,7 @@ export function FormClient({
         ) : (
           <form onSubmit={handleSubmit} className="glass-1 rounded-2xl p-8">
             <div
-              className={cn("grid grid-cols-1 gap-4", gridColsMap[columns])}
+              className={cn("grid grid-cols-1 gap-6", gridColsMap[columns])}
             >
               {fields.map((field) => (
                 <div
@@ -163,7 +163,7 @@ export function FormClient({
                 </div>
               ))}
             </div>
-            <div className="mt-6">
+            <div className="mt-8">
               <Button
                 type="submit"
                 variant="default"
