@@ -22,6 +22,41 @@ public/                # Static assets (images, fonts, favicons)
 .shipsite/             # Generated workspace (do NOT edit)
 ```
 
+## Navigation (shipsite.json)
+
+Navigation is configured in `shipsite.json` under `navigation`. Items can be simple links or dropdown submenus with optional featured items.
+
+```json
+{
+  "navigation": {
+    "items": [
+      { "label": "Pricing", "href": "/pricing" },
+      {
+        "label": "Products",
+        "children": [
+          { "label": "Analytics", "href": "/analytics", "description": "Track your metrics" },
+          { "label": "Automation", "href": "/automation", "description": "Automate workflows" }
+        ],
+        "featured": {
+          "title": "New: AI Assistant",
+          "description": "Meet our latest product.",
+          "href": "/ai",
+          "image": "/images/ai-preview.png"
+        }
+      }
+    ],
+    "cta": { "label": "Get Started", "href": "/signup" }
+  }
+}
+```
+
+**Navigation item types:**
+- **Link:** `{ label, href }` — simple nav link
+- **Submenu:** `{ label, children, featured? }` — dropdown with child links. Each child has `label`, `href`, and optional `description`. The optional `featured` object adds a highlighted card with image.
+- **CTA:** optional `cta` button shown at the right end of the navigation bar
+
+All text fields (`label`, `description`, `title`) accept `string` or `{ locale: "text" }` for i18n.
+
 ## Content Conventions
 
 - Each page is an MDX file at `content/{page-name}/{locale}.mdx`
