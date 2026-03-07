@@ -62,15 +62,23 @@ jobs:
       - name: Publish @shipsite.dev/core
         run: npm publish --provenance --access public
         working-directory: packages/core
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @shipsite.dev/components
         run: npm publish --provenance --access public
         working-directory: packages/components
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @shipsite.dev/cli
         run: npm publish --provenance --access public
         working-directory: packages/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish create-shipsite
         run: npm publish --provenance --access public
         working-directory: packages/create-shipsite
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
