@@ -18,9 +18,10 @@ interface CompaniesProps {
   title?: string;
   logos: LogoItem[];
   variant?: 'marquee' | 'inline';
+  grayscale?: boolean;
 }
 
-export function Companies({ id, title, logos, variant = 'marquee' }: CompaniesProps) {
+export function Companies({ id, title, logos, variant = 'marquee', grayscale = true }: CompaniesProps) {
   if (variant === 'inline') {
     return (
       <Section id={id} className="py-12">
@@ -57,12 +58,12 @@ export function Companies({ id, title, logos, variant = 'marquee' }: CompaniesPr
           <div className="flex gap-12 items-center" style={{ '--marquee-gap': '3rem' } as React.CSSProperties}>
             <div className="flex gap-12 items-center animate-marquee">
               {logos.map((logo, i) => (
-                <ThemeImage key={i} src={logo.src} alt={logo.alt} width={logo.width || 120} className="h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all" />
+                <ThemeImage key={i} src={logo.src} alt={logo.alt} width={logo.width || 120} className={cn("h-8 w-auto object-contain transition-all", grayscale ? "grayscale opacity-60 hover:grayscale-0 hover:opacity-100" : "opacity-80 hover:opacity-100")} />
               ))}
             </div>
             <div className="flex gap-12 items-center animate-marquee" aria-hidden>
               {logos.map((logo, i) => (
-                <ThemeImage key={i} src={logo.src} alt="" width={logo.width || 120} className="h-8 w-auto object-contain grayscale opacity-60" />
+                <ThemeImage key={i} src={logo.src} alt="" width={logo.width || 120} className={cn("h-8 w-auto object-contain", grayscale ? "grayscale opacity-60" : "opacity-80")} />
               ))}
             </div>
           </div>
