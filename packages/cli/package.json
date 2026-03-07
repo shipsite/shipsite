@@ -17,6 +17,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
+    "postinstall": "node dist/postinstall.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
