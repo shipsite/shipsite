@@ -93,7 +93,7 @@
           "type": "array",
           "items": { "$ref": "#/$defs/navigationItem" }
         },
-        "cta": { "$ref": "#/$defs/navigationItem" }
+        "cta": { "$ref": "#/$defs/navigationLink" }
       },
       "required": ["items"],
       "additionalProperties": false
@@ -111,7 +111,7 @@
               "title": { "$ref": "#/$defs/localizedString", "description": "Column heading." },
               "links": {
                 "type": "array",
-                "items": { "$ref": "#/$defs/navigationItem" }
+                "items": { "$ref": "#/$defs/navigationLink" }
               }
             },
             "additionalProperties": false
@@ -307,12 +307,59 @@
         }
       ]
     },
-    "navigationItem": {
+    "navigationLink": {
       "type": "object",
       "required": ["label", "href"],
       "properties": {
         "label": { "$ref": "#/$defs/localizedString", "description": "Display text (plain string or locale map)." },
         "href": { "type": "string", "description": "Link target." }
+      },
+      "additionalProperties": false
+    },
+    "navigationItem": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["label", "href"],
+          "properties": {
+            "label": { "$ref": "#/$defs/localizedString", "description": "Display text (plain string or locale map)." },
+            "href": { "type": "string", "description": "Link target." }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["label", "children"],
+          "properties": {
+            "label": { "$ref": "#/$defs/localizedString", "description": "Submenu trigger label." },
+            "children": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/submenuChild" }
+            },
+            "featured": { "$ref": "#/$defs/featuredItem" }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "submenuChild": {
+      "type": "object",
+      "required": ["label", "href"],
+      "properties": {
+        "label": { "$ref": "#/$defs/localizedString", "description": "Child link text." },
+        "href": { "type": "string", "description": "Child link target." },
+        "description": { "$ref": "#/$defs/localizedString", "description": "Optional description text." }
+      },
+      "additionalProperties": false
+    },
+    "featuredItem": {
+      "type": "object",
+      "required": ["title", "href", "image"],
+      "properties": {
+        "title": { "$ref": "#/$defs/localizedString", "description": "Featured item title." },
+        "description": { "$ref": "#/$defs/localizedString", "description": "Featured item description." },
+        "href": { "type": "string", "description": "Featured item link." },
+        "image": { "type": "string", "description": "Featured image path." }
       },
       "additionalProperties": false
     }

@@ -15,7 +15,19 @@ export interface ShipSiteContextValue {
     text: string;
   };
   navigation: {
-    items: Array<{ label: string; href: string }>;
+    items: Array<
+      | { label: string; href: string }
+      | {
+          label: string;
+          children: Array<{ label: string; href: string; description?: string }>;
+          featured?: {
+            title: string;
+            description?: string;
+            href: string;
+            image: string;
+          };
+        }
+    >;
     cta?: { label: string; href: string };
   };
   footer: {

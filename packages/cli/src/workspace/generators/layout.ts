@@ -152,7 +152,27 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   const rawNav = config.navigation || { items: [] };
   const navigation = {
-    items: rawNav.items.map((i: any) => ({ label: t(i.label), href: i.href })),
+    items: rawNav.items.map((i: any) => {
+      if (i.href) {
+        return { label: t(i.label), href: i.href };
+      }
+      return {
+        label: t(i.label),
+        children: i.children.map((c: any) => ({
+          label: t(c.label),
+          href: c.href,
+          ...(c.description ? { description: t(c.description) } : {}),
+        })),
+        ...(i.featured ? {
+          featured: {
+            title: t(i.featured.title),
+            description: i.featured.description ? t(i.featured.description) : undefined,
+            href: i.featured.href,
+            image: i.featured.image,
+          },
+        } : {}),
+      };
+    }),
     cta: rawNav.cta ? { label: t(rawNav.cta.label), href: rawNav.cta.href } : undefined,
   };
 
