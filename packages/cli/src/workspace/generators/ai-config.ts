@@ -197,6 +197,7 @@ ${componentCatalog}
 5. **Use the component catalog above** to pick the right component for each section.
 6. **Use straight quotes only** — curly/typographic quotes (\u201C \u201D \u2018 \u2019) break MDX parsing. Always use straight quotes (" ').
 7. **Anchor links** — all section-level components accept an optional \`id\` prop for anchor navigation (e.g. \`<FAQ id="faq">\` enables \`#faq\` links). Do not wrap components in extra \`<div id="...">\` elements.
+8. **Match the existing language** — when editing or adding content (labels, descriptions, placeholders, options), always match the language already used in that file. If the form labels are in German, new fields must also be in German. Never mix languages within a file.
 `;
 }
 
@@ -469,6 +470,7 @@ Custom components are automatically registered and available in all MDX files wi
 5. **Use the component catalog above** to pick the right component for each section.
 6. **Use straight quotes only** — curly/typographic quotes (\u201C \u201D \u2018 \u2019) break MDX parsing. Always use straight quotes (" ').
 7. **Anchor links** — all section-level components accept an optional \`id\` prop for anchor navigation (e.g. \`<FAQ id="faq">\` enables \`#faq\` links). Do not wrap components in extra \`<div id="...">\` elements.
+8. **Match the existing language** — when editing or adding content (labels, descriptions, placeholders, options), always match the language already used in that file. If the form labels are in German, new fields must also be in German. Never mix languages within a file.
 `;
 }
 
