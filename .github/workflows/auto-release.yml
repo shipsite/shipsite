@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,3 +61,63 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${{ steps.next.outputs.version }}" -m "Release ${{ steps.next.outputs.version }}"
           git push origin "${{ steps.next.outputs.version }}"
+
+      # Publish to npm directly (tags created by github-actions[bot]
+      # don't trigger other workflows, so we run publish inline)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+
+      - run: npx turbo build test --filter='./packages/*'
+
+      - name: Integration test (full site build)
+        run: |
+          cd examples/minimal
+          rm -rf .shipsite .next
+          node ../../packages/cli/dist/index.js build
+          PAGE_COUNT=$(find .next/server/app -name '*.html' 2>/dev/null | wc -l)
+          echo "Generated $PAGE_COUNT HTML pages"
+          if [ "$PAGE_COUNT" -lt 5 ]; then
+            echo "ERROR: Expected at least 5 pages, got $PAGE_COUNT"
+            exit 1
+          fi
+          CSS_FILE=$(find .next/static -name '*.css' -type f | head -1)
+          CSS_SIZE=$(wc -c < "$CSS_FILE")
+          echo "CSS size: ${CSS_SIZE} bytes"
+          if [ "$CSS_SIZE" -lt 50000 ]; then
+            echo "ERROR: CSS too small — Tailwind likely missed component classes"
+            exit 1
+          fi
+          echo "Integration test passed"
+
+      - name: Update package versions
+        run: |
+          VERSION="${{ steps.next.outputs.version }}"
+          VERSION="${VERSION#v}"
+          for pkg in packages/core packages/components packages/cli packages/create-shipsite; do
+            node -e "
+              const fs = require('fs');
+              const p = JSON.parse(fs.readFileSync('$pkg/package.json', 'utf-8'));
+              p.version = '$VERSION';
+              fs.writeFileSync('$pkg/package.json', JSON.stringify(p, null, 2) + '\n');
+            "
+          done
+
+      - name: Publish @shipsite.dev/core
+        run: npm publish --provenance --access public
+        working-directory: packages/core
+
+      - name: Publish @shipsite.dev/components
+        run: npm publish --provenance --access public
+        working-directory: packages/components
+
+      - name: Publish @shipsite.dev/cli
+        run: npm publish --provenance --access public
+        working-directory: packages/cli
+
+      - name: Publish create-shipsite
+        run: npm publish --provenance --access public
+        working-directory: packages/create-shipsite
