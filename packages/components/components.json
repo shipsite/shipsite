@@ -4,7 +4,7 @@
     {
       "name": "Hero",
       "category": "marketing",
-      "description": "Full-width hero section with animated title, description, optional badge, primary/secondary CTAs, and a responsive device mockup image. Uses a top glow effect for visual emphasis.",
+      "description": "Full-width hero section with animated title, description, optional badge, primary/secondary CTAs, and a responsive device mockup image. Uses a top glow effect for visual emphasis. Supports a compact size for landing pages with reduced padding and smaller typography.",
       "props": [
         { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"pricing\" enables #pricing navigation)." },
         { "name": "title", "type": "string", "required": true, "description": "Main headline text displayed as an h1." },
@@ -13,6 +13,7 @@
         { "name": "secondaryCta", "type": "{ label: string; href: string }", "required": false, "description": "Secondary call-to-action button rendered with the glow variant." },
         { "name": "badge", "type": "string", "required": false, "description": "Small badge text displayed above the title." },
         { "name": "image", "type": "ImageSource", "required": false, "description": "Hero image displayed inside a responsive device mockup. Pass a string URL or { light, dark } for theme-aware images." },
+        { "name": "size", "type": "'default' | 'compact'", "required": false, "description": "Hero size variant. 'compact' reduces padding, font sizes, and spacing — ideal for landing pages that need less whitespace." },
         { "name": "children", "type": "React.ReactNode", "required": false, "description": "Optional additional content rendered below the CTA buttons." }
       ],
       "example": "<Hero\n  title=\"Build your SaaS faster\"\n  description=\"Ship production-ready landing pages in minutes.\"\n  badge=\"New Release\"\n  primaryCta={{ label: \"Get Started\", href: \"/signup\" }}\n  secondaryCta={{ label: \"Learn More\", href: \"/docs\" }}\n  image=\"/images/hero-screenshot.png\"\n/>"
@@ -129,12 +130,13 @@
     {
       "name": "Companies",
       "category": "marketing",
-      "description": "Logo showcase section with two variants: a continuous marquee scroll animation or a static inline flex layout. Supports logo names, versions, and badges in inline mode.",
+      "description": "Logo showcase section with two variants: a continuous marquee scroll animation or a static inline flex layout. Supports logo names, versions, and badges in inline mode. Grayscale can be disabled for full-color logos.",
       "props": [
         { "name": "id", "type": "string", "required": false, "description": "HTML id for anchor links (e.g. id=\"companies\" enables #companies navigation)." },
         { "name": "title", "type": "string", "required": false, "description": "Title text above the logos." },
         { "name": "logos", "type": "Array<{ src: ImageSource; alt: string; width?: number; name?: string; version?: string; badge?: string }>", "required": true, "description": "Array of logo items. Each has an image src (string or { light, dark }), alt text, and optional width, name, version, and badge." },
-        { "name": "variant", "type": "'marquee' | 'inline'", "required": false, "description": "Display variant. 'marquee' (default) shows a scrolling animation; 'inline' shows a static flexbox layout with names and badges." }
+        { "name": "variant", "type": "'marquee' | 'inline'", "required": false, "description": "Display variant. 'marquee' (default) shows a scrolling animation; 'inline' shows a static flexbox layout with names and badges." },
+        { "name": "grayscale", "type": "boolean", "required": false, "description": "Whether to apply grayscale filter to logos in marquee mode. Defaults to true. Set to false for full-color logos (e.g. member logos, partner badges)." }
       ],
       "example": "<Companies\n  title=\"Trusted by leading companies\"\n  logos={[\n    { src: \"/logos/acme.svg\", alt: \"Acme\" },\n    { src: \"/logos/globex.svg\", alt: \"Globex\" }\n  ]}\n/>"
     },
