@@ -16,7 +16,7 @@ export function BannerCTA({ id, title, buttonText, buttonHref, subtext, children
   return (
     <Section id={id}>
       <div className="container-main">
-        <div className="relative overflow-hidden glass-4 rounded-3xl p-12 md:p-16 text-center">
+        <div className="relative overflow-hidden glass-4 rounded-3xl p-6 sm:p-12 md:p-16 text-center">
           <Glow variant="center" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{title}</h2>
