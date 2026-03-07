@@ -48,6 +48,7 @@ export { Gallery, GalleryItem } from './marketing/Gallery';
 export { SocialProof } from './marketing/SocialProof';
 export { Carousel, CarouselItem } from './marketing/Carousel';
 export { TabsSection, TabItem } from './marketing/TabsSection';
+export { Location, LocationItem } from './marketing/Location';
 
 // Forms
 export { ContactForm } from './marketing/ContactForm';
