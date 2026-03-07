@@ -6,7 +6,7 @@ export function generateContentCollections(ctx: GeneratorContext): void {
   writeFileSync(
     join(ctx.shipSiteDir, 'content-collections.ts'),
     `import { createContentCollectionsConfig } from '@shipsite.dev/core/content-collections';
-export default createContentCollectionsConfig('../content');
+export default createContentCollectionsConfig();
 `,
   );
 }

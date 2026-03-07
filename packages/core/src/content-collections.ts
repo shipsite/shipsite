@@ -19,10 +19,10 @@ export function extractExcerpt(excerpt: string | undefined, description: string 
   return (excerpt || description || '').trim();
 }
 
-export function createContentCollectionsConfig(contentDir = 'content') {
+export function createContentCollectionsConfig() {
   const sitePages = defineCollection({
     name: 'sitePages',
-    directory: contentDir,
+    directory: '../content',
     include: '**/*.mdx',
     schema: z.object({
       content: z.string(),
