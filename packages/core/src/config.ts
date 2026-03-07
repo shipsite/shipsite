@@ -5,14 +5,36 @@ import { join } from 'path';
 // ─── Schema ────────────────────────────────────────────────────
 const LocalizedString = z.union([z.string(), z.record(z.string(), z.string())]);
 
-const NavigationItemSchema = z.object({
+const NavigationLinkSchema = z.object({
   label: LocalizedString,
   href: z.string(),
 });
 
+const SubmenuChildSchema = z.object({
+  label: LocalizedString,
+  href: z.string(),
+  description: LocalizedString.optional(),
+});
+
+const FeaturedItemSchema = z.object({
+  title: LocalizedString,
+  description: LocalizedString.optional(),
+  href: z.string(),
+  image: z.string(),
+});
+
+const NavigationItemSchema = z.union([
+  NavigationLinkSchema,
+  z.object({
+    label: LocalizedString,
+    children: z.array(SubmenuChildSchema),
+    featured: FeaturedItemSchema.optional(),
+  }),
+]);
+
 const NavigationSchema = z.object({
   items: z.array(NavigationItemSchema),
-  cta: NavigationItemSchema.optional(),
+  cta: NavigationLinkSchema.optional(),
 });
 
 const FooterColumnSchema = z.object({
