@@ -74,6 +74,13 @@
   border-width: 0 0 var(--line-width, 0);
 }
 
+/* Collapse double padding between adjacent sections */
+@layer base {
+  [data-slot="section"] + [data-slot="section"] {
+    @apply pt-0 sm:pt-0 md:pt-0;
+  }
+}
+
 @utility line-t {
   @apply border-border dark:border-border/10;
   border-width: var(--line-width, 0) 0;
