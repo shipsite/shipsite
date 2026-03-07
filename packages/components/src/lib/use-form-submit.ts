@@ -41,6 +41,14 @@ export function useFormSubmit(action: string) {
         }
 
         setStatus("success");
+
+        // Push conversion event to GTM dataLayer (if GTM is loaded)
+        if (typeof window !== "undefined" && Array.isArray((window as Record<string, unknown>).dataLayer)) {
+          (window as Record<string, unknown[]>).dataLayer.push({
+            event: "form_submission",
+            form_action: action,
+          });
+        }
       } catch {
         setErrorMsg("Network error. Please check your connection and try again.");
         setStatus("error");
