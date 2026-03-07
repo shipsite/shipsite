@@ -58,7 +58,7 @@ export function Header() {
           </NavbarLeft>
 
           <NavbarRight className="hidden md:flex">
-            <NavigationMenu>
+            <NavigationMenu viewport={false}>
               <NavigationMenuList>
                 {navigation.items.map((item, idx) => {
                   if (isSubmenu(item)) {
