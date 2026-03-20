@@ -105,6 +105,7 @@ export const ShipSiteConfigSchema = z.object({
   $schema: z.string().optional(),
   name: z.string(),
   url: z.string().url(),
+  template: z.enum(['shipsite', 'custom']).optional().default('shipsite'),
   darkMode: z.boolean().optional().default(true),
   logo: z
     .union([z.string(), z.object({ light: z.string(), dark: z.string() })])

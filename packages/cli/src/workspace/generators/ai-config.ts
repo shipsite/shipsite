@@ -48,6 +48,109 @@ function formatComponentCatalog(components: Component[]): string {
 }
 
 function buildSharedContent(ctx: GeneratorContext, components: ComponentsJson | null): string {
+  const isCustom = ctx.config.template === 'custom';
+  if (isCustom) {
+    return buildCustomContent(ctx);
+  }
+  return buildShipSiteContent(ctx, components);
+}
+
+function buildCustomContent(ctx: GeneratorContext): string {
+  const config = ctx.config;
+  const siteName = config.name || 'ShipSite Project';
+  const locales: string[] = config.i18n?.locales || ['en'];
+  const defaultLocale: string = config.i18n?.defaultLocale || 'en';
+
+  return `# ${siteName} — Custom ShipSite Project
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Content:** MDX files in \`content/\` — processed by content-collections
+- **Styling:** Tailwind CSS v4 (custom styles in \`styles/globals.css\`)
+- **i18n:** next-intl (locales: ${locales.join(', ')} — default: ${defaultLocale})
+- **Template:** Custom — this project uses its own layout, components, and styles
+
+## Project Structure
+
+\`\`\`
+shipsite.json          # Site configuration (pages, i18n, analytics)
+content/               # MDX content files, one folder per page
+  {page-name}/
+    {locale}.mdx       # Content file per locale
+components/            # Your React components (auto-available in MDX)
+  Layout.tsx           # Main layout wrapper (optional — wraps all pages)
+styles/
+  globals.css          # Your global CSS (optional — Tailwind base if absent)
+public/                # Static assets (images, fonts, favicons)
+.shipsite/             # Generated workspace (do NOT edit)
+\`\`\`
+
+## Layout
+
+This project uses the \`custom\` template. The layout is controlled by:
+- \`components/Layout.tsx\` — if this file exists, it wraps all page content. It receives a \`locale\` prop and \`children\`.
+- If no \`Layout.tsx\` exists, pages render inside a minimal \`<html><body><main>\` shell.
+
+Example \`components/Layout.tsx\`:
+\`\`\`tsx
+export default function Layout({ children, locale }: { children: React.ReactNode; locale: string }) {
+  return (
+    <>
+      <header>{/* your navigation */}</header>
+      <main>{children}</main>
+      <footer>{/* your footer */}</footer>
+    </>
+  );
+}
+\`\`\`
+
+## Styling
+
+- If \`styles/globals.css\` exists in your project root, it is used as-is.
+- Otherwise, a minimal Tailwind CSS setup is generated.
+- You have full control over design tokens, colors, and typography.
+
+## Content Conventions
+
+- Each page is an MDX file at \`content/{page-name}/{locale}.mdx\`
+- Your custom components from \`components/\` are auto-available in MDX — no imports needed
+- Images go in \`public/images/\` and are referenced as \`/images/filename.ext\`
+- ShipSite built-in components are NOT loaded — use your own components in MDX
+
+## Frontmatter
+
+All page types use at minimum:
+\`\`\`yaml
+---
+title: "Page Title"
+description: "Meta description for SEO."
+---
+\`\`\`
+
+For blog articles, add:
+\`\`\`yaml
+---
+title: "Article Title"
+description: "Meta description."
+date: "YYYY-MM-DD"
+readingTime: 3
+author: default
+---
+\`\`\`
+
+## Key Rules
+
+1. **Never edit files inside \`.shipsite/\`** — they are auto-generated and will be overwritten.
+2. **Page structure is defined in \`shipsite.json\`** — to add a page, add an entry to the \`pages\` array and create the content folder.
+3. **One MDX file per locale per page** — e.g. \`content/landing/en.mdx\`, \`content/landing/de.mdx\`.
+4. **Use straight quotes only** — curly/typographic quotes break MDX parsing.
+5. **Custom components in \`components/\`** are the building blocks for your pages.
+6. **Match the existing language** — when editing content, match the language already used in that file.
+`;
+}
+
+function buildShipSiteContent(ctx: GeneratorContext, components: ComponentsJson | null): string {
   const config = ctx.config;
   const siteName = config.name || 'ShipSite Project';
   const locales: string[] = config.i18n?.locales || ['en'];
@@ -248,7 +351,75 @@ alwaysApply: true
   writeFileSync(filePath, output);
 }
 
-function buildSkillContent(components: ComponentsJson | null): string {
+function buildSkillContent(ctx: GeneratorContext, components: ComponentsJson | null): string {
+  const isCustom = ctx.config.template === 'custom';
+
+  if (isCustom) {
+    return `---
+name: shipsite
+description: Build and edit a custom ShipSite project. Use when working with shipsite.json configuration, MDX content files, or custom components.
+license: MIT
+allowed-tools:
+  - Bash
+  - Read
+  - Edit
+  - Write
+  - Glob
+  - Grep
+---
+
+# ShipSite — Custom Template Project Guide
+
+## Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Content:** MDX files in \`content/\` — processed by content-collections
+- **Styling:** Tailwind CSS v4 (custom styles in \`styles/globals.css\`)
+- **i18n:** next-intl (configure locales in \`shipsite.json\` under \`i18n\`)
+- **Template:** Custom — own layout, components, and styles
+- **CLI:** \`npx shipsite\` — scaffold pages, blog posts, and manage the workspace
+
+## Project Structure
+
+\`\`\`
+shipsite.json          # Site configuration (pages, i18n, analytics)
+content/               # MDX content files, one folder per page
+  {page-name}/
+    {locale}.mdx       # Content file per locale
+components/            # Your React components (auto-available in MDX)
+  Layout.tsx           # Main layout wrapper (optional)
+styles/
+  globals.css          # Your global CSS (optional)
+public/                # Static assets (images, fonts, favicons)
+.shipsite/             # Generated workspace (do NOT edit)
+\`\`\`
+
+## Layout
+
+- \`components/Layout.tsx\` wraps all page content if it exists. It receives \`locale\` and \`children\` props.
+- If absent, pages render in a minimal \`<html><body><main>\` shell.
+
+## Content Conventions
+
+- Each page is an MDX file at \`content/{page-name}/{locale}.mdx\`
+- Custom components in \`components/\` are auto-available in MDX — no imports needed
+- ShipSite built-in components are NOT loaded — use your own components
+- Images go in \`public/images/\` and are referenced as \`/images/filename.ext\`
+
+## Frontmatter
+
+All pages: \`title\`, \`description\`. Blog articles add: \`date\`, \`readingTime\`, \`author\`, \`excerpt\`.
+
+## Key Rules
+
+1. **Never edit files inside \`.shipsite/\`** — they are auto-generated.
+2. **Page structure is defined in \`shipsite.json\`** — add entries to \`pages\` array.
+3. **One MDX file per locale per page**.
+4. **Use straight quotes only** — curly quotes break MDX.
+5. **Match the existing language** in content files.
+`;
+  }
+
   const componentCatalog = components ? formatComponentCatalog(components.components) : '_Components not found — run `npm install` first._';
 
   return `---
@@ -491,7 +662,7 @@ export function generateAiConfig(ctx: GeneratorContext): void {
   writeWithPreservedContent(join(ctx.rootDir, '.windsurf', 'rules', 'shipsite.md'), content);
 
   // Skills (installed into each agent's skill directory)
-  const skillContent = buildSkillContent(components);
+  const skillContent = buildSkillContent(ctx, components);
   for (const skillDir of [
     join(ctx.rootDir, '.claude', 'skills', 'shipsite'),
     join(ctx.rootDir, '.cursor', 'skills', 'shipsite'),

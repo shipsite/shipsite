@@ -1,18 +1,8 @@
 import { join } from 'path';
-import { writeFileSync } from 'fs';
+import { existsSync, writeFileSync } from 'fs';
 import type { GeneratorContext } from '../types.js';
 
-export function generateLayout(ctx: GeneratorContext): void {
-  const favicon = ctx.config.favicon;
-  let iconsBlock = '';
-  if (favicon) {
-    iconsBlock = `
-  icons: {
-    icon: '${favicon}',
-    apple: '/apple-touch-icon.png',
-  },`;
-  }
-
+function buildAnalytics(ctx: GeneratorContext) {
   const analytics = ctx.config.analytics;
   const customScripts: { src?: string; content?: string; strategy?: string; location?: string }[] =
     ctx.config.scripts || [];
@@ -88,28 +78,21 @@ export function generateLayout(ctx: GeneratorContext): void {
     }
   }
 
-  const defaultLocale = ctx.config.i18n?.defaultLocale || 'en';
-
-  // Root layout — static shell with default lang for /_not-found and other
-  // non-locale routes. The [locale] layout overrides <html> for real pages.
-  writeFileSync(
-    join(ctx.srcDir, 'app', 'layout.tsx'),
-    `import '../styles/globals.css';
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="${defaultLocale}" suppressHydrationWarning>
-      <body>{children}</body>
-    </html>
-  );
+  return { analyticsImports, analyticsHeadComponents, analyticsBodyComponents };
 }
-`,
-  );
 
-  // Locale layout — owns <html lang={locale}>, <body>, providers, header/footer.
-  writeFileSync(
-    join(ctx.srcDir, 'app', '[locale]', 'layout.tsx'),
-    `import { notFound } from 'next/navigation';
+function generateShipSiteLocaleLayout(ctx: GeneratorContext, analytics: ReturnType<typeof buildAnalytics>): string {
+  const favicon = ctx.config.favicon;
+  let iconsBlock = '';
+  if (favicon) {
+    iconsBlock = `
+  icons: {
+    icon: '${favicon}',
+    apple: '/apple-touch-icon.png',
+  },`;
+  }
+
+  return `import { notFound } from 'next/navigation';
 import { routing } from '../../i18n/routing';
 import { ShipSiteProvider } from '@shipsite.dev/components/context';
 import { ThemeProvider } from '@shipsite.dev/components/theme';
@@ -117,7 +100,7 @@ import { Header, Footer } from '@shipsite.dev/components';
 import { generateNavLinks, generateAlternatePathMap, getConfig, getSiteUrl } from '@shipsite.dev/core';
 import '../../styles/globals.css';
 import type { Metadata, Viewport } from 'next';
-${analyticsImports}
+${analytics.analyticsImports}
 
 const config = getConfig();
 
@@ -187,7 +170,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   };
 
   return (
-    <html lang={locale} suppressHydrationWarning>${analyticsHeadComponents}
+    <html lang={locale} suppressHydrationWarning>${analytics.analyticsHeadComponents}
       <body>
         <ThemeProvider darkMode={config.darkMode}>
         <ShipSiteProvider value={{
@@ -214,11 +197,107 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           <main id="main-content">{children}</main>
           <Footer />
         </ShipSiteProvider>
-        </ThemeProvider>${analyticsBodyComponents}
+        </ThemeProvider>${analytics.analyticsBodyComponents}
       </body>
     </html>
   );
 }
+`;
+}
+
+function generateCustomLocaleLayout(ctx: GeneratorContext, analytics: ReturnType<typeof buildAnalytics>): string {
+  const favicon = ctx.config.favicon;
+  let iconsBlock = '';
+  if (favicon) {
+    iconsBlock = `
+  icons: {
+    icon: '${favicon}',
+    apple: '/apple-touch-icon.png',
+  },`;
+  }
+
+  const hasCustomLayout = existsSync(join(ctx.rootDir, 'components', 'Layout.tsx'))
+    || existsSync(join(ctx.rootDir, 'components', 'Layout.jsx'));
+
+  const layoutImport = hasCustomLayout
+    ? `import Layout from '../../../../components/Layout';\n`
+    : '';
+
+  const bodyContent = hasCustomLayout
+    ? `          <Layout locale={locale}>{children}</Layout>`
+    : `          <main>{children}</main>`;
+
+  return `import { notFound } from 'next/navigation';
+import { routing } from '../../i18n/routing';
+import { getConfig, getSiteUrl } from '@shipsite.dev/core';
+import '../../styles/globals.css';
+import type { Metadata, Viewport } from 'next';
+${layoutImport}${analytics.analyticsImports}
+
+const config = getConfig();
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
+  title: { default: config.name, template: '%s | ' + config.name },${iconsBlock}
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
+interface LayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
+export default async function LocaleLayout({ children, params }: LayoutProps) {
+  const { locale } = await params;
+  if (!(routing.locales as readonly string[]).includes(locale)) notFound();
+
+  return (
+    <html lang={locale} suppressHydrationWarning>${analytics.analyticsHeadComponents}
+      <body>
+${bodyContent}${analytics.analyticsBodyComponents}
+      </body>
+    </html>
+  );
+}
+`;
+}
+
+export function generateLayout(ctx: GeneratorContext): void {
+  const defaultLocale = ctx.config.i18n?.defaultLocale || 'en';
+  const analytics = buildAnalytics(ctx);
+  const isCustom = ctx.config.template === 'custom';
+
+  // Root layout — static shell with default lang for /_not-found and other
+  // non-locale routes. The [locale] layout overrides <html> for real pages.
+  writeFileSync(
+    join(ctx.srcDir, 'app', 'layout.tsx'),
+    `import '../styles/globals.css';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="${defaultLocale}" suppressHydrationWarning>
+      <body>{children}</body>
+    </html>
+  );
+}
 `,
+  );
+
+  // Locale layout — depends on template mode
+  const localeLayout = isCustom
+    ? generateCustomLocaleLayout(ctx, analytics)
+    : generateShipSiteLocaleLayout(ctx, analytics);
+
+  writeFileSync(
+    join(ctx.srcDir, 'app', '[locale]', 'layout.tsx'),
+    localeLayout,
   );
 }

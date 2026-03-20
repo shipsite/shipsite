@@ -4,6 +4,7 @@ import { deflateSync } from 'zlib';
 
 export interface ScaffoldOptions {
   projectName: string;
+  template?: 'shipsite' | 'custom';  // default: "shipsite"
   primaryColor?: string;    // default: "#059669"
   locales?: string[];       // default: ["en"]
   cliVersion?: string;      // for package.json dependencies
@@ -374,6 +375,723 @@ function getLandingStrings(projectName: string): Record<string, Record<string, s
  * Binary files (PNG) are returned as base64-encoded strings.
  */
 export function generateProjectFiles(options: ScaffoldOptions): ScaffoldFile[] {
+  if (options.template === 'custom') {
+    return generateCustomProjectFiles(options);
+  }
+  return generateShipSiteProjectFiles(options);
+}
+
+function generateCustomProjectFiles(options: ScaffoldOptions): ScaffoldFile[] {
+  const {
+    projectName,
+    locales = ['en'],
+    cliVersion = '0.0.0',
+  } = options;
+
+  const defaultLocale = locales[0] || 'en';
+  const files: ScaffoldFile[] = [];
+
+  const text = (path: string, content: string) =>
+    files.push({ path, content, encoding: 'utf-8' });
+
+  // ── shipsite.json ──────────────────────────────────────────
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const config = {
+    $schema: './node_modules/@shipsite.dev/core/shipsite.schema.json',
+    name: projectName,
+    url: `https://${projectName}.com`,
+    template: 'custom' as const,
+    i18n: {
+      defaultLocale,
+      locales,
+      localePrefix: 'as-needed' as const,
+    },
+    pages: [
+      { slug: '', type: 'page', content: 'landing', locales },
+      { slug: 'blog', type: 'blog-index', content: 'blog', locales: [defaultLocale] },
+      { slug: 'blog/hello-world', type: 'blog-article', content: 'blog/hello-world', locales: [defaultLocale] },
+    ],
+    blog: {
+      authors: {
+        default: {
+          name: 'Team',
+          role: 'Author',
+        },
+      },
+    },
+  };
+
+  text('shipsite.json', JSON.stringify(config, null, 2) + '\n');
+
+  // ── Landing page ────────────────────────────────────────────
+
+  for (const locale of locales) {
+    text(`content/landing/${locale}.mdx`, `---
+title: "${projectName} — Build Something Great"
+description: "Welcome to ${projectName}."
+---
+
+<Hero
+  title="Build Something Great"
+  description="This is your custom ShipSite project. Every component here is yours to modify — change the design, swap the layout, make it your own."
+  primaryHref="#features"
+  primaryLabel="See Features"
+  secondaryHref="/blog"
+  secondaryLabel="Read the Blog"
+/>
+
+<Section id="features" title="What You Get" description="A solid starting point with components you fully control.">
+  <CardGrid>
+    <Card title="Custom Layout" description="Header, footer, and page shell — all in your components/ folder. Change anything." />
+    <Card title="Blog Built In" description="A working blog with index and article pages. Add posts as MDX files." />
+    <Card title="Full Control" description="No locked-in design system. Tailwind CSS, your styles, your rules." />
+  </CardGrid>
+</Section>
+`);
+  }
+
+  // ── Blog index page ─────────────────────────────────────────
+
+  text(`content/blog/${defaultLocale}.mdx`, `---
+title: "Blog — ${projectName}"
+description: "Latest posts from ${projectName}."
+---
+
+<BlogIndex title="Blog" description="Latest posts." />
+`);
+
+  // ── Blog article ────────────────────────────────────────────
+
+  text(`content/blog/hello-world/${defaultLocale}.mdx`, `---
+title: "Hello World"
+description: "Our very first blog post."
+excerpt: "Welcome to the blog! This is a sample post to show how articles work in your custom ShipSite project."
+date: "${today}"
+readingTime: 2
+author: default
+---
+
+<BlogArticle>
+
+## Welcome
+
+This is your first blog post. It lives at \`content/blog/hello-world/${defaultLocale}.mdx\`.
+
+You can write **Markdown** here and use any of your custom components. The \`BlogArticle\` wrapper
+adds the title, date, and author info automatically — but you control how it looks in
+\`components/BlogArticle.tsx\`.
+
+## Adding More Posts
+
+1. Create a new folder under \`content/blog/\`, e.g. \`content/blog/my-post/\`
+2. Add a \`${defaultLocale}.mdx\` file with frontmatter (\`title\`, \`description\`, \`date\`, \`author\`, \`excerpt\`)
+3. Register the page in \`shipsite.json\` under \`pages\`
+
+That is it — the blog index picks it up automatically.
+
+</BlogArticle>
+`);
+
+  // ── Starter components ──────────────────────────────────────
+
+  text('components/Layout.tsx', `export default function Layout({ children, locale }: { children: React.ReactNode; locale: string }) {
+  return (
+    <>
+      <header className="site-header">
+        <nav className="site-nav">
+          <a href="/" className="site-logo">${projectName}</a>
+          <div className="nav-links">
+            <a href="/blog">Blog</a>
+          </div>
+        </nav>
+      </header>
+      <main className="site-main">
+        {children}
+      </main>
+      <footer className="site-footer">
+        <p>&copy; ${new Date().getFullYear()} ${projectName}. All rights reserved.</p>
+      </footer>
+    </>
+  );
+}
+`);
+
+  text('components/Hero.tsx', `interface HeroProps {
+  title: string;
+  description?: string;
+  primaryHref?: string;
+  primaryLabel?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+}
+
+export function Hero({ title, description, primaryHref, primaryLabel, secondaryHref, secondaryLabel }: HeroProps) {
+  return (
+    <section className="hero">
+      <h1>{title}</h1>
+      {description && <p className="hero-description">{description}</p>}
+      {(primaryHref || secondaryHref) && (
+        <div className="hero-actions">
+          {primaryHref && <a href={primaryHref} className="btn btn-primary">{primaryLabel || 'Get Started'}</a>}
+          {secondaryHref && <a href={secondaryHref} className="btn btn-secondary">{secondaryLabel || 'Learn More'}</a>}
+        </div>
+      )}
+    </section>
+  );
+}
+`);
+
+  text('components/Section.tsx', `interface SectionProps {
+  id?: string;
+  title?: string;
+  description?: string;
+  children: React.ReactNode;
+}
+
+export function Section({ id, title, description, children }: SectionProps) {
+  return (
+    <section id={id} className="content-section">
+      {title && <h2>{title}</h2>}
+      {description && <p className="section-description">{description}</p>}
+      {children}
+    </section>
+  );
+}
+`);
+
+  text('components/Card.tsx', `interface CardProps {
+  title: string;
+  description?: string;
+  href?: string;
+  children?: React.ReactNode;
+}
+
+export function Card({ title, description, href, children }: CardProps) {
+  const content = (
+    <div className="card">
+      <h3>{title}</h3>
+      {description && <p>{description}</p>}
+      {children}
+    </div>
+  );
+
+  if (href) {
+    return <a href={href} className="card-link">{content}</a>;
+  }
+  return content;
+}
+`);
+
+  text('components/CardGrid.tsx', `interface CardGridProps {
+  columns?: 2 | 3 | 4;
+  children: React.ReactNode;
+}
+
+export function CardGrid({ columns = 3, children }: CardGridProps) {
+  return (
+    <div className="card-grid" style={{ '--columns': columns } as React.CSSProperties}>
+      {children}
+    </div>
+  );
+}
+`);
+
+  text('components/BlogIndex.tsx', `interface BlogArticleSummary {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  readingTime: number;
+  href: string;
+  author?: { name: string; role: string; image: string };
+}
+
+interface BlogIndexProps {
+  title?: string;
+  description?: string;
+  articles?: BlogArticleSummary[];
+}
+
+function formatDate(dateStr: string): string {
+  try {
+    return new Date(dateStr).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+export function BlogIndex({ title, description, articles = [] }: BlogIndexProps) {
+  return (
+    <section className="blog-index">
+      {title && <h1>{title}</h1>}
+      {description && <p className="section-description">{description}</p>}
+      {articles.length === 0 && <p className="empty-state">No posts yet.</p>}
+      <div className="blog-grid">
+        {articles.map((article) => (
+          <a key={article.slug} href={article.href} className="blog-card">
+            <h2>{article.title}</h2>
+            <p>{article.excerpt}</p>
+            <div className="blog-card-meta">
+              {article.author && <span>{article.author.name}</span>}
+              <time dateTime={article.date}>{formatDate(article.date)}</time>
+              <span>{article.readingTime} min read</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+`);
+
+  text('components/BlogArticle.tsx', `interface BlogArticleProps {
+  children: React.ReactNode;
+  title?: string;
+  date?: string;
+  readingTime?: number;
+  author?: { name: string; role: string; image: string; bio?: string };
+}
+
+function formatDate(dateStr: string): string {
+  try {
+    return new Date(dateStr).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
+export function BlogArticle({ children, title, date, readingTime, author }: BlogArticleProps) {
+  return (
+    <article className="blog-article">
+      {title && <h1>{title}</h1>}
+      <div className="blog-article-meta">
+        {author && <span className="blog-author">{author.name}</span>}
+        {date && <time dateTime={date}>{formatDate(date)}</time>}
+        {readingTime && <span>{readingTime} min read</span>}
+      </div>
+      <div className="blog-article-content">
+        {children}
+      </div>
+    </article>
+  );
+}
+`);
+
+  text('components/index.ts', `export { default as Layout } from './Layout';
+export { Hero } from './Hero';
+export { Section } from './Section';
+export { Card } from './Card';
+export { CardGrid } from './CardGrid';
+export { BlogIndex } from './BlogIndex';
+export { BlogArticle } from './BlogArticle';
+`);
+
+  // ── Custom styles ───────────────────────────────────────────
+
+  text('styles/globals.css', `@import 'tailwindcss';
+
+/* ─── Base ─────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    --color-primary: #059669;
+    --color-primary-hover: #047857;
+    --color-text: #1f2937;
+    --color-text-muted: #6b7280;
+    --color-bg: #ffffff;
+    --color-bg-muted: #f9fafb;
+    --color-border: #e5e7eb;
+    --max-width: 64rem;
+    --radius: 0.5rem;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+}
+
+/* ─── Layout ───────────────────────────────────────── */
+
+.site-header {
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 1.5rem;
+}
+
+.site-nav {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-logo {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.nav-links a:hover {
+  color: var(--color-text);
+}
+
+.site-main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* ─── Hero ─────────────────────────────────────────── */
+
+.hero {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.hero-description {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  max-width: 36rem;
+  margin: 0 auto 2rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ─── Buttons ──────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover {
+  background: var(--color-bg-muted);
+}
+
+/* ─── Sections ─────────────────────────────────────── */
+
+.content-section {
+  padding: 3rem 0;
+}
+
+.content-section h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.section-description {
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}
+
+/* ─── Cards ────────────────────────────────────────── */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns, 3), 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: box-shadow 0.15s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ─── Blog Index ───────────────────────────────────── */
+
+.blog-index h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.blog-card {
+  display: block;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.blog-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.blog-card h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.blog-card p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.blog-card-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.empty-state {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ─── Blog Article ─────────────────────────────────── */
+
+.blog-article {
+  max-width: 42rem;
+}
+
+.blog-article h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+
+.blog-article-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.blog-author {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.blog-article-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.blog-article-content p {
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.blog-article-content ol,
+.blog-article-content ul {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.blog-article-content li {
+  line-height: 1.75;
+  margin-bottom: 0.25rem;
+}
+
+.blog-article-content strong {
+  font-weight: 600;
+}
+
+.blog-article-content code {
+  font-size: 0.875em;
+  background: var(--color-bg-muted);
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+}
+`);
+
+  // ── Project files ───────────────────────────────────────────
+
+  text('tsconfig.json', `{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".shipsite/**/*.ts", ".shipsite/**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+`);
+
+  text('postcss.config.mjs', `/** @type {import('postcss-load-config').Config} */
+const config = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+
+export default config;
+`);
+
+  text('.gitignore', `node_modules/
+.next/
+.shipsite/
+.content-collections/
+*.tsbuildinfo
+`);
+
+  text('package.json', JSON.stringify(
+    {
+      name: projectName,
+      version: '0.1.0',
+      private: true,
+      scripts: {
+        dev: 'shipsite dev',
+        build: 'shipsite build',
+        validate: 'shipsite validate',
+      },
+      dependencies: {
+        '@shipsite.dev/cli': `^${cliVersion}`,
+        '@shipsite.dev/core': `^${cliVersion}`,
+        '@content-collections/core': '^0.14.1',
+        '@content-collections/next': '^0.2.11',
+        next: '16.1.6',
+        'next-intl': '^4.6.1',
+        'next-mdx-remote': '^6.0.0',
+        react: '19.2.3',
+        'react-dom': '19.2.3',
+        'remark-gfm': '^4.0.1',
+        zod: '^4.0.0',
+      },
+      devDependencies: {
+        '@tailwindcss/postcss': '^4',
+        '@types/node': '^20',
+        '@types/react': '^19',
+        tailwindcss: '^4',
+        typescript: '^5',
+      },
+    },
+    null,
+    2,
+  ) + '\n');
+
+  return files;
+}
+
+function generateShipSiteProjectFiles(options: ScaffoldOptions): ScaffoldFile[] {
   const {
     projectName,
     primaryColor = '#059669',

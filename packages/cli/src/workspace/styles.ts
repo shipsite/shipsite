@@ -1,5 +1,5 @@
 import { join, relative, dirname } from 'path';
-import { existsSync, writeFileSync, realpathSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, realpathSync } from 'fs';
 import { generateShadcnTokens } from '@shipsite.dev/core/theme';
 import type { GeneratorContext } from './types.js';
 
@@ -28,14 +28,12 @@ function resolveComponentsSource(rootDir: string, cssDir: string): { sourceDirec
   return { sourceDirective: '', utilsCssImport: '' };
 }
 
-export function generateStyles(ctx: GeneratorContext): void {
+function generateShipSiteStyles(ctx: GeneratorContext): string {
   const cssDir = join(ctx.srcDir, 'styles');
   const { sourceDirective, utilsCssImport } = resolveComponentsSource(ctx.rootDir, cssDir);
   const shadcnTokens = generateShadcnTokens(ctx.config.colors || {});
 
-  writeFileSync(
-    join(cssDir, 'globals.css'),
-    `@import 'tailwindcss';${sourceDirective}${utilsCssImport}
+  return `@import 'tailwindcss';${sourceDirective}${utilsCssImport}
 
 @import 'tw-animate-css';
 
@@ -145,6 +143,33 @@ body {
   }
 }
 
-`,
-  );
+`;
+}
+
+function generateCustomStyles(ctx: GeneratorContext): string {
+  // Check if the user has their own globals.css
+  const userCssPath = join(ctx.rootDir, 'styles', 'globals.css');
+  if (existsSync(userCssPath)) {
+    return readFileSync(userCssPath, 'utf-8');
+  }
+
+  // Minimal Tailwind CSS setup for custom template
+  return `@import 'tailwindcss';
+
+@layer base {
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-behavior: smooth; }
+}
+
+`;
+}
+
+export function generateStyles(ctx: GeneratorContext): void {
+  const isCustom = ctx.config.template === 'custom';
+  const css = isCustom ? generateCustomStyles(ctx) : generateShipSiteStyles(ctx);
+
+  writeFileSync(join(ctx.srcDir, 'styles', 'globals.css'), css);
 }
