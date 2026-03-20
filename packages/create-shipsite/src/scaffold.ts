@@ -1066,9 +1066,15 @@ export default config;
       dependencies: {
         '@shipsite.dev/cli': `^${cliVersion}`,
         '@shipsite.dev/core': `^${cliVersion}`,
+        '@content-collections/core': '^0.14.1',
+        '@content-collections/next': '^0.2.11',
         next: '16.1.6',
+        'next-intl': '^4.6.1',
+        'next-mdx-remote': '^6.0.0',
         react: '19.2.3',
         'react-dom': '19.2.3',
+        'remark-gfm': '^4.0.1',
+        zod: '^4.0.0',
       },
       devDependencies: {
         '@tailwindcss/postcss': '^4',
