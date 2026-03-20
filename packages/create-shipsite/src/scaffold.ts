@@ -4,6 +4,7 @@ import { deflateSync } from 'zlib';
 
 export interface ScaffoldOptions {
   projectName: string;
+  template?: 'shipsite' | 'custom';  // default: "shipsite"
   primaryColor?: string;    // default: "#059669"
   locales?: string[];       // default: ["en"]
   cliVersion?: string;      // for package.json dependencies
@@ -374,6 +375,170 @@ function getLandingStrings(projectName: string): Record<string, Record<string, s
  * Binary files (PNG) are returned as base64-encoded strings.
  */
 export function generateProjectFiles(options: ScaffoldOptions): ScaffoldFile[] {
+  if (options.template === 'custom') {
+    return generateCustomProjectFiles(options);
+  }
+  return generateShipSiteProjectFiles(options);
+}
+
+function generateCustomProjectFiles(options: ScaffoldOptions): ScaffoldFile[] {
+  const {
+    projectName,
+    locales = ['en'],
+    cliVersion = '0.0.0',
+  } = options;
+
+  const defaultLocale = locales[0] || 'en';
+  const files: ScaffoldFile[] = [];
+
+  const text = (path: string, content: string) =>
+    files.push({ path, content, encoding: 'utf-8' });
+
+  // ── shipsite.json ──────────────────────────────────────────
+
+  const config = {
+    $schema: './node_modules/@shipsite.dev/core/shipsite.schema.json',
+    name: projectName,
+    url: `https://${projectName}.com`,
+    template: 'custom' as const,
+    i18n: {
+      defaultLocale,
+      locales,
+      localePrefix: 'as-needed' as const,
+    },
+    pages: [
+      { slug: '', type: 'page', content: 'landing', locales },
+    ],
+  };
+
+  text('shipsite.json', JSON.stringify(config, null, 2) + '\n');
+
+  // ── Landing page ────────────────────────────────────────────
+
+  for (const locale of locales) {
+    text(`content/landing/${locale}.mdx`, `---
+title: "${projectName}"
+description: "Welcome to ${projectName}."
+---
+
+# Welcome to ${projectName}
+
+Start building your site by editing this file and adding your own components.
+`);
+  }
+
+  // ── Starter Layout component ────────────────────────────────
+
+  text('components/Layout.tsx', `export default function Layout({ children, locale }: { children: React.ReactNode; locale: string }) {
+  return (
+    <>
+      <header className="border-b px-6 py-4">
+        <nav className="mx-auto flex max-w-5xl items-center justify-between">
+          <a href="/" className="text-lg font-semibold">${projectName}</a>
+          <div className="flex gap-4 text-sm">
+            {/* Add your navigation links here */}
+          </div>
+        </nav>
+      </header>
+      <main className="mx-auto max-w-5xl px-6 py-12">
+        {children}
+      </main>
+      <footer className="border-t px-6 py-8 text-center text-sm text-gray-500">
+        &copy; ${new Date().getFullYear()} ${projectName}
+      </footer>
+    </>
+  );
+}
+`);
+
+  // ── Custom styles ───────────────────────────────────────────
+
+  text('styles/globals.css', `@import 'tailwindcss';
+
+@layer base {
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-behavior: smooth; }
+}
+`);
+
+  // ── Project files ───────────────────────────────────────────
+
+  text('tsconfig.json', `{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".shipsite/**/*.ts", ".shipsite/**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+`);
+
+  text('postcss.config.mjs', `/** @type {import('postcss-load-config').Config} */
+const config = {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+
+export default config;
+`);
+
+  text('.gitignore', `node_modules/
+.next/
+.shipsite/
+.content-collections/
+*.tsbuildinfo
+`);
+
+  text('package.json', JSON.stringify(
+    {
+      name: projectName,
+      version: '0.1.0',
+      private: true,
+      scripts: {
+        dev: 'shipsite dev',
+        build: 'shipsite build',
+        validate: 'shipsite validate',
+      },
+      dependencies: {
+        '@shipsite.dev/cli': `^${cliVersion}`,
+        '@shipsite.dev/core': `^${cliVersion}`,
+        next: '16.1.6',
+        react: '19.2.3',
+        'react-dom': '19.2.3',
+      },
+      devDependencies: {
+        '@tailwindcss/postcss': '^4',
+        '@types/node': '^20',
+        '@types/react': '^19',
+        tailwindcss: '^4',
+        typescript: '^5',
+      },
+    },
+    null,
+    2,
+  ) + '\n');
+
+  return files;
+}
+
+function generateShipSiteProjectFiles(options: ScaffoldOptions): ScaffoldFile[] {
   const {
     projectName,
     primaryColor = '#059669',

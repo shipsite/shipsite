@@ -37,15 +37,32 @@ async function main() {
     process.exit(0);
   }
 
-  const primaryColor = (await p.text({
-    message: 'Primary color (hex)',
-    placeholder: '#059669',
-    initialValue: '#059669',
-  })) as string;
+  const templateChoice = (await p.select({
+    message: 'Which template do you want to use?',
+    options: [
+      { value: 'shipsite', label: 'ShipSite Design', hint: 'Pre-built components, header, footer, theme — ready to go' },
+      { value: 'custom', label: 'Custom Design', hint: 'Blank canvas — bring your own layout, components, and styles' },
+    ],
+    initialValue: 'shipsite',
+  })) as 'shipsite' | 'custom';
 
-  if (p.isCancel(primaryColor)) {
+  if (p.isCancel(templateChoice)) {
     p.cancel('Cancelled');
     process.exit(0);
+  }
+
+  let primaryColor = '#059669';
+  if (templateChoice === 'shipsite') {
+    primaryColor = (await p.text({
+      message: 'Primary color (hex)',
+      placeholder: '#059669',
+      initialValue: '#059669',
+    })) as string;
+
+    if (p.isCancel(primaryColor)) {
+      p.cancel('Cancelled');
+      process.exit(0);
+    }
   }
 
   const localesResult = (await p.multiselect({
@@ -76,6 +93,7 @@ async function main() {
   // Generate all project files in-memory
   const files = generateProjectFiles({
     projectName,
+    template: templateChoice,
     primaryColor,
     locales,
     cliVersion: version,

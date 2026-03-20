@@ -3,26 +3,29 @@ import { existsSync, writeFileSync } from 'fs';
 import type { GeneratorContext } from '../types.js';
 
 export function generatePage(ctx: GeneratorContext): void {
+  const isCustom = ctx.config.template === 'custom';
   const hasCustomComponents = existsSync(join(ctx.rootDir, 'components'));
-  const customComponentsImport = hasCustomComponents
-    ? `import * as CustomComponents from '../../../../components';\n`
-    : '';
-  const allComponentsMerge = hasCustomComponents
-    ? 'const AllComponents = { ...mdxHtmlOverrides, ...Components, ...CustomComponents };\n'
-    : 'const AllComponents = { ...mdxHtmlOverrides, ...Components };\n';
 
-  writeFileSync(
-    join(ctx.srcDir, 'app', '[locale]', '[[...slug]]', 'page.tsx'),
-    `import { setRequestLocale } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { getPageContent } from '@shipsite.dev/core/mdx';
-import { getPageBySlug, generateAllStaticParams, buildCanonicalUrl, getAlternateUrls, isNoIndexPage } from '@shipsite.dev/core/pages';
-import { resolveAuthor } from '@shipsite.dev/core/blog';
-import { getConfig, getSiteUrl, getDefaultLocale } from '@shipsite.dev/core/config';
-import * as Components from '@shipsite.dev/components';
-${customComponentsImport}import type { Metadata } from 'next';
+  let imports: string;
+  let allComponentsMerge: string;
 
-// Map styled components to HTML elements for Markdown rendering
+  if (isCustom) {
+    // Custom template: only load user's own components, no ShipSite components
+    const customComponentsImport = hasCustomComponents
+      ? `import * as CustomComponents from '../../../../components';\n`
+      : '';
+    imports = `${customComponentsImport}`;
+    allComponentsMerge = hasCustomComponents
+      ? 'const AllComponents = { ...CustomComponents };\n'
+      : 'const AllComponents = {};\n';
+  } else {
+    // ShipSite template: load built-in + custom components
+    const customComponentsImport = hasCustomComponents
+      ? `import * as CustomComponents from '../../../../components';\n`
+      : '';
+    imports = `import * as Components from '@shipsite.dev/components';\n${customComponentsImport}`;
+
+    const mdxOverrides = `// Map styled components to HTML elements for Markdown rendering
 const mdxHtmlOverrides = {
   // Tables
   table: Components.Table,
@@ -46,6 +49,23 @@ const mdxHtmlOverrides = {
   hr: Components.ProseHr,
   img: Components.ProseImg,
 };
+
+`;
+    imports += mdxOverrides;
+    allComponentsMerge = hasCustomComponents
+      ? 'const AllComponents = { ...mdxHtmlOverrides, ...Components, ...CustomComponents };\n'
+      : 'const AllComponents = { ...mdxHtmlOverrides, ...Components };\n';
+  }
+
+  writeFileSync(
+    join(ctx.srcDir, 'app', '[locale]', '[[...slug]]', 'page.tsx'),
+    `import { setRequestLocale } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { getPageContent } from '@shipsite.dev/core/mdx';
+import { getPageBySlug, generateAllStaticParams, buildCanonicalUrl, getAlternateUrls, isNoIndexPage } from '@shipsite.dev/core/pages';
+import { resolveAuthor } from '@shipsite.dev/core/blog';
+import { getConfig, getSiteUrl, getDefaultLocale } from '@shipsite.dev/core/config';
+${imports}import type { Metadata } from 'next';
 
 ${allComponentsMerge}
 interface PageProps {
