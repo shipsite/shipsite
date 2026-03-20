@@ -71,7 +71,7 @@
   "dependencies": {
     "@content-collections/core": "^0.14.1",
     "@content-collections/next": "^0.2.11",
-    "next": ">=15",
+    "next": ">=16",
     "next-intl": "^4.6.1",
     "next-mdx-remote": "^6.0.0",
     "react": "19.2.3",
@@ -86,6 +86,6 @@
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "next": ">=15"
+    "next": ">=16"
   }
 }
