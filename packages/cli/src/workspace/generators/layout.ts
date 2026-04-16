@@ -275,16 +275,28 @@ export function generateLayout(ctx: GeneratorContext): void {
   const analytics = buildAnalytics(ctx);
   const isCustom = ctx.config.template === 'custom';
 
-  // Root layout — static shell with default lang for /_not-found and other
-  // non-locale routes. The [locale] layout overrides <html> for real pages.
+  // Root layout — thin pass-through.  The [locale] layout renders the real
+  // <html lang={locale}> and <body> so every locale gets the correct lang
+  // attribute.  Rendering <html>/<body> here as well would produce nested
+  // tags and lock every page to the default locale.
   writeFileSync(
     join(ctx.srcDir, 'app', 'layout.tsx'),
-    `import '../styles/globals.css';
+    `export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return children;
+}
+`,
+  );
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Root not-found page — provides an HTML shell for 404s that fall outside
+  // the [locale] segment (e.g. invalid locale prefix).
+  writeFileSync(
+    join(ctx.srcDir, 'app', 'not-found.tsx'),
+    `export default function NotFound() {
   return (
-    <html lang="${defaultLocale}" suppressHydrationWarning>
-      <body>{children}</body>
+    <html lang="${defaultLocale}">
+      <body>
+        <h1>404 — Page Not Found</h1>
+      </body>
     </html>
   );
 }
