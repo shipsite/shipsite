@@ -69,7 +69,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@content-collections/core": "^0.14.1",
+    "@content-collections/core": "^0.14.3",
     "@content-collections/next": "^0.2.11",
     "next": ">=16",
     "next-intl": "^4.9.1",
